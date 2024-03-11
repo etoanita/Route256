@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrdersService", "Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrdersService.csproj", "{6C82E938-C13D-4F35-A4CB-43CB930C38E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.GatewayService", "Ozon.Route256.Practice.GatewayService\Ozon.Route256.Practice.GatewayService.csproj", "{4857F731-BCB5-4882-A13E-C6FB9E9330B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E7D54463-92D6-4D98-BC9F-B14DC6C431D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{66D9F9D0-04D4-401D-97D4-176690401289}"
+	ProjectSection(SolutionItems) = preProject
+		.gitlab-ci.yml = .gitlab-ci.yml
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43128563-973A-42DC-B56C-D17BE2EAFFB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C82E938-C13D-4F35-A4CB-43CB930C38E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C82E938-C13D-4F35-A4CB-43CB930C38E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C82E938-C13D-4F35-A4CB-43CB930C38E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C82E938-C13D-4F35-A4CB-43CB930C38E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C82E938-C13D-4F35-A4CB-43CB930C38E9} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
+		{4857F731-BCB5-4882-A13E-C6FB9E9330B5} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0F35E1AF-BD22-4740-B6CF-3D0A2BE50A8A}
+	EndGlobalSection
+EndGlobal

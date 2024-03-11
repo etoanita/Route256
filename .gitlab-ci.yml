@@ -1,0 +1,38 @@
+image: docker:latest
+
+stages:
+  - build
+  - test
+
+services:
+  - name: docker:dind
+
+gateway_service_build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  needs: []
+  script:
+    - dotnet restore ./Ozon.Route256.Practice.GatewayService/Ozon.Route256.Practice.GatewayService.csproj  
+    - dotnet build ./Ozon.Route256.Practice.GatewayService/Ozon.Route256.Practice.GatewayService.csproj --no-restore
+
+orders_service_build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  needs: []
+  script:
+    - dotnet restore ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrdersService.csproj    
+    - dotnet build ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrdersService.csproj --no-restore
+
+
+gateway_service_test:
+  stage: test
+  needs: ["gateway_service_build"]
+  script:
+    - echo "[TODO] gateway service tests"
+
+orders_service_test:
+  stage: test
+  needs: ["orders_service_build"]
+  script:
+    - echo "[TODO] orders service tests"
+ 
