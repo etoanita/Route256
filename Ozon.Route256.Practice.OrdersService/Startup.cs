@@ -1,4 +1,5 @@
-﻿using Ozon.Route256.Practice.OrdersService.Infrastructure;
+﻿using Ozon.Route256.Practice.OrdersService.ClientBalancing;
+using Ozon.Route256.Practice.OrdersService.Infrastructure;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -28,6 +29,8 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddGrpcReflection();
             serviceCollection.AddControllers();
             serviceCollection.AddEndpointsApiExplorer();
+            serviceCollection.AddSingleton<IDbStore, DbStore>();
+            serviceCollection.AddHostedService<SdConsumerHostedService>();
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)
