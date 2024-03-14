@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option csharp_namespace = "Ozon.Route256.Practice";
+
+service Orders
+{
+  rpc CancelOrder(CancelOrderRequest) returns(CancelOrderResponse);
+  rpc GetOrderState(GetOrderStateRequest) returns(GetOrderStateResponse);
+  rpc GetRegionsList(GetRegionsListRequest) returns(GetRegionsListResponse);
+  rpc GetOrdersList(GetOrdersListRequest) returns(GetOrdersListResponse);
+  rpc GetOrders(GetOrdersRequest) returns(GetOrdersResponse);
+}
+
+message CancelOrderRequest {
+	int64 order_id = 1;
+}
+
+message CancelOrderResponse {
+	bool success = 1;
+	string description = 2;
+}
+
+message GetOrderStateRequest {
+    int64 order_id = 1;
+}
+
+message GetOrderStateResponse {
+
+}
+
+message GetRegionsListRequest {
+
+}
+
+message GetRegionsListResponse {
+
+}
+
+message GetOrdersListRequest {
+
+}
+
+message GetOrdersListResponse {
+
+}
+
+message GetOrdersRequest {
+
+}
+
+message GetOrdersResponse {
+
+}

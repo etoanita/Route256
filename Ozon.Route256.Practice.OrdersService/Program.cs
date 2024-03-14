@@ -1,20 +1,32 @@
-var builder = WebApplication.CreateBuilder(args);
+using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Ozon.Route256.Practice.OrdersService;
+using System.Net;
 
-// Add services to the container.
+await Host
+    .CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>()
+        .ConfigureKestrel(option =>
+        {
+            option.ListenPortByOptions(ProgramExtension.ROUTE256_GRPC_PORT, HttpProtocols.Http2);
+        }))
+    .Build()
+    .RunAsync();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+public static class ProgramExtension
+{
+    public const string ROUTE256_GRPC_PORT = "ROUTE256_GRPC_PORT";
 
-var app = builder.Build();
+    public static void ListenPortByOptions(
+        this KestrelServerOptions option,
+        string envOption,
+        HttpProtocols httpProtocol)
+    {
+        var isHttpPortParsed = int.TryParse(Environment.GetEnvironmentVariable(envOption), out var httpPort);
 
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
-
-app.MapControllers();
-
-app.Run();
+        if (isHttpPortParsed)
+        {
+            option.ListenAnyIP(httpPort, options => options.Protocols = httpProtocol);
+        }
+    }
+}

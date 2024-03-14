@@ -7,6 +7,43 @@ volumes:
     name: orders-service-db-volume
 
 services:
+  orders-service-1:
+    build:
+      context: ./Ozon.Route256.Practice.OrdersService
+      dockerfile: Dockerfile
+    container_name: orders-service-1
+    depends_on: 
+      - orders-service-db
+    environment:
+      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "ROUTE256_GRPC_PORT": "5010"
+
+  orders-service-2:
+    build:
+      context: ./Ozon.Route256.Practice.OrdersService
+      dockerfile: Dockerfile
+    container_name: orders-service-2
+    ports:
+      - 5010:5010 
+    depends_on: 
+      - orders-service-db
+    environment:
+      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "ROUTE256_GRPC_PORT": "5010"
+
+  gateway-service:
+    build:
+      context: ./Ozon.Route256.Practice.GatewayService
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - '5084:80'
+    environment:
+      "ROUTE256_ORDERS_SERVICE_GRPC" : "static:///orders-service"
+      "ROUTE256_CUSTOMER_SERVICE_GRPC_PORT" : "5005"
+      "ORDERS_SERVICE_1" : "orders-service-1:5010"
+      "ORDERS_SERVICE_2" : "orders-service-2:5010"
+  
   customer-service:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/customer-service:latest
@@ -57,34 +94,6 @@ services:
       - >-
         ROUTE256_DB_STATE=cluster:0-9:db1:1543;cluster:10-19:db2:1543;cluster1:0:db3:1543
       - ROUTE256_UPDATE_TIMEOUT=10
-
-  orders-service-1:
-    build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
-    container_name: orders-service-1
-    ports:
-      - '5082:80'
-    depends_on: 
-      - orders-service-db
-
-  orders-service-2:
-    build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
-    container_name: orders-service-2
-    ports:
-      - '5083:80'
-    depends_on: 
-      - orders-service-db
-
-  gateway-service:
-    build:
-      context: ./Ozon.Route256.Practice.GatewayService
-      dockerfile: Dockerfile
-    container_name: gateway-service
-    ports:
-      - '5084:80'
 
   customer-service-db:
     image: 'postgres:latest'
