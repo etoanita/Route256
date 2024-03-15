@@ -2,7 +2,9 @@
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
+using Grpc.Net.ClientFactory;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
+using Ozon.Route256.Practice.GatewayService.Infrastructure;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -33,13 +35,20 @@ namespace Ozon.Route256.Practice.OrdersService
                 {
                     LoadBalancingConfigs = { new LoadBalancingConfig("round_robin") }
                 };
+            }).AddInterceptor<LoggerInterceptor>(InterceptorScope.Client);
+            serviceCollection.AddGrpcClient <Customers.CustomersClient> (options =>
+            {
+                options.Address = new Uri("http://customer-service:5005");
             });
             serviceCollection.AddGrpcReflection();
-            serviceCollection.AddControllers();
+            serviceCollection.AddControllers(options =>
+            {
+                options.Filters.Add<HttpResponseExceptionFilter>();
+            });
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSwaggerGen();
             serviceCollection.AddScoped<IGatewayService, GatewayService.GrpcServices.GatewayService>();
-            
+            serviceCollection.AddSingleton<LoggerInterceptor>();
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)

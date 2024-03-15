@@ -3,19 +3,22 @@
     public class GatewayService : IGatewayService
     {
         private readonly Orders.OrdersClient _ordersClient;
-        public GatewayService(Orders.OrdersClient ordersClient)
+        private readonly Customers.CustomersClient _customersClient;
+        public GatewayService(Orders.OrdersClient ordersClient, Customers.CustomersClient customersClient)
         {
             _ordersClient = ordersClient;
+            _customersClient = customersClient;
         }
 
         public void CancelOrder(long orderId)
         {
-            _ordersClient.CancelOrder(new CancelOrderRequest());
+            _ordersClient.CancelOrder(new CancelOrderRequest { OrderId = orderId });
         }
 
         public string GetOrderStatus(long orderId)
         {
-            throw new NotImplementedException();
+            var request = _ordersClient.GetOrderState(new GetOrderStateRequest { OrderId = orderId });
+            return request.State;
         }
 
         public void GetOrders()
@@ -35,12 +38,13 @@
 
         public void GetClients()
         {
-            throw new NotImplementedException();
+           // return _customersClient.GetCustomers().Customers.ToList()
         }
 
-        public void GetRegions()
+        public List<string> GetRegions()
         {
-            throw new NotImplementedException();
+            return _ordersClient.GetRegionsList(new GetRegionsListRequest()).Regions.ToList();
         }
+
     }
 }

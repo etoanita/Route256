@@ -8,6 +8,6 @@
         void GetOrdersByRegion(string region);
         void GetOrdersByUser(int userId);
         void GetClients();
-        void GetRegions();
+        List<string> GetRegions();
     }
 }

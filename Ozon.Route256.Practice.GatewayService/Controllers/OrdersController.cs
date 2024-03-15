@@ -8,7 +8,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private IGatewayService _gatewayService;
+        private readonly IGatewayService _gatewayService;
         public OrdersController(IGatewayService gatewayService)
         {
             _gatewayService = gatewayService;
@@ -44,9 +44,9 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         }
 
         [HttpGet]
-        public Task GetOrdersByUser(int userId)
+        public Task GetOrdersByClientId(int clientId)
         {
-            _gatewayService.GetOrdersByUser(userId);
+            _gatewayService.GetOrdersByUser(clientId);
             return Task.CompletedTask;
         }
 
