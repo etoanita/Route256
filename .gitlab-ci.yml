@@ -29,7 +29,7 @@ gateway_service_test:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: ["gateway_service_build"]
   script:  
-    - dotnet test ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.GatewayServiceTests.csproj --no-restore
+    - dotnet test ./Ozon.Route256.Practice.GatewayService/Ozon.Route256.Practice.GatewayServiceTests.csproj --no-restore
 
 orders_service_test:
   stage: test
