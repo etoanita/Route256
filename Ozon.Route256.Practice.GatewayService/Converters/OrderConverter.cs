@@ -12,7 +12,7 @@ namespace Ozon.Route256.Practice.GatewayService.Converters
             result.Regions.AddRange(requestParameters.Regions);
             result.OrderType = requestParameters.OrderType;
             result.PaginationParameters = ConvertPaginationParameters(requestParameters.PaginationParameters);
-            result.SortingOrder = (SortOrder)requestParameters.SortOrder;
+            result.SortingOrder = requestParameters.SortOrder.HasValue ? (SortOrder)(requestParameters.SortOrder) : SortOrder.Asc;
             result.SortingField.AddRange(requestParameters.SortingFields);
             return result;
         }
