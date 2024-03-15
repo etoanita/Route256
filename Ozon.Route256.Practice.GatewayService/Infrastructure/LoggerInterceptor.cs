@@ -1,6 +1,5 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Ozon.Route256.Practice.GatewayService.Exceptions;
 using System.Net;
 using System.Net.Mail;
 using System.Web.Http;
