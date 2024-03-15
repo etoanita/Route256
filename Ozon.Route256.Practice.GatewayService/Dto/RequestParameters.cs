@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ozon.Route256.Practice.GatewayService.Dto
 {
@@ -15,7 +16,10 @@ namespace Ozon.Route256.Practice.GatewayService.Dto
 
     public class PaginationParametersDto
     {
+        [Range(1, int.MaxValue)]
         public int PageNumber { get; set; }
+
+        [Range(1, int.MaxValue)]
         public int PageSize { get; set; }
     }
 
