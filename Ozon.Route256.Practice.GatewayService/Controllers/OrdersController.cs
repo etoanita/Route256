@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Ozon.Route256.Practice.GatewayService.Dto;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
 
 namespace Ozon.Route256.Practice.GatewayService.Controllers
@@ -16,39 +16,33 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
 
         [HttpGet]
         [Route("api/[controller]/[action]/{orderId}")]
-        public Task CancelOrder(long orderId)
+        public async Task CancelOrder(long orderId)
         {
-            _gatewayService.CancelOrder(orderId);
-            return Task.CompletedTask;
+             await _gatewayService.CancelOrder(orderId);
         }
 
         [HttpGet]
-        public Task<string> GetOrderStatus(long orderId)
+        public async Task<string> GetOrderState(long orderId)
         {
-            _gatewayService.GetOrderStatus(orderId);
-            return Task.FromResult("");
+            return await _gatewayService.GetOrderState(orderId);
         }
 
         [HttpGet]
-        public Task Get(List<string> regions, int orderType, int start, int end)
+        public async Task<List<OrderDto>> GetOrders(GetOrdersRequestParametersDto parameters)
         {
-            _gatewayService.GetOrders(); ;
-            return Task.CompletedTask;
+            return await _gatewayService.GetOrders(parameters);
         }
 
         [HttpGet]
-        public Task GetOrdersByRegion(string region) 
+        public async Task<List<RegionOrderDto>> GetOrdersByRegion(DateTime startDate, List<string> regions) 
         {
-            _gatewayService.GetOrdersByRegion(region);
-            return Task.CompletedTask;
+            return await _gatewayService.GetOrdersByRegion(startDate, regions);
         }
 
         [HttpGet]
-        public Task GetOrdersByClientId(int clientId)
+        public async Task<List<OrderDto>> GetOrdersByClientId(int userId, DateTime startDate, PaginationParametersDto paginationParameters)
         {
-            _gatewayService.GetOrdersByUser(clientId);
-            return Task.CompletedTask;
+            return await _gatewayService.GetOrdersByUser(userId, startDate, paginationParameters);
         }
-
     }
 }

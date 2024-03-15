@@ -44,7 +44,7 @@ message GetOrdersListRequest {
 	string order_type = 2;
 	PaginationParameters pagination_parameters = 3;
 	optional SortOrder sorting_order = 4;
-	optional string sorting_field = 5;
+	repeated string sorting_field = 5;
 }
 
 message GetOrdersListResponse {
@@ -57,20 +57,17 @@ message GetOrdersByRegionsRequest {
 }
 
 message GetOrdersByRegionsResponse {
-	string region = 1;
-	int32 orders_count = 2;
-	int32 total_price = 3;
-	int32 total_weight = 4;
-	int32 clients_count = 5;
+	repeated RegionOrderItem order_items = 1;
 }
 
 message GetOrdersByClientIdRequest {
 	int32 client_id = 1;
-	PaginationParameters pagination_parameters = 2;
+	google.protobuf.Timestamp start_date = 2;
+	PaginationParameters pagination_parameters = 3;
 }
 
 message GetOrdersByClientIdResponse {
-	repeated OrderItem order_item = 1;
+	repeated OrderItem order_items = 1;
 }
 
 message OrderItem {
@@ -88,10 +85,26 @@ message OrderItem {
 	string phone = 12;
 }
 
+message RegionOrderItem {
+	string region = 1;
+	int32 orders_count = 2;
+	int32 total_price = 3;
+	int32 total_weight = 4;
+	int32 clients_count = 5;
+}
+
 message PaginationParameters {
 	int32 page_number = 1;
 	int32 page_size = 2;
 }
 enum SortOrder {
 	ASC = 0; DESC = 1;
+}
+
+message GetOrdersRequest {
+
+}
+
+message GetOrdersResponse {
+
 }

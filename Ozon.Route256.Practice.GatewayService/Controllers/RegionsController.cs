@@ -16,10 +16,9 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         }
 
         [HttpGet]
-        public Task GetRegions()
+        public async Task<List<string>> GetRegions()
         {
-            _gatewayService.GetRegions();
-            return Task.CompletedTask;
+            return await _gatewayService.GetRegions();
         }
     }
 }

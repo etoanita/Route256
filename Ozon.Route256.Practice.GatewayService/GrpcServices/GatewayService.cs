@@ -1,4 +1,8 @@
-﻿namespace Ozon.Route256.Practice.GatewayService.GrpcServices
+﻿using Google.Protobuf.WellKnownTypes;
+using Ozon.Route256.Practice.GatewayService.Converters;
+using Ozon.Route256.Practice.GatewayService.Dto;
+
+namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 {
     public class GatewayService : IGatewayService
     {
@@ -10,41 +14,54 @@
             _customersClient = customersClient;
         }
 
-        public void CancelOrder(long orderId)
+        public async Task CancelOrder(long orderId)
         {
-            _ordersClient.CancelOrder(new CancelOrderRequest { OrderId = orderId });
+            await _ordersClient.CancelOrderAsync(new CancelOrderRequest { OrderId = orderId });
         }
 
-        public string GetOrderStatus(long orderId)
+        public async Task<string> GetOrderState(long orderId)
         {
-            var request = _ordersClient.GetOrderState(new GetOrderStateRequest { OrderId = orderId });
+            var request = await _ordersClient.GetOrderStateAsync(new GetOrderStateRequest { OrderId = orderId });
             return request.State;
         }
 
-        public void GetOrders()
+        public async Task<List<CustomerDto>> GetClients()
         {
-            throw new NotImplementedException();
+            var result = await _customersClient.GetCustomersAsync(new GetCustomersRequest());
+            return result.Customers.Select(CustomerConverter.Convert).ToList();
         }
 
-        public void GetOrdersByRegion(string region)
+        public async Task<List<string>> GetRegions()
         {
-            throw new NotImplementedException();
+            var result = await _ordersClient.GetRegionsListAsync(new GetRegionsListRequest());
+            return result.Regions.ToList();
+        }
+        public async Task<List<OrderDto>> GetOrders(GetOrdersRequestParametersDto requestParameters)
+        {
+            var result = await _ordersClient.GetOrdersListAsync(OrderConverter.ConvertGetOrdersRequestParameters(requestParameters));
+            return result.OrderItem.Select(OrderConverter.ConvertOrderDto).ToList();
         }
 
-        public void GetOrdersByUser(int userId)
+        public async Task<List<RegionOrderDto>> GetOrdersByRegion(DateTime startDate, List<string> regions)
         {
-            throw new NotImplementedException();
+            var request = new GetOrdersByRegionsRequest();
+            request.StartDate = Timestamp.FromDateTime(startDate);
+            request.Regions.AddRange(regions);
+            var result = await _ordersClient.GetOrdersByRegionsAsync(request);
+            return result.OrderItems.Select(OrderConverter.ConvertRegionOrderDto).ToList();
         }
 
-        public void GetClients()
+        public async Task<List<OrderDto>> GetOrdersByUser(int userId, DateTime startDate, PaginationParametersDto paginationParameters)
         {
-           // return _customersClient.GetCustomers().Customers.ToList()
+            var request = new GetOrdersByClientIdRequest();
+            request.ClientId = userId;
+            request.PaginationParameters = new PaginationParameters
+            {
+                PageSize = paginationParameters.PageSize,
+                PageNumber = paginationParameters.PageNumber
+            };
+            var result = await _ordersClient.GetOrdersByClientIdAsync(request);
+            return result.OrderItems.Select(OrderConverter.ConvertOrderDto).ToList();
         }
-
-        public List<string> GetRegions()
-        {
-            return _ordersClient.GetRegionsList(new GetRegionsListRequest()).Regions.ToList();
-        }
-
     }
 }

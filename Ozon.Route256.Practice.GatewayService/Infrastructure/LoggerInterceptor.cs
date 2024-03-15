@@ -16,13 +16,13 @@ public sealed class LoggerInterceptor : Interceptor
         _logger = logger;
     }
 
-    public override TResponse BlockingUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
+    public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(TRequest request, ClientInterceptorContext<TRequest, TResponse> context, AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
     {
         _logger.LogInformation("Request {request}", request);
 
         try
         {
-            var response = base.BlockingUnaryCall(request, context, continuation);
+            var response = base.AsyncUnaryCall(request, context, continuation);
             
             _logger.LogInformation("Response {response}", response);
 

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Ozon.Route256.Practice.GatewayService.Dto;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
 
 namespace Ozon.Route256.Practice.GatewayService.Controllers
@@ -15,10 +15,9 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         }
 
         [HttpGet]
-        public Task GetClients()
+        public async Task<List<CustomerDto>> GetClients()
         {
-            _gatewayService.GetClients();
-            return Task.CompletedTask;
+            return await _gatewayService.GetClients();
         }
     }
 }
