@@ -15,6 +15,10 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
             _gatewayService = gatewayService;
         }
 
+        /// <summary>
+        /// Возвращает список всех регионов
+        /// </summary>
+        /// <response code="200">Выполнено успешно</response>
         [HttpGet]
         public async Task<List<string>> GetRegions()
         {

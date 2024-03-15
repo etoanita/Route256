@@ -1,4 +1,6 @@
-﻿namespace Ozon.Route256.Practice.GatewayService.Dto
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Ozon.Route256.Practice.GatewayService.Dto
 {
     public class GetOrdersRequestParametersDto
     {
@@ -6,8 +8,8 @@
         public string OrderType { get; set; }
         public PaginationParametersDto PaginationParameters { get; set; }
 
-        public SortOrder SortOrder { get; set; }
-        public List<string> SortingFields { get; set; }
+        public SortOrder? SortOrder { get; set; }
+        public List<string>? SortingFields { get; set; }
 
     }
 

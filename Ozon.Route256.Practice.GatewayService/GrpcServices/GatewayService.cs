@@ -42,19 +42,20 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
             return result.OrderItem.Select(OrderConverter.ConvertOrderDto).ToList();
         }
 
-        public async Task<List<RegionOrderDto>> GetOrdersByRegion(DateTime startDate, List<string> regions)
+        public async Task<List<RegionOrderDto>> GetOrdersByRegion(long startDate, string[] regions)
         {
             var request = new GetOrdersByRegionsRequest();
-            request.StartDate = Timestamp.FromDateTime(startDate);
+            request.StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc));
             request.Regions.AddRange(regions);
             var result = await _ordersClient.GetOrdersByRegionsAsync(request);
             return result.OrderItems.Select(OrderConverter.ConvertRegionOrderDto).ToList();
         }
 
-        public async Task<List<OrderDto>> GetOrdersByUser(int userId, DateTime startDate, PaginationParametersDto paginationParameters)
+        public async Task<List<OrderDto>> GetOrdersByUser(int userId, long startDate, PaginationParametersDto paginationParameters)
         {
             var request = new GetOrdersByClientIdRequest();
             request.ClientId = userId;
+            request.StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc));
             request.PaginationParameters = new PaginationParameters
             {
                 PageSize = paginationParameters.PageSize,

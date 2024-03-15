@@ -38,6 +38,18 @@ namespace Ozon.Route256.Practice.GatewayService.Infrastructure
 
                 context.ExceptionHandled = true;
             }
+            else
+            {
+                context.Result = new ObjectResult(new
+                {
+                    context.Exception?.Message,
+                    context.Exception?.Source,
+                    ExceptionType = context.Exception?.GetType().FullName,
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                });
+
+                context.ExceptionHandled = true;
+            }
         }
     }
 }

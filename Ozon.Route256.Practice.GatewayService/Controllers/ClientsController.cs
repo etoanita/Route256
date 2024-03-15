@@ -14,6 +14,10 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
             _gatewayService = gatewayService;
         }
 
+        /// <summary>
+        /// Возвращает всех клиентов системы
+        /// </summary>
+        /// <response code="200">Выполнено успешно</response>
         [HttpGet]
         public async Task<List<CustomerDto>> GetClients()
         {

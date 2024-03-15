@@ -3,8 +3,11 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
 using Grpc.Net.ClientFactory;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
 using Ozon.Route256.Practice.GatewayService.Infrastructure;
+using System.Reflection;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -46,7 +49,17 @@ namespace Ozon.Route256.Practice.OrdersService
                 options.Filters.Add<HttpResponseExceptionFilter>();
             });
             serviceCollection.AddEndpointsApiExplorer();
-            serviceCollection.AddSwaggerGen();
+            serviceCollection.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "ToDo API",
+                    Description = "An ASP.NET Core Web API for managing ToDo items",
+                });
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
             serviceCollection.AddScoped<IGatewayService, GatewayService.GrpcServices.GatewayService>();
             serviceCollection.AddSingleton<LoggerInterceptor>();
         }
