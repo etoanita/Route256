@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{66D9F9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43128563-973A-42DC-B56C-D17BE2EAFFB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Route256.Practice.Tests", "Ozon.Route256.Practice.Tests\Ozon.Route256.Practice.Tests.csproj", "{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Route256.Practice.GatewayServiceTests", "Ozon.Route256.Practice.Tests\Ozon.Route256.Practice.GatewayServiceTests.csproj", "{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

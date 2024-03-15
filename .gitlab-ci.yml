@@ -27,8 +27,8 @@ orders_service_build:
 gateway_service_test:
   stage: test
   needs: ["gateway_service_build"]
-  script:
-    - echo "[TODO] gateway service tests"
+  script:  
+    - dotnet test ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.GatewayServiceTests.csproj --no-restore
 
 orders_service_test:
   stage: test
