@@ -22,11 +22,14 @@ namespace Ozon.Route256.Practice.OrdersService
 
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
+            //TODO: handle parameters correctly
+            var os1 = _configuration.GetValue<string>("ORDERS_SERVICE_1").Split(':');
+            var os2 = _configuration.GetValue<string>("ORDERS_SERVICE_2").Split(':');
             var factory = new StaticResolverFactory(addr => new[]
             {
-                new BalancerAddress("orders-service-1", 5010),
-                new BalancerAddress("orders-service-2", 5010)
-            }); 
+                new BalancerAddress(os1[0], int.Parse(os1[1])),
+                new BalancerAddress(os2[0], int.Parse(os2[1]))
+            }); ; 
             serviceCollection.AddSingleton<ResolverFactory>(factory);
             serviceCollection.AddGrpcClient<Orders.OrdersClient>(options =>
             {
@@ -41,7 +44,7 @@ namespace Ozon.Route256.Practice.OrdersService
             }).AddInterceptor<LoggerInterceptor>(InterceptorScope.Client);
             serviceCollection.AddGrpcClient <Customers.CustomersClient> (options =>
             {
-                options.Address = new Uri("http://customer-service:5005");
+                options.Address = new Uri(_configuration.GetValue<string>("ROUTE256_CUSTOMER_SERVICE_GRPC"));
             });
             serviceCollection.AddGrpcReflection();
             serviceCollection.AddControllers(options =>
@@ -54,8 +57,8 @@ namespace Ozon.Route256.Practice.OrdersService
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ToDo API",
-                    Description = "An ASP.NET Core Web API for managing ToDo items",
+                    Title = "ROUTE.256",
+                    Description = "Project for Route.256",
                 });
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
