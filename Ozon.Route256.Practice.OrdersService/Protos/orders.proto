@@ -28,11 +28,27 @@ message GetOrderStateRequest {
 }
 
 message GetOrderStateResponse {
-	string state = 1;
+	OrderState state = 1;
 }
 
 message GetRegionsListRequest {
 
+}
+
+enum OrderState
+{
+    Created = 0;
+    SentToCustomer = 1;
+    Delivered = 2;
+    Lost = 3;
+    Cancelled = 4;
+}
+
+enum OrderType
+{
+    Web = 0;
+	Api = 1;
+	Mobile = 2;
 }
 
 message GetRegionsListResponse {
@@ -41,7 +57,7 @@ message GetRegionsListResponse {
 
 message GetOrdersListRequest {
 	repeated string regions = 1;
-	string order_type = 2;
+	OrderType order_type = 2;
 	PaginationParameters pagination_parameters = 3;
 	optional SortOrder sorting_order = 4;
 	repeated string sorting_field = 5;
@@ -75,10 +91,10 @@ message OrderItem {
 	int32 items_count = 2;
 	int32 total_price = 3;
 	int32 total_weight = 4;
-	string order_type = 5;
+	OrderType order_type = 5;
 	google.protobuf.Timestamp order_date = 6;
 	string region = 7;
-	string state = 8;
+	OrderState state = 8;
 	string customer_name = 9;
 	string customer_surname = 10;
 	string address = 11;

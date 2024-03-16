@@ -34,7 +34,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         /// <response code="200">Выполнено успешно</response>
         /// <response code="404">Заказ не найден</response>
         [HttpGet]
-        public async Task<string> GetOrderState(long orderId)
+        public async Task<OrderState> GetOrderState(long orderId)
         {
             return await _gatewayService.GetOrderState(orderId);
         }

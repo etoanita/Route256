@@ -6,7 +6,7 @@ namespace Ozon.Route256.Practice.GatewayService.Dto
     public class GetOrdersRequestParametersDto
     {
         public List<string> Regions { get; set; }
-        public string OrderType { get; set; }
+        public OrderType OrderType { get; set; }
         public PaginationParametersDto PaginationParameters { get; set; }
 
         public SortOrder? SortOrder { get; set; }

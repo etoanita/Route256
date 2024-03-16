@@ -19,7 +19,7 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
             await _ordersClient.CancelOrderAsync(new CancelOrderRequest { OrderId = orderId });
         }
 
-        public async Task<string> GetOrderState(long orderId)
+        public async Task<OrderState> GetOrderState(long orderId)
         {
             var request = await _ordersClient.GetOrderStateAsync(new GetOrderStateRequest { OrderId = orderId });
             return request.State;
