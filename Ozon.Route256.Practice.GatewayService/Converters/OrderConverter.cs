@@ -8,7 +8,7 @@ namespace Ozon.Route256.Practice.GatewayService.Converters
     {
         public static GetOrdersListRequest ConvertGetOrdersRequestParameters(GetOrdersRequestParametersDto requestParameters)
         {
-            GetOrdersListRequest result = new GetOrdersListRequest();
+            GetOrdersListRequest result = new();
             result.Regions.AddRange(requestParameters.Regions);
             result.OrderType = requestParameters.OrderType;
             result.PaginationParameters = ConvertPaginationParameters(requestParameters.PaginationParameters);

@@ -6,28 +6,30 @@ namespace Ozon.Route256.Practice.GatewayService.Converters
     {
         public static CustomerDto Convert(this Customer customer)
         {
-            CustomerDto result = new CustomerDto();
-            result.Id = customer.Id;
-            result.FirstName = customer.FirstName;
-            result.LastName = customer.LastName;
-            result.MobileNumber = customer.MobileNumber;
-            result.Email = customer.Email;
-            result.DefaultAddress = customer.DefaultAddress.Convert();
-            result.Addressed = customer.Addressed.Select(Convert).ToList();
-            return result;
+            return new CustomerDto
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                MobileNumber = customer.MobileNumber,
+                Email = customer.Email,
+                DefaultAddress = customer.DefaultAddress.Convert(),
+                Addressed = customer.Addressed.Select(Convert).ToList()
+            };
         }
 
         public static AddressDto Convert(this Address address)
         {
-            AddressDto result = new AddressDto();
-            result.Region = address.Region;
-            result.City = address.City;
-            result.Street = address.Street;
-            result.Building = address.Building;
-            result.Apartment = address.Apartment;
-            result.Latitude = address.Latitude;
-            result.Longitude = address.Longitude;
-            return result;
+            return new AddressDto
+            {
+                Region = address.Region,
+                City = address.City,
+                Street = address.Street,
+                Building = address.Building,
+                Apartment = address.Apartment,
+                Latitude = address.Latitude,
+                Longitude = address.Longitude
+            };
         }
     }
 }
