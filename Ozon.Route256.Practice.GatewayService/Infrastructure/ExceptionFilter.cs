@@ -16,10 +16,10 @@ namespace Ozon.Route256.Practice.GatewayService.Infrastructure
         {
             if (context.Exception is RpcException rpcException)
             {
-                context.Result = new ObjectResult(new
+                context.Result = new ObjectResult(new CustomExceptionModel
                 {
-                    context.Exception.Message,
-                    context.Exception.Source,
+                    Message = context.Exception.Message,
+                    Source = context.Exception.Source,
                     ExceptionType = context.Exception.GetType().FullName,
                 });
                 switch (rpcException.StatusCode)
@@ -40,12 +40,12 @@ namespace Ozon.Route256.Practice.GatewayService.Infrastructure
             }
             else if (context.Exception != null)
             {
-                context.Result = new ObjectResult(new
+                context.Result = new ObjectResult(new CustomExceptionModel
                 {
-                    context.Exception.Message,
-                    context.Exception.Source,
+                    Message = context.Exception.Message,
+                    Source = context.Exception.Source,
                     ExceptionType = context.Exception.GetType().FullName,
-                    StatusCode = (int)HttpStatusCode.InternalServerError
+                    StatusCode = HttpStatusCode.InternalServerError
                 });
 
                 context.ExceptionHandled = true;

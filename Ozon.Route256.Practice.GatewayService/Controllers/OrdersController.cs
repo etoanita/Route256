@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ozon.Route256.Practice.GatewayService.Controllers
 {
@@ -21,9 +23,9 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         /// <response code="400">Заказ отменить нельзя</response>
         /// <response code="404">Заказ не найден</response>
         [HttpGet]
-        public async Task CancelOrder(long orderId)
+        public async Task CancelOrder([BindRequired, Range(1, long.MaxValue)] long orderId)
         {
-             await _orderService.CancelOrder(orderId);
+            await _orderService.CancelOrder(orderId);
         }
 
         /// <summary>
@@ -55,9 +57,9 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         /// <response code="200">Выполнено успешно</response>
         /// <response code="400">Одного или нескольких регионов нет в системе</response>
         [HttpGet]
-        public async Task<List<RegionOrderDto>> GetOrdersByRegion(long startDate, [FromQuery]string[] regions) 
+        public async Task<List<RegionOrderDto>> GetOrdersByRegion([BindRequired, Range(1, long.MaxValue)] long startDateTimeStamp, [FromQuery]string[] regions) 
         {
-            return await _orderService.GetOrdersByRegion(startDate, regions);
+            return await _orderService.GetOrdersByRegion(startDateTimeStamp, regions);
         }
 
         /// <summary>
@@ -66,7 +68,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         /// <response code="200">Выполнено успешно</response>
         /// <response code="400">Клиента с указанным id не существует</response>
         [HttpGet]
-        public async Task<List<OrderDto>> GetOrdersByClientId(int userId, long startDate, [FromQuery] PaginationParametersDto paginationParameters)
+        public async Task<List<OrderDto>> GetOrdersByClientId([BindRequired, Range(1, int.MaxValue)] int userId, [BindRequired, Range(1, long.MaxValue)] long startDate, [FromQuery] PaginationParametersDto paginationParameters)
         {
             return await _orderService.GetOrdersByUser(userId, startDate, paginationParameters);
         }

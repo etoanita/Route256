@@ -1,10 +1,13 @@
-﻿using Grpc.Core;
+﻿using FluentValidation;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Balancer;
 using Grpc.Net.Client.Configuration;
 using Grpc.Net.ClientFactory;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Ozon.Route256.Practice.GatewayService;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
 using Ozon.Route256.Practice.GatewayService.Infrastructure;
 using System.Reflection;
@@ -50,7 +53,14 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddControllers(options =>
             {
                 options.Filters.Add<HttpResponseExceptionFilter>();
-            });
+            }).ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var problems = new CustomBadRequestModel(context);
+                    return new BadRequestObjectResult(problems);
+                };
+            }); ;
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSwaggerGen(options =>
             {
@@ -65,6 +75,7 @@ namespace Ozon.Route256.Practice.OrdersService
             });
             serviceCollection.AddScoped<IOrderService, OrderSevice>();
             serviceCollection.AddScoped<ICustomerService, CustomerService>();
+            serviceCollection.AddScoped<IValidator<GetOrdersRequestParametersDto>, OrderRequestValidator>();
             serviceCollection.AddSingleton<LoggerInterceptor>();
         }
 

@@ -5,8 +5,8 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 {
     public class CustomerService : ICustomerService
     {
-        private readonly Customers.CustomersClient _customersClient;
-        public CustomerService(Customers.CustomersClient customersClient)
+        private readonly CustomersClient _customersClient;
+        public CustomerService(CustomersClient customersClient)
         {
             _customersClient = customersClient;
         }

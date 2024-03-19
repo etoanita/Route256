@@ -1,4 +1,6 @@
-﻿namespace Ozon.Route256.Practice.GatewayService
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Ozon.Route256.Practice.GatewayService
 {
     public record AddressDto
     {
