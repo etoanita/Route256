@@ -26,14 +26,23 @@ namespace Ozon.Route256.Practice.OrdersService
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
             //TODO: handle parameters correctly
-            var os1 = _configuration.GetValue<string>("ORDERS_SERVICE_1").Split(':');
-            var os2 = _configuration.GetValue<string>("ORDERS_SERVICE_2").Split(':');
+            var os1 = _configuration.GetValue<string>("ORDERS_SERVICE_1");
+            if (string.IsNullOrEmpty(os1))
+            {
+                throw new ArgumentException("ORDERS_SERVICE_1 variable is null or empty");
+            }
+            var os2 = _configuration.GetValue<string>("ORDERS_SERVICE_2");
+            if (string.IsNullOrEmpty(os1))
+            {
+                throw new ArgumentException("ORDERS_SERVICE_2 variable is null or empty");
+            }
+            var os1Splitted = os1.Split(',');
+            var os2Splitted = os2.Split(',');
             var factory = new StaticResolverFactory(addr => new[]
             {
-                new BalancerAddress(os1[0], int.Parse(os1[1])),
-                new BalancerAddress(os2[0], int.Parse(os2[1]))
+                new BalancerAddress(os1Splitted[0], int.Parse(os1Splitted[1])),
+                new BalancerAddress(os2Splitted[0], int.Parse(os2Splitted[1]))
             }); ; 
-            serviceCollection.AddSingleton<ResolverFactory>(factory);
             serviceCollection.AddGrpcClient<Orders.OrdersClient>(options =>
             {
                 options.Address = new Uri(_configuration.GetValue<string>("ROUTE256_ORDERS_SERVICE_GRPC"));
@@ -50,6 +59,7 @@ namespace Ozon.Route256.Practice.OrdersService
                 options.Address = new Uri(_configuration.GetValue<string>("ROUTE256_CUSTOMER_SERVICE_GRPC"));
             });
             serviceCollection.AddGrpcReflection();
+
             serviceCollection.AddControllers(options =>
             {
                 options.Filters.Add<HttpResponseExceptionFilter>();
@@ -73,10 +83,12 @@ namespace Ozon.Route256.Practice.OrdersService
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+
             serviceCollection.AddScoped<IOrderService, OrderSevice>();
             serviceCollection.AddScoped<ICustomerService, CustomerService>();
             serviceCollection.AddScoped<IValidator<GetOrdersRequestParametersDto>, OrderRequestValidator>();
             serviceCollection.AddSingleton<LoggerInterceptor>();
+            serviceCollection.AddSingleton<ResolverFactory>(factory);
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)
