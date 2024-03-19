@@ -1,4 +1,4 @@
-﻿namespace Ozon.Route256.Practice.GatewayService.Dto
+﻿namespace Ozon.Route256.Practice.GatewayService
 {
     public class CustomerDto
     {
@@ -9,16 +9,5 @@
         public string Email { get; set; }
         public AddressDto DefaultAddress { get; set; }
         public List<AddressDto> Addressed { get; set; }
-    }
-
-    public class AddressDto
-    {
-        public string Region { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public string Building { get; set; }
-        public string Apartment { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
     }
 }

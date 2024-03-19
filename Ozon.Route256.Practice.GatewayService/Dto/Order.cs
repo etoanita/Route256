@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Ozon.Route256.Practice.GatewayService.Dto
+﻿namespace Ozon.Route256.Practice.GatewayService
 {
     public class OrderDto
     {
@@ -16,14 +14,5 @@ namespace Ozon.Route256.Practice.GatewayService.Dto
         public string CustomerSurname { get; set; }
         public string Address { get; set; }
         public string Phone { get; set; }
-    }
-
-    public class RegionOrderDto
-    {
-        public string Region { get; set; }
-        public int OrdersCount { get; set; }
-        public int TotalPrice { get; set; }
-        public int TotalWeight { get; set; }
-        public int ClientsCount { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-using Ozon.Route256.Practice.GatewayService.Dto;
+using Ozon.Route256.Practice.GatewayService;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ozon.Route256.Practice.Tests

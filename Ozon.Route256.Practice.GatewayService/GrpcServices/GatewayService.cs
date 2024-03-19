@@ -1,6 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Ozon.Route256.Practice.GatewayService.Converters;
-using Ozon.Route256.Practice.GatewayService.Dto;
 
 namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ozon.Route256.Practice.GatewayService.Dto;
 using Ozon.Route256.Practice.GatewayService.GrpcServices;
 
 namespace Ozon.Route256.Practice.GatewayService.Controllers

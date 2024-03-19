@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Ozon.Route256.Practice.GatewayService.Dto
+namespace Ozon.Route256.Practice.GatewayService
 {
     public class GetOrdersRequestParametersDto
     {
         public List<string> Regions { get; set; }
         public OrderType OrderType { get; set; }
         public PaginationParametersDto PaginationParameters { get; set; }
-
         public SortOrder? SortOrder { get; set; }
         public List<string>? SortingFields { get; set; }
 
@@ -21,10 +19,5 @@ namespace Ozon.Route256.Practice.GatewayService.Dto
 
         [Range(1, int.MaxValue)]
         public int PageSize { get; set; }
-    }
-
-    public enum SortOrder
-    {
-        ASC = 0, DESC = 1
     }
 }

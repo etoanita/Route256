@@ -1,8 +1,4 @@
-﻿using Ozon.Route256.Practice.GatewayService.Dto;
-using System;
-using static Ozon.Route256.Practice.GatewayService.Controllers.OrdersController;
-
-namespace Ozon.Route256.Practice.GatewayService.Converters
+﻿namespace Ozon.Route256.Practice.GatewayService.Converters
 {
     public static class OrderConverter
     {
@@ -12,7 +8,7 @@ namespace Ozon.Route256.Practice.GatewayService.Converters
             result.Regions.AddRange(requestParameters.Regions);
             result.OrderType = requestParameters.OrderType;
             result.PaginationParameters = ConvertPaginationParameters(requestParameters.PaginationParameters);
-            result.SortingOrder = requestParameters.SortOrder.HasValue ? (SortOrder)(requestParameters.SortOrder) : SortOrder.Asc;
+            result.SortingOrder = requestParameters.SortOrder.HasValue ? (Practice.SortOrder)(requestParameters.SortOrder) : Practice.SortOrder.Asc;
             if (requestParameters.SortingFields != null)
                 result.SortingField.AddRange(requestParameters.SortingFields);
             return result;

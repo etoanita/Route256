@@ -1,7 +1,4 @@
-﻿using Ozon.Route256.Practice.GatewayService.Dto;
-using static Ozon.Route256.Practice.GatewayService.Controllers.OrdersController;
-
-namespace Ozon.Route256.Practice.GatewayService.GrpcServices
+﻿namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 {
     public interface IGatewayService
     {
