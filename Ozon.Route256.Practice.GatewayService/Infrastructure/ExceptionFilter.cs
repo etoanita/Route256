@@ -16,21 +16,25 @@ namespace Ozon.Route256.Practice.GatewayService.Infrastructure
         {
             if (context.Exception is RpcException rpcException)
             {
-                context.Result = new ObjectResult(new CustomExceptionModel
+                var model = new CustomExceptionModel
                 {
                     Message = context.Exception.Message,
                     Source = context.Exception.Source,
                     ExceptionType = context.Exception.GetType().FullName,
-                });
+                };
                 switch (rpcException.StatusCode)
                 {
                     case StatusCode.NotFound:
                         {
+                            model.StatusCode = HttpStatusCode.NotFound;
+                            context.Result = new ObjectResult(model);
                             ((ObjectResult)context.Result).StatusCode = (int)HttpStatusCode.NotFound;
                             break;
                         }
                     default:
                         {
+                            model.StatusCode = HttpStatusCode.InternalServerError;
+                            context.Result = new ObjectResult(model);
                             ((ObjectResult)context.Result).StatusCode = (int)HttpStatusCode.InternalServerError;
                             break;
                         }
