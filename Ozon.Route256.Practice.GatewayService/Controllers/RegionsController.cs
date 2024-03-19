@@ -8,11 +8,11 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
     [ApiController]
     public class RegionsController : ControllerBase
     {
-        private IGatewayService _gatewayService;
+        private IOrderService _orderService;
 
-        public RegionsController(IGatewayService gatewayService)
+        public RegionsController(IOrderService orderService)
         {
-            _gatewayService = gatewayService;
+            _orderService = orderService;
         }
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<List<string>> GetRegions()
         {
-            return await _gatewayService.GetRegions();
+            return await _orderService.GetRegions();
         }
     }
 }

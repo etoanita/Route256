@@ -7,10 +7,10 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
     [ApiController]
     public class ClientsController : ControllerBase
     {
-        private IGatewayService _gatewayService;
-        public ClientsController(IGatewayService gatewayService)
+        private ICustomerService _customerService;
+        public ClientsController(ICustomerService customerService)
         {
-            _gatewayService = gatewayService;
+            _customerService = customerService;
         }
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<List<CustomerDto>> GetClients()
         {
-            return await _gatewayService.GetClients();
+            return await _customerService.GetClients();
         }
     }
 }

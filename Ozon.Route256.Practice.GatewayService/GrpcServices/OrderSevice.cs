@@ -3,14 +3,12 @@ using Ozon.Route256.Practice.GatewayService.Converters;
 
 namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 {
-    public class GatewayService : IGatewayService
+    public class OrderSevice : IOrderService
     {
         private readonly Orders.OrdersClient _ordersClient;
-        private readonly Customers.CustomersClient _customersClient;
-        public GatewayService(Orders.OrdersClient ordersClient, Customers.CustomersClient customersClient)
+        public OrderSevice(Orders.OrdersClient ordersClient)
         {
             _ordersClient = ordersClient;
-            _customersClient = customersClient;
         }
 
         public async Task CancelOrder(long orderId)
@@ -24,17 +22,6 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
             return request.State;
         }
 
-        public async Task<List<CustomerDto>> GetClients()
-        {
-            var result = await _customersClient.GetCustomersAsync(new GetCustomersRequest());
-            return result.Customers.Select(CustomerConverter.Convert).ToList();
-        }
-
-        public async Task<List<string>> GetRegions()
-        {
-            var result = await _ordersClient.GetRegionsListAsync(new GetRegionsListRequest());
-            return result.Regions.ToList();
-        }
         public async Task<List<OrderDto>> GetOrders(GetOrdersRequestParametersDto requestParameters)
         {
             var result = await _ordersClient.GetOrdersListAsync(OrderConverter.ConvertGetOrdersRequestParameters(requestParameters));
@@ -63,5 +50,12 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
             var result = await _ordersClient.GetOrdersByClientIdAsync(request);
             return result.OrderItems.Select(OrderConverter.ConvertOrderDto).ToList();
         }
+
+        public async Task<List<string>> GetRegions()
+        {
+            var result = await _ordersClient.GetRegionsListAsync(new GetRegionsListRequest());
+            return result.Regions.ToList();
+        }
     }
 }
+

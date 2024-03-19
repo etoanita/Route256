@@ -7,10 +7,10 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly IGatewayService _gatewayService;
-        public OrdersController(IGatewayService gatewayService)
+        private readonly IOrderService _orderService;
+        public OrdersController(IOrderService orderService)
         {
-            _gatewayService = gatewayService;
+            _orderService = orderService;
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task CancelOrder(long orderId)
         {
-             await _gatewayService.CancelOrder(orderId);
+             await _orderService.CancelOrder(orderId);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<OrderState> GetOrderState(long orderId)
         {
-            return await _gatewayService.GetOrderState(orderId);
+            return await _orderService.GetOrderState(orderId);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<List<OrderDto>> GetOrders([FromQuery] GetOrdersRequestParametersDto parameters)
         {
-            return await _gatewayService.GetOrders(parameters);
+            return await _orderService.GetOrders(parameters);
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<List<RegionOrderDto>> GetOrdersByRegion(long startDate, [FromQuery]string[] regions) 
         {
-            return await _gatewayService.GetOrdersByRegion(startDate, regions);
+            return await _orderService.GetOrdersByRegion(startDate, regions);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         [HttpGet]
         public async Task<List<OrderDto>> GetOrdersByClientId(int userId, long startDate, [FromQuery] PaginationParametersDto paginationParameters)
         {
-            return await _gatewayService.GetOrdersByUser(userId, startDate, paginationParameters);
+            return await _orderService.GetOrdersByUser(userId, startDate, paginationParameters);
         }
     }
 }

@@ -63,7 +63,8 @@ namespace Ozon.Route256.Practice.OrdersService
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
-            serviceCollection.AddScoped<IGatewayService, GatewayService.GrpcServices.GatewayService>();
+            serviceCollection.AddScoped<IOrderService, OrderSevice>();
+            serviceCollection.AddScoped<ICustomerService, CustomerService>();
             serviceCollection.AddSingleton<LoggerInterceptor>();
         }
 
