@@ -19,7 +19,7 @@ namespace Ozon.Route256.Practice.GatewayService.Controllers
         /// </summary>
         /// <response code="200">Выполнено успешно</response>
         [HttpGet]
-        [ProducesResponseType(typeof(CustomerDto), 200)]
+        [ProducesResponseType(typeof(List<CustomerDto>), 200)]
         [ProducesResponseType(typeof(CustomExceptionModel), 500)]
         public async Task<List<CustomerDto>> GetClients()
         {
