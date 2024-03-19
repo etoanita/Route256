@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Practice.GatewayService
 {
-    public class AddressDto
+    public record AddressDto
     {
         public string Region { get; set; }
         public string City { get; set; }

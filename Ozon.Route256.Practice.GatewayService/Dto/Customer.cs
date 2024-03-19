@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Practice.GatewayService
 {
-    public class CustomerDto
+    public record CustomerDto
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

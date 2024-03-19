@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Practice.GatewayService
 {
-    public class RegionOrderDto
+    public record RegionOrderDto
     {
         public string Region { get; set; }
         public int OrdersCount { get; set; }

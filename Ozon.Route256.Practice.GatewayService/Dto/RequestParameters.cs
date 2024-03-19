@@ -2,7 +2,7 @@
 
 namespace Ozon.Route256.Practice.GatewayService
 {
-    public class GetOrdersRequestParametersDto
+    public record GetOrdersRequestParametersDto
     {
         public List<string> Regions { get; set; }
         public OrderType OrderType { get; set; }
@@ -12,7 +12,7 @@ namespace Ozon.Route256.Practice.GatewayService
 
     }
 
-    public class PaginationParametersDto
+    public record PaginationParametersDto
     {
         [Range(1, int.MaxValue)]
         public int PageNumber { get; set; }
