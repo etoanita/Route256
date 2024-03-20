@@ -5,7 +5,11 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ROUTE256_ORDERS_SERVICE_GRPC": "static:///orders-service",
+        "ROUTE256_CUSTOMER_SERVICE_GRPC": "http://customer-service:5005",
+        "ORDERS_SERVICE_1": "orders-service-1:5010",
+        "ORDERS_SERVICE_2": "orders-service-2:5010"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7081;http://localhost:5201"

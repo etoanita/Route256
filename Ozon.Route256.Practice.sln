@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{66D9F9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43128563-973A-42DC-B56C-D17BE2EAFFB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Route256.Practice.GatewayServiceTests", "Ozon.Route256.Practice.Tests\Ozon.Route256.Practice.GatewayServiceTests.csproj", "{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4857F731-BCB5-4882-A13E-C6FB9E9330B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6C82E938-C13D-4F35-A4CB-43CB930C38E9} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
 		{4857F731-BCB5-4882-A13E-C6FB9E9330B5} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
+		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB} = {43128563-973A-42DC-B56C-D17BE2EAFFB5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F35E1AF-BD22-4740-B6CF-3D0A2BE50A8A}
