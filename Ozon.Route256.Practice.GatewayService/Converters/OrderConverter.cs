@@ -25,32 +25,32 @@
 
         public static OrderDto ConvertOrderDto(OrderItem order)
         {
-            return new()
-            {
-                OrderId = order.OrderId,
-                ItemsCount = order.ItemsCount,
-                TotalPrice = order.TotalPrice,
-                TotalWeight = order.TotalWeight,
-                OrderType = order.OrderType,
-                OrderDate = order.OrderDate.ToDateTime(),
-                Region = order.Region,
-                State = order.State,
-                CustomerName = order.CustomerName,
-                CustomerSurname = order.CustomerSurname,
-                Address = order.Address,
-                Phone = order.Phone
-            };
+            return new
+            (
+                order.OrderId,
+                order.ItemsCount,
+                order.TotalPrice,
+                order.TotalWeight,
+                order.OrderType,
+                order.OrderDate.ToDateTime(),
+                order.Region,
+                order.State,
+                order.CustomerName,
+                order.CustomerSurname,
+                order.Address,
+                order.Phone
+            );
         }
         public static RegionOrderDto ConvertRegionOrderDto(RegionOrderItem orderItem)
         {
-            return new RegionOrderDto
-            {
-                Region = orderItem.Region,
-                OrdersCount = orderItem.OrdersCount,
-                TotalPrice = orderItem.TotalPrice,
-                TotalWeight = orderItem.TotalWeight,
-                ClientsCount = orderItem.ClientsCount
-            };
+            return new
+            (
+                orderItem.Region,
+                orderItem.OrdersCount,
+                orderItem.TotalPrice,
+                orderItem.TotalWeight,
+                orderItem.ClientsCount
+            );
         }
     }
 }

@@ -4,30 +4,25 @@
     {
         public static CustomerDto Convert(this Customer customer)
         {
-            return new CustomerDto
-            {
-                Id = customer.Id,
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                MobileNumber = customer.MobileNumber,
-                Email = customer.Email,
-                DefaultAddress = customer.DefaultAddress.Convert(),
-                Addressed = customer.Addressed.Select(Convert).ToList()
-            };
+            return new CustomerDto(customer.Id,
+                customer.FirstName,
+                customer.LastName,
+                customer.MobileNumber,
+                customer.Email,
+                customer.DefaultAddress.Convert(),
+                customer.Addressed.Select(Convert).ToList()
+            );
         }
 
-        public static AddressDto Convert(this Address address)
-        {
-            return new AddressDto
-            {
-                Region = address.Region,
-                City = address.City,
-                Street = address.Street,
-                Building = address.Building,
-                Apartment = address.Apartment,
-                Latitude = address.Latitude,
-                Longitude = address.Longitude
-            };
-        }
+        public static AddressDto Convert(this Address address) => new        
+        (
+            address.Region,
+            address.City,
+            address.Street,
+            address.Building,
+            address.Apartment,
+            address.Latitude,
+            address.Longitude
+        );
     }
 }

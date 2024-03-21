@@ -6,12 +6,12 @@ namespace Ozon.Route256.Practice.GatewayService
     public record GetOrdersRequestParametersDto
     {
         [Required]
-        public List<string> Regions { get; set; }
-        public OrderType OrderType { get; set; }
+        public List<string> Regions { get; init; }
+        public OrderType OrderType { get; init; }
         [Required]
-        public PaginationParametersDto PaginationParameters { get; set; }
-        public SortOrder? SortOrder { get; set; }
-        public List<string>? SortingFields { get; set; }
+        public PaginationParametersDto PaginationParameters { get; init; }
+        public SortOrder? SortOrder { get; init; }
+        public List<string>? SortingFields { get; init; }
 
     }
 
@@ -19,11 +19,11 @@ namespace Ozon.Route256.Practice.GatewayService
     {
         [Required]
         [Range(1, int.MaxValue)]
-        public int PageNumber { get; set; }
+        public int PageNumber { get; init; }
 
         [Required]
         [Range(1, int.MaxValue)]
-        public int PageSize { get; set; }
+        public int PageSize { get; init; }
     }
 
     public class OrderRequestValidator : AbstractValidator<GetOrdersRequestParametersDto>
