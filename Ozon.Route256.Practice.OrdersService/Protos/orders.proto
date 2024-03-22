@@ -20,7 +20,7 @@ message CancelOrderRequest {
 
 message CancelOrderResponse {
 	bool success = 1;
-	string description = 2;
+	string message = 2;
 }
 
 message GetOrderStateRequest {
