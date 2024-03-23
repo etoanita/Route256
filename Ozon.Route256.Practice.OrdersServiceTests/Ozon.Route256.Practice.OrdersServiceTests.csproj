@@ -11,9 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="Faker.Net" Version="2.0.163" />
-    <PackageReference Include="Grpc.Core.Api" Version="2.61.0" />
-    <PackageReference Include="Grpc.Core.Testing" Version="2.46.6" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="xunit" Version="2.5.3" />
@@ -21,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrdersService.csproj" />
+    <ProjectReference Include="..\Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrdersService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
