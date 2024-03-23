@@ -33,6 +33,7 @@ gateway_service_test:
 
 orders_service_test:
   stage: test
+  image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: ["orders_service_build"]
   script:
     - dotnet test ./Ozon.Route256.Practice.OrdersServiceTests/Ozon.Route256.Practice.OrdersServiceTests.csproj
