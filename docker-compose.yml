@@ -16,6 +16,7 @@ services:
       - orders-service-db
     environment:
       "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
       "ROUTE256_GRPC_PORT": "5010"
 
   orders-service-2:
@@ -29,6 +30,7 @@ services:
       - orders-service-db
     environment:
       "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
       "ROUTE256_GRPC_PORT": "5010"
 
   gateway-service:
@@ -58,6 +60,7 @@ services:
   logistic-simulator:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/logistics-simulator:latest
+
     container_name: logistic-simulator
 
   orders-generator-web:
@@ -90,6 +93,8 @@ services:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/service-discovery:latest
     container_name: service-discovery
+    ports:
+      - "6081:80"
     environment:
       - >-
         ROUTE256_DB_STATE=cluster:0-9:db1:1543;cluster:10-19:db2:1543;cluster1:0:db3:1543

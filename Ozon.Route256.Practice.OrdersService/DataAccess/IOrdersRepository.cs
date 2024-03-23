@@ -5,7 +5,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     public interface IOrdersRepository
     {
-        public Task<OrderEntity> CancelOrderAsync(long orderId, CancellationToken ct = default);
+        public Task CancelOrderAsync(long orderId, CancellationToken ct = default);
         public Task<Entities.OrderState> GetOrderStateAsync(long orderId, CancellationToken ct = default);
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, Entities.OrderType orderType,
         Entities.PaginationParameters pp, Entities.SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default);

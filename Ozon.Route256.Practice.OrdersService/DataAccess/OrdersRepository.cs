@@ -9,7 +9,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
     {
         private static readonly ConcurrentDictionary<long, OrderEntity> OrdersById = new();
 
-        public Task<OrderEntity> CancelOrderAsync(long orderId, CancellationToken ct = default)
+        public Task CancelOrderAsync(long orderId, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             if (!OrdersById.TryGetValue(orderId, out var order))
@@ -19,7 +19,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             var orderBeforeUpdate = order;
             order = order with { State = Entities.OrderState.Cancelled };
             if (OrdersById.TryUpdate(orderId, order, orderBeforeUpdate))
-                return Task.FromResult(order);
+                return Task.CompletedTask;
             return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. Order already cancelled."));
         }
 
@@ -36,7 +36,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
             IEnumerable<OrderEntity> items = OrdersById.Values;
-            items = items.Where(x => regions.Contains(x.Region) && x.OrderType == orderType)
+            items = items.Where(x => (!regions.Any() || regions.Contains(x.Region)) && x.OrderType == orderType)
                     .Skip((pp.PageNumber - 1) * pp.PageSize).Take(pp.PageSize);
             if (sortOrder != null) {
                 items = SortByColumns(items, sortOrder.Value, sortingFields);
@@ -49,7 +49,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
             IEnumerable<OrderEntity> items = OrdersById.Values;
-            items = items.Where(x => x.OrderDate > startDate && regions.Contains(x.Region));
+            items = items.Where(x => x.OrderDate > startDate && (!regions.Any() || regions.Contains(x.Region)));
             var result = items.GroupBy(x => x.Region).Select(x => new OrderByRegionEntity
             (
                 x.Select(x => x.Region).First(), x.Count(), x.Sum(y => y.TotalPrice), 

@@ -1,7 +1,8 @@
 ﻿using Grpc.Core;
+using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
-using System.Linq;
+using static Ozon.Route256.Practice.LogisticsSimulator.Grpc.LogisticsSimulatorService;
 
 namespace Ozon.Route256.Practice.OrdersService.GrpcServices
 {
@@ -9,21 +10,26 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
     {
         private readonly IOrdersRepository _ordersRepository;
         private readonly IRegionsRepository _regionsRepository;
-        public OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository)
+        private readonly LogisticsSimulatorServiceClient _logisticsSimulatorServiceClient;
+        public OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
         {
             _ordersRepository = ordersRepository;
             _regionsRepository = regionsRepository;
+            _logisticsSimulatorServiceClient = logisticsSimulatorServiceClient;
         }
         public override async Task<CancelOrderResponse> CancelOrder(CancelOrderRequest request, ServerCallContext context)
         {
             try
             {
+                var result = await _logisticsSimulatorServiceClient.OrderCancelAsync(new Order { Id = request.OrderId });
+                if (!result.Success)
+                    return new CancelOrderResponse { Success = false, Message = result.Error };
                 await _ordersRepository.CancelOrderAsync(request.OrderId, context.CancellationToken);
                 CancelOrderResponse response = new()
                 {
                     Success = true
                 };
-                return await Task.FromResult(response);
+                return response;
             }
             catch (NotFoundException ex)
             {
@@ -36,7 +42,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
                     Success = false,
                     Message = ex.Message
                 };
-                return await Task.FromResult(response);
+                return response;
             }
         }
     
@@ -59,7 +65,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             GetRegionsListResponse result = new();
             var regions = await _regionsRepository.GetRegionsListAsync(context.CancellationToken);
             result.Regions.Add(regions);
-            return await Task.FromResult(result);
+            return result;
         }
 
         public override async Task<GetOrdersListResponse> GetOrdersList(GetOrdersListRequest request, ServerCallContext context)
@@ -87,7 +93,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             var orders = await _ordersRepository.GetOrdersByRegionsAsync(request.StartDate.ToDateTime(), request.Regions.ToList(), context.CancellationToken);
             var result = new GetOrdersByRegionsResponse();
             result.OrderItems.Add(orders.Select(Converters.ConvertRegionOrderItem));
-            return await Task.FromResult(result);
+            return result;
         }
 
         public override async Task<GetOrdersByClientIdResponse> GetOrdersByClientId(GetOrdersByClientIdRequest request, ServerCallContext context)

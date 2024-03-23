@@ -18,4 +18,8 @@
    <Protobuf Include="Protos/*.proto" Type="Both" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="protos\logisticsSimulator.proto" />
+  </ItemGroup>
+
 </Project>
