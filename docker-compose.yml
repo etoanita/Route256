@@ -62,6 +62,10 @@ services:
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/logistics-simulator:latest
 
     container_name: logistic-simulator
+    depends_on:
+      - broker-1
+      - broker-2
+      - broker-3
 
   orders-generator-web:
     image: >-
@@ -172,3 +176,26 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT'
       KAFKA_DEFAULT_REPLICATION_FACTOR: '2'
+          
+  broker-3:
+    image: confluentinc/cp-kafka:7.3.2
+    container_name: broker-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "29093:29093"
+    environment:
+      KAFKA_BROKER_ID: '3'
+      KAFKA_BROKER_RACK: '3'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENERS: 'LISTENER_INTERNAL://:9091,LISTENER_LOCAL://:29093'
+      KAFKA_ADVERTISED_LISTENERS: 'LISTENER_INTERNAL://broker-3:9091,LISTENER_LOCAL://localhost:29093'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'LISTENER_INTERNAL'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT'
+      KAFKA_DEFAULT_REPLICATION_FACTOR: '2'
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
