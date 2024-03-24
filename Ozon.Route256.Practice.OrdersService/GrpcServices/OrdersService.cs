@@ -23,7 +23,11 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             {
                 var result = await _logisticsSimulatorServiceClient.OrderCancelAsync(new Order { Id = request.OrderId });
                 if (!result.Success)
+                {
+                    if (result.Error.Contains("not found")) //todo: handle correctly
+                        throw new RpcException(new Status(StatusCode.NotFound, result.Error));
                     return new CancelOrderResponse { Success = false, Message = result.Error };
+                }
                 await _ordersRepository.CancelOrderAsync(request.OrderId, context.CancellationToken);
                 CancelOrderResponse response = new()
                 {

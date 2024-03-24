@@ -33,11 +33,6 @@ public sealed class LoggerInterceptor : Interceptor
             _logger.LogError(ex, "Some exception happened");
             throw;
         }
-        catch (NotFoundException ex)
-        {
-            _logger.LogError(ex, "Some exception happened");
-            throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Some exception happened");
