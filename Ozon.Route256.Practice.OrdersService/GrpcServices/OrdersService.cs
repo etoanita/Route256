@@ -66,8 +66,8 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
 
         public override async Task<GetRegionsListResponse> GetRegionsList(GetRegionsListRequest request, ServerCallContext context)
         {
-            GetRegionsListResponse result = new();
             var regions = await _regionsRepository.GetRegionsListAsync(context.CancellationToken);
+            GetRegionsListResponse result = new();
             result.Regions.Add(regions);
             return result;
         }
