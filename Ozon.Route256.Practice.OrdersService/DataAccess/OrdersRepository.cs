@@ -41,8 +41,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
 
-            IEnumerable<OrderEntity> items = OrdersById.Values;
-            items = items.Where(x => (!regions.Any() || regions.Contains(x.Region)) && x.OrderType == orderType)
+            IEnumerable<OrderEntity> items = OrdersById.Values.Where(x => (!regions.Any() 
+                || regions.Contains(x.Region)) && x.OrderType == orderType)
                     .Skip((pp.PageNumber - 1) * pp.PageSize).Take(pp.PageSize);
             if (sortOrder != null) {
                 items = SortByColumns(items, sortOrder.Value, sortingFields);
@@ -56,8 +56,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
 
-            IEnumerable<OrderEntity> items = OrdersById.Values;
-            items = items.Where(x => x.OrderDate > startDate && (!regions.Any() || regions.Contains(x.Region)));
+            IEnumerable<OrderEntity> items = OrdersById.Values
+                .Where(x => x.OrderDate > startDate && (!regions.Any() || regions.Contains(x.Region)));
             var result = items.GroupBy(x => x.Region).Select(x => new OrderByRegionEntity
             (
                 x.Select(x => x.Region).First(), x.Count(), x.Sum(y => y.TotalPrice), 
