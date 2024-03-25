@@ -6,7 +6,7 @@ using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
 using static Ozon.Route256.Practice.LogisticsSimulator.Grpc.LogisticsSimulatorService;
 
-namespace Ozon.Route256.Practice.OrdersServiceTests
+namespace Ozon.Route256.Practice.OrdersService.Tests
 {
     public class OrderServiceTests
     {

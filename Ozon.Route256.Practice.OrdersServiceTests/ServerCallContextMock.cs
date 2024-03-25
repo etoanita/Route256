@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ozon.Route256.Practice.OrdersServiceTests
+namespace Ozon.Route256.Practice.OrdersService.Tests
 {
     internal class ServerCallContextMock : ServerCallContext
     {
