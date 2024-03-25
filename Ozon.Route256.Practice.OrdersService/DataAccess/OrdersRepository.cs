@@ -87,18 +87,18 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             IOrderedEnumerable<T> sorted;
             if (sortOrder == SortOrder.ASC)
             {
-                sorted = items.OrderBy(p => p.GetType().GetProperty(sortingFields.First()).GetValue(p, null));
+                sorted = items.OrderBy(p => p.GetType().GetProperty(sortingFields.First())?.GetValue(p, null));
                 foreach (var sortField in sortingFields.Skip(1))
                 {
-                    sorted = sorted.ThenBy(p => p.GetType().GetProperty(sortField).GetValue(p, null));
+                    sorted = sorted.ThenBy(p => p.GetType().GetProperty(sortField)?.GetValue(p, null));
                 }
             }
             else
             {
-                sorted = items.OrderByDescending(p => p.GetType().GetProperty(sortingFields.First()).GetValue(p, null));
+                sorted = items.OrderByDescending(p => p.GetType().GetProperty(sortingFields.First())?.GetValue(p, null));
                 foreach (var sortField in sortingFields.Skip(1))
                 {
-                    sorted = sorted.ThenByDescending(p => p.GetType().GetProperty(sortField).GetValue(p, null));
+                    sorted = sorted.ThenByDescending(p => p.GetType().GetProperty(sortField)?.GetValue(p, null));
                 }
             }
             return sorted;
