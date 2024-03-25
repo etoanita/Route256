@@ -22,6 +22,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             order = order with { State = OrderState.Cancelled };
             if (OrdersById.TryUpdate(orderId, order, orderBeforeUpdate))
                 return Task.CompletedTask;
+
             return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. Order already cancelled."));
         }
 
@@ -39,12 +40,14 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+
             IEnumerable<OrderEntity> items = OrdersById.Values;
             items = items.Where(x => (!regions.Any() || regions.Contains(x.Region)) && x.OrderType == orderType)
                     .Skip((pp.PageNumber - 1) * pp.PageSize).Take(pp.PageSize);
             if (sortOrder != null) {
                 items = SortByColumns(items, sortOrder.Value, sortingFields);
             }
+
             IReadOnlyCollection<OrderEntity> roResult = items.ToList().AsReadOnly();
             return Task.FromResult(roResult);
         }
@@ -52,6 +55,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         public Task<IReadOnlyCollection<OrderByRegionEntity>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+
             IEnumerable<OrderEntity> items = OrdersById.Values;
             items = items.Where(x => x.OrderDate > startDate && (!regions.Any() || regions.Contains(x.Region)));
             var result = items.GroupBy(x => x.Region).Select(x => new OrderByRegionEntity
@@ -59,6 +63,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                 x.Select(x => x.Region).First(), x.Count(), x.Sum(y => y.TotalPrice), 
                 x.Sum(y => y.TotalWeight), x.Select(y => y.CustomerId).Distinct().Count())
             );
+
             IReadOnlyCollection<OrderByRegionEntity> roResult = result.ToList().AsReadOnly();
             return Task.FromResult(roResult);
         }
@@ -67,10 +72,12 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             PaginationParameters pp, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+
             var result = OrdersById.Values.
                 Where(x => x.CustomerId == clientId && x.OrderDate > startFrom)
                 .Skip((pp.PageNumber - 1) * pp.PageSize)
                 .Take(pp.PageSize);
+
             IReadOnlyCollection<OrderEntity> rdOnly = result.ToList().AsReadOnly();
             return Task.FromResult(rdOnly);
         }
