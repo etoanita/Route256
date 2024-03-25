@@ -74,8 +74,6 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             return new()
             {
                 Address = orderEntity.Address,
-                CustomerName = orderEntity.CustomerName,
-                CustomerSurname = orderEntity.CustomerSurname,
                 ItemsCount = orderEntity.ItemsCount,
                 OrderDate = Timestamp.FromDateTime(orderEntity.OrderDate),
                 OrderId = orderEntity.OrderId,
