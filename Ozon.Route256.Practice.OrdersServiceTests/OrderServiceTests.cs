@@ -106,7 +106,7 @@ namespace Ozon.Route256.Practice.OrdersServiceTests
             {
                 SetupLogisticSimulator(new CancelResult { Success = true });
                 _ordersRepositoryMock.Setup(client => client.GetOrderStateAsync(0, CancellationToken.None))
-                    .Returns(Task.FromResult(OrdersService.DataAccess.Entities.OrderState.SentToCustomer));
+                    .Returns(Task.FromResult(OrdersService.DataAccess.OrderState.SentToCustomer));
                 SetupOrderService();
                 var state = await _ordersService.GetOrderState(new GetOrderStateRequest(), new ServerCallContextMock());
                 Assert.Equal(OrderState.SentToCustomer, state.State);
@@ -146,9 +146,9 @@ namespace Ozon.Route256.Practice.OrdersServiceTests
                 _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { }))
                     .Returns(Task.FromResult(new List<string> { }.AsReadOnly() as IReadOnlyCollection<string>));
                 _ordersRepositoryMock.Setup(client => client.GetOrdersListAsync(It.IsAny<List<string>>()
-                    , It.IsAny<OrdersService.DataAccess.Entities.OrderType>()
+                    , It.IsAny<OrdersService.DataAccess.OrderType>()
                     , new OrdersService.DataAccess.Entities.PaginationParameters(0, 0)
-                    , It.IsAny<OrdersService.DataAccess.Entities.SortOrder>()
+                    , It.IsAny<OrdersService.DataAccess.SortOrder>()
                     , It.IsAny<List<string>>(), CancellationToken.None)).ReturnsAsync(new List<OrderEntity> { });
                 SetupOrderService();
                  await _ordersService.GetOrdersList(new GetOrdersListRequest() { PaginationParameters = new PaginationParameters()}, new ServerCallContextMock());

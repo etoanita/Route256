@@ -5,24 +5,24 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
 {
     public class Converters
     {
-        public static DataAccess.Entities.OrderType ConvertOrderType(OrderType orderType)
+        public static DataAccess.OrderType ConvertOrderType(OrderType orderType)
         {
             return orderType switch
             {
-                OrderType.Web => DataAccess.Entities.OrderType.Web,
-                OrderType.Api => DataAccess.Entities.OrderType.Api,
-                OrderType.Mobile => DataAccess.Entities.OrderType.Mobile,
+                OrderType.Web => DataAccess.OrderType.Web,
+                OrderType.Api => DataAccess.OrderType.Api,
+                OrderType.Mobile => DataAccess.OrderType.Mobile,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static OrderType ConvertOrderType(DataAccess.Entities.OrderType orderType)
+        public static OrderType ConvertOrderType(DataAccess.OrderType orderType)
         {
             return orderType switch
             {
-                DataAccess.Entities.OrderType.Web => OrderType.Web,
-                DataAccess.Entities.OrderType.Api => OrderType.Api,
-                DataAccess.Entities.OrderType.Mobile => OrderType.Mobile,
+                DataAccess.OrderType.Web => OrderType.Web,
+                DataAccess.OrderType.Api => OrderType.Api,
+                DataAccess.OrderType.Mobile => OrderType.Mobile,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -32,39 +32,39 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             return new DataAccess.Entities.PaginationParameters(paginationParameters.PageNumber, paginationParameters.PageSize);
         }
 
-        public static DataAccess.Entities.SortOrder ConvertSortOrder(SortOrder sortOrder)
+        public static DataAccess.SortOrder ConvertSortOrder(SortOrder sortOrder)
         {
             return sortOrder switch
             {
-                SortOrder.Asc => DataAccess.Entities.SortOrder.ASC,
-                SortOrder.Desc => DataAccess.Entities.SortOrder.DESC,
+                SortOrder.Asc => DataAccess.SortOrder.ASC,
+                SortOrder.Desc => DataAccess.SortOrder.DESC,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static DataAccess.Entities.OrderState ConvertOrderState(OrderState orderState)
+        public static DataAccess.OrderState ConvertOrderState(OrderState orderState)
         {
             return orderState switch
             {
-                OrderState.Created => DataAccess.Entities.OrderState.Created,
-                OrderState.Delivered => DataAccess.Entities.OrderState.Delivered,
-                OrderState.SentToCustomer => DataAccess.Entities.OrderState.SentToCustomer,
-                OrderState.Cancelled => DataAccess.Entities.OrderState.Cancelled,
-                OrderState.Lost => DataAccess.Entities.OrderState.Lost,
+                OrderState.Created => DataAccess.OrderState.Created,
+                OrderState.Delivered => DataAccess.OrderState.Delivered,
+                OrderState.SentToCustomer => DataAccess.OrderState.SentToCustomer,
+                OrderState.Cancelled => DataAccess.OrderState.Cancelled,
+                OrderState.Lost => DataAccess.OrderState.Lost,
                 _ => throw new NotImplementedException(),
             };
         }
 
 
-        public static OrderState ConvertOrderState(DataAccess.Entities.OrderState orderState)
+        public static OrderState ConvertOrderState(DataAccess.OrderState orderState)
         {
             return orderState switch
             {
-                DataAccess.Entities.OrderState.Created => OrderState.Created,
-                DataAccess.Entities.OrderState.Delivered => OrderState.Delivered,
-                DataAccess.Entities.OrderState.SentToCustomer => OrderState.SentToCustomer,
-                DataAccess.Entities.OrderState.Cancelled => OrderState.Cancelled,
-                DataAccess.Entities. OrderState.Lost => OrderState.Lost,
+                DataAccess.OrderState.Created => OrderState.Created,
+                DataAccess.OrderState.Delivered => OrderState.Delivered,
+                DataAccess.OrderState.SentToCustomer => OrderState.SentToCustomer,
+                DataAccess.OrderState.Cancelled => OrderState.Cancelled,
+                DataAccess.OrderState.Lost => OrderState.Lost,
                 _ => throw new NotImplementedException(),
             };
         }
