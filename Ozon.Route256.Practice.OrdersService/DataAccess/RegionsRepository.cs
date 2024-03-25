@@ -25,12 +25,12 @@
             IReadOnlyCollection<string> roResult = result.AsReadOnly();
             return Task.FromResult(roResult); 
         }
-    }
 
-    public enum Regions
-    {
-        Moscow,
-        StPetersburg,
-        Novosibirsk
+        private enum Regions
+        {
+            Moscow,
+            StPetersburg,
+            Novosibirsk
+        }
     }
 }
