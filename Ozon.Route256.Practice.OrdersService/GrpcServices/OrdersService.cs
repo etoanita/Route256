@@ -11,7 +11,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
         private readonly IOrdersRepository _ordersRepository;
         private readonly IRegionsRepository _regionsRepository;
         private readonly LogisticsSimulatorServiceClient _logisticsSimulatorServiceClient;
-        public OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
+        internal OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
         {
             _ordersRepository = ordersRepository;
             _regionsRepository = regionsRepository;

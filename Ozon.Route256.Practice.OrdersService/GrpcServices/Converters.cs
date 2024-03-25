@@ -1,5 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Ozon.Route256.Practice.OrdersService.DataAccess.Entities;
+using Ozon.Route256.Practice.OrdersService.DataAccess;
 
 namespace Ozon.Route256.Practice.OrdersService.GrpcServices
 {
@@ -27,9 +27,9 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             };
         }
 
-        public static DataAccess.Entities.PaginationParameters ConvertPaginationParameters(PaginationParameters paginationParameters)
+        public static DataAccess.PaginationParameters ConvertPaginationParameters(PaginationParameters paginationParameters)
         {
-            return new DataAccess.Entities.PaginationParameters(paginationParameters.PageNumber, paginationParameters.PageSize);
+            return new DataAccess.PaginationParameters(paginationParameters.PageNumber, paginationParameters.PageSize);
         }
 
         public static DataAccess.SortOrder ConvertSortOrder(SortOrder sortOrder)

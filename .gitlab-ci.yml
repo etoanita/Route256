@@ -29,12 +29,12 @@ gateway_service_test:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: ["gateway_service_build"]
   script:  
-    - dotnet test ./Ozon.Route256.Practice.Tests/Ozon.Route256.Practice.GatewayServiceTests.csproj
+    - dotnet test ./Ozon.Route256.Practice.Tests/Ozon.Route256.Practice.GatewayService.Tests.csproj
 
 orders_service_test:
   stage: test
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: ["orders_service_build"]
   script:
-    - dotnet test ./Ozon.Route256.Practice.OrdersServiceTests/Ozon.Route256.Practice.OrdersServiceTests.csproj
+    - dotnet test ./Ozon.Route256.Practice.OrdersServiceTests/Ozon.Route256.Practice.OrdersService.Tests.csproj
  

@@ -1,5 +1,4 @@
-﻿using Ozon.Route256.Practice.OrdersService.DataAccess.Entities;
-using Ozon.Route256.Practice.OrdersService.Exceptions;
+﻿using Ozon.Route256.Practice.OrdersService.Exceptions;
 using System.Collections.Concurrent;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess
@@ -37,7 +36,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         }
 
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType,
-        Entities.PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
+        PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             IEnumerable<OrderEntity> items = OrdersById.Values;
@@ -65,7 +64,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         }
 
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, 
-            Entities.PaginationParameters pp, CancellationToken ct = default)
+            PaginationParameters pp, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             var result = OrdersById.Values.
