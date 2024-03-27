@@ -1,8 +1,5 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using System.Net;
-using System.Net.Mail;
-using System.Web.Http;
 
 namespace Ozon.Route256.Practice.GatewayService.Infrastructure;
 

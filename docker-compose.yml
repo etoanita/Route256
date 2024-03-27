@@ -14,8 +14,10 @@ services:
     container_name: orders-service-1
     depends_on: 
       - orders-service-db
+      - service-discovery
     environment:
       "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
       "ROUTE256_GRPC_PORT": "5010"
 
   orders-service-2:
@@ -27,8 +29,10 @@ services:
       - 5010:5010 
     depends_on: 
       - orders-service-db
+      - service-discovery 
     environment:
       "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
       "ROUTE256_GRPC_PORT": "5010"
 
   gateway-service:
@@ -58,7 +62,12 @@ services:
   logistic-simulator:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/logistics-simulator:latest
+
     container_name: logistic-simulator
+    depends_on:
+      - broker-1
+      - broker-2
+      - broker-3
 
   orders-generator-web:
     image: >-
@@ -90,6 +99,8 @@ services:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/service-discovery:latest
     container_name: service-discovery
+    ports:
+      - "6081:80"
     environment:
       - >-
         ROUTE256_DB_STATE=cluster:0-9:db1:1543;cluster:10-19:db2:1543;cluster1:0:db3:1543
@@ -167,3 +178,26 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_INTERNAL
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT'
       KAFKA_DEFAULT_REPLICATION_FACTOR: '2'
+          
+  broker-3:
+    image: confluentinc/cp-kafka:7.3.2
+    container_name: broker-3
+    depends_on:
+      - zookeeper
+    ports:
+      - "29093:29093"
+    environment:
+      KAFKA_BROKER_ID: '3'
+      KAFKA_BROKER_RACK: '3'
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENERS: 'LISTENER_INTERNAL://:9091,LISTENER_LOCAL://:29093'
+      KAFKA_ADVERTISED_LISTENERS: 'LISTENER_INTERNAL://broker-3:9091,LISTENER_LOCAL://localhost:29093'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'LISTENER_INTERNAL'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT'
+      KAFKA_DEFAULT_REPLICATION_FACTOR: '2'
+  
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"

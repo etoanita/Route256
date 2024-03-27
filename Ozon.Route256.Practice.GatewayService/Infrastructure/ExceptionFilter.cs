@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
 using Grpc.Core;
 using System.Net;
 
@@ -27,15 +26,13 @@ namespace Ozon.Route256.Practice.GatewayService.Infrastructure
                     case StatusCode.NotFound:
                         {
                             model.StatusCode = HttpStatusCode.NotFound;
-                            context.Result = new ObjectResult(model);
-                            ((ObjectResult)context.Result).StatusCode = (int)HttpStatusCode.NotFound;
+                            context.Result = new ObjectResult(model) { StatusCode = (int)HttpStatusCode.NotFound };
                             break;
                         }
                     default:
                         {
                             model.StatusCode = HttpStatusCode.InternalServerError;
-                            context.Result = new ObjectResult(model);
-                            ((ObjectResult)context.Result).StatusCode = (int)HttpStatusCode.InternalServerError;
+                            context.Result = new ObjectResult(model) { StatusCode = (int)HttpStatusCode.InternalServerError };
                             break;
                         }
                 }

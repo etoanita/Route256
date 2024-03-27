@@ -30,8 +30,10 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 
         public async Task<List<RegionOrderDto>> GetOrdersByRegion(long startDate, string[] regions)
         {
-            var request = new GetOrdersByRegionsRequest();
-            request.StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc));
+            var request = new GetOrdersByRegionsRequest
+            {
+                StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc))
+            };
             request.Regions.AddRange(regions);
             var result = await _ordersClient.GetOrdersByRegionsAsync(request);
             return result.OrderItems.Select(OrderConverter.ConvertRegionOrderDto).ToList();
@@ -39,13 +41,15 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
 
         public async Task<List<OrderDto>> GetOrdersByUser(int userId, long startDate, PaginationParametersDto paginationParameters)
         {
-            var request = new GetOrdersByClientIdRequest();
-            request.ClientId = userId;
-            request.StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc));
-            request.PaginationParameters = new PaginationParameters
+            var request = new GetOrdersByClientIdRequest
             {
-                PageSize = paginationParameters.PageSize,
-                PageNumber = paginationParameters.PageNumber
+                ClientId = userId,
+                StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc)),
+                PaginationParameters = new PaginationParameters
+                {
+                    PageSize = paginationParameters.PageSize,
+                    PageNumber = paginationParameters.PageNumber
+                }
             };
             var result = await _ordersClient.GetOrdersByClientIdAsync(request);
             return result.OrderItems.Select(OrderConverter.ConvertOrderDto).ToList();

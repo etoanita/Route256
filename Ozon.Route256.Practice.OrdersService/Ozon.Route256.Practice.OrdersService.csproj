@@ -15,10 +15,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+   <Protobuf Include="Protos/*.proto" Type="Both" />
   </ItemGroup>
 
   <ItemGroup>
-   <Protobuf Include="Protos/*.proto" Type="Both" />
+    <None Remove="protos\logisticsSimulator.proto" />
   </ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 </Project>

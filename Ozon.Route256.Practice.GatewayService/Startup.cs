@@ -36,8 +36,8 @@ namespace Ozon.Route256.Practice.OrdersService
             {
                 throw new ArgumentException("ORDERS_SERVICE_2 variable is null or empty");
             }
-            var os1Splitted = os1.Split(',');
-            var os2Splitted = os2.Split(',');
+            var os1Splitted = os1.Split(':');
+            var os2Splitted = os2.Split(':');
             var factory = new StaticResolverFactory(addr => new[]
             {
                 new BalancerAddress(os1Splitted[0], int.Parse(os1Splitted[1])),
