@@ -44,6 +44,7 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddHostedService<SdConsumerHostedService>();
             serviceCollection.AddScoped<IRegionsRepository, RegionsRepository>();
             serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
+            serviceCollection.AddKafka();
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)
@@ -54,7 +55,7 @@ namespace Ozon.Route256.Practice.OrdersService
             applicationBuilder.UseEndpoints(endpointRouteBuilder =>
             {
                 endpointRouteBuilder.MapGrpcReflectionService();
-                endpointRouteBuilder.MapGrpcService<GrpcServices.OrdersService>();
+                endpointRouteBuilder.MapGrpcService<Infrastructure.GrpcServices.OrdersService>();
             });
         }
     }

@@ -16,7 +16,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 
             if (order.State != OrderState.SentToCustomer && order.State != OrderState.Created)
                 return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. " +
-                    $"Order is in appropriate state."));
+                    $"Order is in inappropriate state."));
 
             var orderBeforeUpdate = order;
             order = order with { State = OrderState.Cancelled };

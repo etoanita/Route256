@@ -13,7 +13,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         private readonly Mock<IRegionsRepository> _regionsRepositoryMock;
         private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
         private readonly Mock<LogisticsSimulatorServiceClient> _logisticSimulatorMock;
-        private OrdersService.GrpcServices.OrdersService _ordersService;
+        private Infrastructure.GrpcServices.OrdersService _ordersService;
         public OrderServiceTests() 
         {
             _regionsRepositoryMock = new Mock<IRegionsRepository>();
@@ -30,7 +30,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
 
         private void SetupOrderService()
         {
-            _ordersService = new OrdersService.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
+            _ordersService = new Infrastructure.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
                 _regionsRepositoryMock.Object, _logisticSimulatorMock.Object);
         }
 

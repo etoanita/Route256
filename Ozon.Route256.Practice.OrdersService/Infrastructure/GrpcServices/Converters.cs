@@ -1,7 +1,7 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 
-namespace Ozon.Route256.Practice.OrdersService.GrpcServices
+namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 {
     public class Converters
     {
