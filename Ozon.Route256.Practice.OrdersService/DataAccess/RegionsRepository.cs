@@ -3,15 +3,33 @@
     public class RegionsRepository : IRegionsRepository
     {
         private readonly List<string> _regions;
+        private readonly Dictionary<string, RegionData> _regionsStorage;
         public RegionsRepository()
         {
             _regions = Enum.GetNames(typeof(Regions)).ToList();
+            _regionsStorage = new Dictionary<string, RegionData>();
+            Random rnd = new();
+            for (int i = 0; i < _regions.Count; i++)
+            {
+                _regionsStorage.Add(_regions[i], new RegionData() { 
+                    Depots = { 
+                        new KeyValuePair<double, double>(rnd.NextDouble(), rnd.NextDouble())
+                    } 
+                });
+            }
         }
         public Task<IReadOnlyCollection<string>> GetRegionsListAsync(CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             IReadOnlyCollection<string> result = _regions.AsReadOnly();
             return Task.FromResult(result);
+        }
+
+        public Task<RegionData> FindRegionAsync(string region, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            return Task.FromResult(_regionsStorage[region]);
         }
 
         public Task<IReadOnlyCollection<string>> FindNotPresentedAsync(List<string> regions) { 
@@ -33,4 +51,9 @@
             Novosibirsk
         }
     }
+
+    public record struct RegionData
+    (
+        List<KeyValuePair<double, double>> Depots
+    );
 }

@@ -11,8 +11,8 @@
         string Region,
         OrderState State,
         int CustomerId,
-       // string CustomerName, //todo: get this data from customer service
-       // string CustomerSurname,
+        string CustomerName, 
+        string CustomerSurname,
         string Address,
         string Phone
     );

@@ -103,5 +103,15 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             }
             return sorted;
         }
+
+        public Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

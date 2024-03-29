@@ -3,17 +3,18 @@
 namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers;
 public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundService
 {
-    private const string TopicName = "pre_orders";
-
     private readonly IKafkaDataProvider<TKey, TValue> _kafkaDataProvider;
     private readonly ILogger _logger;
+    private readonly string _topicName;
     protected readonly IServiceScope _scope;
 
     protected ConsumerBackgroundService(
+        string topicName,
         IServiceProvider serviceProvider,
         IKafkaDataProvider<TKey, TValue> kafkaDataProvider,
         ILogger logger)
     {
+        _topicName = topicName;
         _kafkaDataProvider = kafkaDataProvider;
         _logger = logger;
         _scope = serviceProvider.CreateScope();
@@ -22,15 +23,15 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await Task.Yield();
-        _logger.LogInformation("Start ExecuteAsync");
+
         if (stoppingToken.IsCancellationRequested)
         {
             return;
         }
 
-        _kafkaDataProvider.Consumer.Subscribe(TopicName);
+        _kafkaDataProvider.Consumer.Subscribe(_topicName);
 
-        _logger.LogInformation("Start consumer topic {Topic}", TopicName);
+        _logger.LogInformation("Start consumer topic {Topic}", _topicName);
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -39,7 +40,7 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
         _kafkaDataProvider.Consumer.Unsubscribe();
 
-        _logger.LogInformation("Stop consumer topic {Topic}", TopicName);
+        _logger.LogInformation("Stop consumer topic {Topic}", _topicName);
     }
 
     private async Task ConsumeAsync(CancellationToken cancellationToken)
