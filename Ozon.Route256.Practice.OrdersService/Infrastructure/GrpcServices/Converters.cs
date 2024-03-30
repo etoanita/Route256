@@ -99,7 +99,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             };
         }
 
-        public static OrderEntity CreateOrderEntity(Order order, DateTime orderDate)
+        public static OrderEntity CreateOrderEntity(NewOrder order, Customer customer, DateTime orderDate)
         {
             return new(
                 order.Id,
@@ -111,10 +111,10 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
                 order.Customer.Address.Region,
                 DataAccess.OrderState.Created,
                 order.Customer.Id,
-                "name",
-                "surname",
-                "address",
-                "phone"
+                customer.FirstName,
+                customer.LastName,
+                order.Customer.Address.ToString(),
+                customer.MobileNumber
             );
         }
     }

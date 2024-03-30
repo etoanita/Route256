@@ -4,8 +4,8 @@
     (
         long OrderId,
         int ItemsCount,
-        int TotalPrice,
-        int TotalWeight,
+        double TotalPrice,
+        long TotalWeight,
         OrderType OrderType,
         DateTime OrderDate,
         string Region,

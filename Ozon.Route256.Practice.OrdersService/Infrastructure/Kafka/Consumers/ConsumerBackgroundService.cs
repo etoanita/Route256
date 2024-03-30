@@ -53,6 +53,7 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
             if (message is null)
             {
+                _logger.LogWarning("Message is null");
                 await Task.Delay(100, cancellationToken);
                 return;
             }

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using Confluent.Kafka;
+using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers;
 using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
 
 namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Producers;
@@ -8,6 +9,8 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Producers;
 internal class OrderProducer : IOrderProducer
 {
     private readonly IKafkaDataProvider<long, string> _kafkaDataProvider;
+    private readonly ILogger<OrderProducer> _logger;
+    private const string TopicName = "new_orders";
 
     private readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
@@ -17,12 +20,13 @@ internal class OrderProducer : IOrderProducer
         }
     };
 
-    public OrderProducer(IKafkaDataProvider<long, string> kafkaDataProvider)
+    public OrderProducer(IKafkaDataProvider<long, string> kafkaDataProvider, ILogger<OrderProducer> logger)
     {
         _kafkaDataProvider = kafkaDataProvider;
+        _logger = logger;
     }
 
-    public async Task ProduceAsync(IReadOnlyCollection<Order> updatedOrders, CancellationToken token)
+    public async Task ProduceAsync(IReadOnlyCollection<OrderShort> updatedOrders, CancellationToken token)
     {
         await Task.Yield();
 
@@ -35,7 +39,7 @@ internal class OrderProducer : IOrderProducer
                 token.ThrowIfCancellationRequested();
             }
 
-            var key = order.Id;
+            var key = order.OrderId;
             var value = JsonSerializer.Serialize(order, _jsonSerializerOptions);
 
             var message = new Message<long, string>
@@ -43,7 +47,8 @@ internal class OrderProducer : IOrderProducer
                 Key = key,
                 Value = value
             };
-            var task = _kafkaDataProvider.Producer.ProduceAsync("new_orders", message, token);
+            _logger.LogInformation("Message {} was added to queue to produce", message);
+            var task = _kafkaDataProvider.Producer.ProduceAsync(TopicName, message, token);
             tasks.Add(task);
         }
 

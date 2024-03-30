@@ -3,8 +3,8 @@
     public record OrderByRegionEntity(
         string Region,
         int OrdersCount,
-        int TotalPrice,
-        int TotalWeight,
+        double TotalPrice,
+        long TotalWeight,
         int ClientsCount    
     );
 }

@@ -1,6 +1,7 @@
 ﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.ClientBalancing;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrdersService.Handlers;
 using Ozon.Route256.Practice.OrdersService.Infrastructure;
 
 namespace Ozon.Route256.Practice.OrdersService
@@ -37,6 +38,16 @@ namespace Ozon.Route256.Practice.OrdersService
 
                 option.Address = new Uri(url);
             });
+            serviceCollection.AddGrpcClient<Customers.CustomersClient>(option =>
+            {
+                var url = _configuration.GetValue<string>("CUSTOMER_SERVICE_ADDRESS");
+                if (string.IsNullOrEmpty(url))
+                {
+                    throw new ArgumentException("CUSTOMER_SERVICE_ADDRESS variable is null or empty");
+                }
+
+                option.Address = new Uri(url);
+            });
             serviceCollection.AddGrpcReflection();
             serviceCollection.AddControllers();
             serviceCollection.AddEndpointsApiExplorer();
@@ -44,7 +55,7 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddHostedService<SdConsumerHostedService>();
             serviceCollection.AddScoped<IRegionsRepository, RegionsRepository>();
             serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
-            serviceCollection.AddKafka();
+            serviceCollection.AddKafka().AddHandlers();
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)

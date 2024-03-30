@@ -11,10 +11,13 @@
             Random rnd = new();
             for (int i = 0; i < _regions.Count; i++)
             {
-                _regionsStorage.Add(_regions[i], new RegionData() { 
-                    Depots = { 
-                        new KeyValuePair<double, double>(rnd.NextDouble(), rnd.NextDouble())
-                    } 
+                const int MAX_VALUE = 90;
+                const int MIN_VALUE = -90;
+                _regionsStorage.Add(_regions[i], new RegionData()
+                {
+                    Depots = new List<Coordinate> {
+                        new(rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE, rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE)
+                    }
                 });
             }
         }
@@ -32,7 +35,10 @@
             return Task.FromResult(_regionsStorage[region]);
         }
 
-        public Task<IReadOnlyCollection<string>> FindNotPresentedAsync(List<string> regions) { 
+        public Task<IReadOnlyCollection<string>> FindNotPresentedAsync(List<string> regions, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
             List<string> result = new();
             foreach (var region in regions) { 
                 if (!_regions.Contains(region))
@@ -54,6 +60,12 @@
 
     public record struct RegionData
     (
-        List<KeyValuePair<double, double>> Depots
+        List<Coordinate> Depots
+    );
+
+    public record struct Coordinate
+    (
+        double orderLatitude, 
+        double orderLongitude
     );
 }

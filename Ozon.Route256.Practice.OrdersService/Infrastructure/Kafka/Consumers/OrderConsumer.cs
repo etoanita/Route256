@@ -6,25 +6,25 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
 {
     public class OrderConsumer : ConsumerBackgroundService<long, string>
     {
-        private readonly ILogger<NewOrderConsumer> _logger;
-        private readonly IOrderRegistrationHandler _orderRegistrationHandler;
-        private readonly static string TopicName = "orders_events";
+        private readonly ILogger<OrderConsumer> _logger;
+        private readonly IOrderEventHandler _orderEventHandler;
+        private const string TopicName = "orders_events";
 
         public OrderConsumer(
             IServiceProvider serviceProvider,
             IKafkaDataProvider<long, string> kafkaDataProvider,
-            ILogger<NewOrderConsumer> logger)
+            ILogger<OrderConsumer> logger)
             : base(TopicName, serviceProvider, kafkaDataProvider, logger)
         {
             _logger = logger;
-            _orderRegistrationHandler = _scope.ServiceProvider.GetRequiredService<IOrderRegistrationHandler>();
+            _orderEventHandler = _scope.ServiceProvider.GetRequiredService<IOrderEventHandler>();
         }
 
         protected override async Task HandleAsync(ConsumeResult<long, string> message, CancellationToken cancellationToken)
         {
             var order = JsonSerializer.Deserialize<Models.Order>(message.Message.Value);
-            await _orderRegistrationHandler.Handle(order, cancellationToken);
-            _logger.LogInformation("New order created, {}", message.Message.Value);
+            _logger.LogInformation("Updated order created, {}", message.Message.Value);
+            await _orderEventHandler.Handle(order, cancellationToken);
         }
     }
 }

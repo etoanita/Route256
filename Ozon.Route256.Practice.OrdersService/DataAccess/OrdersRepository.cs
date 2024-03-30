@@ -36,6 +36,22 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             return Task.FromResult(order.State);
         }
 
+        public Task UpdateOrderState(long orderId, OrderState state, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (!OrdersById.TryGetValue(orderId, out var order))
+                return Task.FromException<OrderEntity>(new NotFoundException($"Order with id={orderId} not found"));
+
+
+            var orderBeforeUpdate = order;
+            order = order with { State = state};
+            if (OrdersById.TryUpdate(orderId, order, orderBeforeUpdate))
+                return Task.CompletedTask;
+
+            return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. Order already cancelled."));
+        }
+
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType,
         PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
         {
@@ -82,6 +98,22 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             return Task.FromResult(rdOnly);
         }
 
+        public Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            OrdersById.TryAdd(orderEntity.OrderId, orderEntity);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            return Task.FromResult(OrdersById.ContainsKey(orderId));
+        }
+
         private static IEnumerable<T> SortByColumns<T>(IEnumerable<T> items, SortOrder sortOrder, List<string> sortingFields)
         {
             IOrderedEnumerable<T> sorted;
@@ -102,16 +134,6 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                 }
             }
             return sorted;
-        }
-
-        public Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)
-        {
-            throw new NotImplementedException();
         }
     }
 }

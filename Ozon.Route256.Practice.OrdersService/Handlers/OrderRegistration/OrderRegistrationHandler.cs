@@ -13,7 +13,7 @@ public class OrderRegistrationHandler : IOrderRegistrationHandler
     private readonly CustomersClient _customersClient;
     private readonly IOrderProducer _producer;
 
-    internal OrderRegistrationHandler(IOrdersRepository orderRepository, IRegionsRepository regionsRepository, CustomersClient customersClient, IOrderProducer producer)
+    public OrderRegistrationHandler(IOrdersRepository orderRepository, IRegionsRepository regionsRepository, CustomersClient customersClient, IOrderProducer producer)
     {
         _orderRepository = orderRepository;
         _regionsRepository = regionsRepository;
@@ -21,27 +21,27 @@ public class OrderRegistrationHandler : IOrderRegistrationHandler
         _producer = producer; 
     }
 
-    public async Task Handle(Order order, CancellationToken token)
+    public async Task Handle(NewOrder order, CancellationToken token)
     {
         var orderAlreadyRegistered = await _orderRepository.IsExistsAsync(order.Id, token);
 
         if (orderAlreadyRegistered)
             throw new Exception($"Order {order.Id} already registered");
-
-        var customer = await _customersClient.GetCustomerByIdAsync(new GetCustomerByIdRequest { Id = order.Customer.Id }, cancellationToken: token);
-        var orderEntity = Converters.CreateOrderEntity(order, DateTime.UtcNow);
+        var result  = await _customersClient.GetCustomerByIdAsync(new GetCustomerByIdRequest { Id = order.Customer.Id }, cancellationToken: token);
+        var orderEntity = Converters.CreateOrderEntity(order, result.Customer, DateTime.UtcNow);
         await _orderRepository.InsertAsync(orderEntity, token);
 
-
-        if (IsOrderValid(order))
+        var custAddress = order.Customer.Address;
+        var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region);
+        var depot = region.Depots.First();
+        if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.orderLatitude, depot.orderLongitude))
         {
-            await _producer.ProduceAsync( new[] { order }, token);
+            await _producer.ProduceAsync( new[] { new OrderShort(order.Id) }, token);
         }
     }
 
-    private bool IsOrderValid(Order order)
+    private static bool IsOrderValid(double orderLatitude, double orderLongitude, double depotLatitude, double depotLongitude)
     {
-        return true;
-        //return Math.Acos(Math.Sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon2 - lon1)) * 6371 < 5000;
+        return Math.Acos(Math.Sin(orderLatitude) * Math.Sin(depotLatitude) + Math.Cos(orderLatitude) * Math.Cos(depotLatitude) * Math.Cos(depotLongitude - orderLongitude)) * 6371 < 5000;
     }
 }
