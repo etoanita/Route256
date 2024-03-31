@@ -23,7 +23,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
         protected override async Task HandleAsync(ConsumeResult<long, string> message, CancellationToken cancellationToken)
         {
             var order = JsonSerializer.Deserialize<Models.Order>(message.Message.Value);
-            _logger.LogInformation("Updated order created, {}", message.Message.Value);
+            _logger.LogInformation("Update order state {} for logger {}", order.OrderId, order.OrderState);
             await _orderEventHandler.Handle(order, cancellationToken);
         }
     }

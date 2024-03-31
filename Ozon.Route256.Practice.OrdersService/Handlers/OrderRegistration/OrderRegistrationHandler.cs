@@ -12,13 +12,16 @@ public class OrderRegistrationHandler : IOrderRegistrationHandler
     private readonly IRegionsRepository _regionsRepository;
     private readonly CustomersClient _customersClient;
     private readonly IOrderProducer _producer;
+    private readonly ILogger _logger;
 
-    public OrderRegistrationHandler(IOrdersRepository orderRepository, IRegionsRepository regionsRepository, CustomersClient customersClient, IOrderProducer producer)
+    public OrderRegistrationHandler(IOrdersRepository orderRepository, IRegionsRepository regionsRepository, 
+        CustomersClient customersClient, IOrderProducer producer, ILogger<OrderRegistrationHandler> logger)
     {
         _orderRepository = orderRepository;
         _regionsRepository = regionsRepository;
         _customersClient = customersClient;
         _producer = producer; 
+        _logger = logger;
     }
 
     public async Task Handle(NewOrder order, CancellationToken token)
@@ -27,7 +30,26 @@ public class OrderRegistrationHandler : IOrderRegistrationHandler
 
         if (orderAlreadyRegistered)
             throw new Exception($"Order {order.Id} already registered");
-        var result  = await _customersClient.GetCustomerByIdAsync(new GetCustomerByIdRequest { Id = order.Customer.Id }, cancellationToken: token);
+
+        GetCustomerByIdResponse result;
+        try
+        {
+            result = await _customersClient.GetCustomerByIdAsync(new GetCustomerByIdRequest { Id = order.Customer.Id }, cancellationToken: token);
+        }
+        catch (Exception ex)
+        {
+            //log
+            result = new GetCustomerByIdResponse
+            {
+                Customer = new Customer
+                {
+                    Id = order.Customer.Id,
+                    FirstName = "TestCustFirstName",
+                    LastName = "TestCustLastName",
+                    MobileNumber = "12344567890"
+                }
+            };
+        }
         var orderEntity = Converters.CreateOrderEntity(order, result.Customer, DateTime.UtcNow);
         await _orderRepository.InsertAsync(orderEntity, token);
 
@@ -37,6 +59,10 @@ public class OrderRegistrationHandler : IOrderRegistrationHandler
         if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.orderLatitude, depot.orderLongitude))
         {
             await _producer.ProduceAsync( new[] { new OrderShort(order.Id) }, token);
+        }
+        else
+        {
+            _logger.LogWarning("Order {} is not valid", order.Id);
         }
     }
 

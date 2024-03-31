@@ -53,11 +53,11 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
             if (message is null)
             {
-                _logger.LogWarning("Message is null");
+                //_logger.LogWarning("Message is null");
                 await Task.Delay(100, cancellationToken);
                 return;
             }
-
+            _logger.LogInformation("message {} received from topic {}", message.Message.Value, message.Topic);
             await HandleAsync(message, cancellationToken);
             _kafkaDataProvider.Consumer.Commit();
         }
