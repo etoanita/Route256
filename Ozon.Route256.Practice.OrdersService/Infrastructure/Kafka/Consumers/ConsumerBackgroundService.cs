@@ -27,8 +27,8 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
             return;
         }
 
-        _kafkaDataProvider.Consumer.Subscribe(_consumers.Keys);
-        _logger.LogInformation("Start consumer topic {Topic}", String.Join(',',  _consumers.Keys)) ;
+        _kafkaDataProvider.Consumer.Subscribe(Consumers.Keys);
+        _logger.LogInformation("Start consumer topic {Topic}", String.Join(',',  Consumers.Keys)) ;
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -37,7 +37,7 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
         _kafkaDataProvider.Consumer.Unsubscribe();
 
-        _logger.LogInformation("Stop consumer topics {}", String.Join(',', _consumers.Keys));
+        _logger.LogInformation("Stop consumer topics {}", String.Join(',', Consumers.Keys));
     }
 
     private async Task ConsumeAsync(CancellationToken cancellationToken)
@@ -57,7 +57,7 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
             _logger.LogInformation("message {} received from topic {}", message.Message.Value, message.Topic);
 
-            await _consumers[message.Topic].HandleAsync(message, cancellationToken);
+            await Consumers[message.Topic].HandleAsync(message, cancellationToken);
             
             _kafkaDataProvider.Consumer.Commit();
         }

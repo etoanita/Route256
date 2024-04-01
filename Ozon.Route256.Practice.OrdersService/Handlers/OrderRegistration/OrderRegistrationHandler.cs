@@ -6,7 +6,7 @@ using static Ozon.Route256.Practice.Customers;
 
 namespace Ozon.Route256.Practice.OrdersService.Handlers.OrderRegistration;
 
-public class OrderRegistrationHandler : IOrderRegistrationHandler
+internal class OrderRegistrationHandler : IOrderRegistrationHandler
 {
     private readonly IOrdersRepository _orderRepository;
     private readonly IRegionsRepository _regionsRepository;

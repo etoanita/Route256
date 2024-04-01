@@ -4,7 +4,7 @@ using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
 
 namespace Ozon.Route256.Practice.OrdersService.Handlers.OrderRegistration;
 
-public class OrderEventHandler : IOrderEventHandler
+internal class OrderEventHandler : IOrderEventHandler
 {
     private readonly IOrdersRepository _orderRepository;
 
