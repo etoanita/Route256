@@ -65,7 +65,7 @@
 
     public record struct Coordinate
     (
-        double orderLatitude, 
-        double orderLongitude
+        double OrderLatitude, 
+        double OrderLongitude
     );
 }

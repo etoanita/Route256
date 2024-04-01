@@ -63,7 +63,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
         var custAddress = order.Customer.Address;
         var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region);
         var depot = region.Depots.First();
-        if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.orderLatitude, depot.orderLongitude))
+        if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.OrderLatitude, depot.OrderLongitude))
         {
             await _producer.ProduceAsync( new[] { new OrderShort(order.Id) }, token);
         }
