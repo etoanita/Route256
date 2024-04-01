@@ -1,15 +1,18 @@
 ﻿using Confluent.Kafka;
+using Microsoft.Extensions.Options;
+using Ozon.Route256.Practice.OrdersService.Configurations;
 
 namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka;
 
 internal class OrderDataProvider : IKafkaDataProvider<long, string>
 {
-    public OrderDataProvider(ILogger<OrderDataProvider> logger)
+    public OrderDataProvider(IOptions<KafkaConfiguration> kafkaConfigurationOptions, ILogger<OrderDataProvider> logger)
     {
+        var config = kafkaConfigurationOptions.Value;
         var consumerConfig = new ConsumerConfig
         {
-            GroupId = "new_order_group",
-            BootstrapServers = "broker-1:9091",
+            GroupId = config.ConsumerGroup,
+            BootstrapServers = config.Brokers,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = false,
         };
@@ -22,7 +25,7 @@ internal class OrderDataProvider : IKafkaDataProvider<long, string>
 
         var producerConfig = new ProducerConfig
         {
-            BootstrapServers = "broker-1:9091",
+            BootstrapServers = config.Brokers,
         };
 
         ProducerBuilder<long, string> producerBuilder = new(producerConfig);

@@ -1,8 +1,10 @@
 ﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.ClientBalancing;
+using Ozon.Route256.Practice.OrdersService.Configurations;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Handlers;
 using Ozon.Route256.Practice.OrdersService.Infrastructure;
+using StackExchange.Redis;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -55,7 +57,17 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddHostedService<SdConsumerHostedService>();
             serviceCollection.AddScoped<IRegionsRepository, RegionsRepository>();
             serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
+            serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
             serviceCollection.AddKafka().AddHandlers();
+            serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));
+            serviceCollection.AddSingleton<IConnectionMultiplexer>(
+                _ =>
+                {
+                    var connection = ConnectionMultiplexer.Connect("redis");
+
+                    return connection;
+                });
+
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)

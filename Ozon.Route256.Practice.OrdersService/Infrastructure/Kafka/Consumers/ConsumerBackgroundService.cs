@@ -5,16 +5,14 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 {
     private readonly IKafkaDataProvider<TKey, TValue> _kafkaDataProvider;
     private readonly ILogger _logger;
-    private readonly string _topicName;
     protected readonly IServiceScope _scope;
 
+    protected Dictionary<string, IKafkaConsumeHandler<TKey, TValue>> Consumers { get; set; }
     protected ConsumerBackgroundService(
-        string topicName,
         IServiceProvider serviceProvider,
         IKafkaDataProvider<TKey, TValue> kafkaDataProvider,
         ILogger logger)
     {
-        _topicName = topicName;
         _kafkaDataProvider = kafkaDataProvider;
         _logger = logger;
         _scope = serviceProvider.CreateScope();
@@ -29,9 +27,8 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
             return;
         }
 
-        _kafkaDataProvider.Consumer.Subscribe(_topicName);
-
-        _logger.LogInformation("Start consumer topic {Topic}", _topicName);
+        _kafkaDataProvider.Consumer.Subscribe(_consumers.Keys);
+        _logger.LogInformation("Start consumer topic {Topic}", String.Join(',',  _consumers.Keys)) ;
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -40,7 +37,7 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
         _kafkaDataProvider.Consumer.Unsubscribe();
 
-        _logger.LogInformation("Stop consumer topic {Topic}", _topicName);
+        _logger.LogInformation("Stop consumer topics {}", String.Join(',', _consumers.Keys));
     }
 
     private async Task ConsumeAsync(CancellationToken cancellationToken)
@@ -57,8 +54,11 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
                 await Task.Delay(100, cancellationToken);
                 return;
             }
+
             _logger.LogInformation("message {} received from topic {}", message.Message.Value, message.Topic);
-            await HandleAsync(message, cancellationToken);
+
+            await _consumers[message.Topic].HandleAsync(message, cancellationToken);
+            
             _kafkaDataProvider.Consumer.Commit();
         }
         catch (Exception exc)
@@ -69,9 +69,6 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
             _logger.LogError(exc, "Error process message Key:{Key} Value:{Value}", key, value);
         }
     }
-
-    protected abstract Task HandleAsync(ConsumeResult<TKey, TValue> message, CancellationToken cancellationToken);
-
     public override void Dispose()
     {
         _scope.Dispose();

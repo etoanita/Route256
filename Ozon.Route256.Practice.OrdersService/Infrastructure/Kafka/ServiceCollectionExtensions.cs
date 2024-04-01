@@ -10,8 +10,9 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure
         {
             collection.AddSingleton<IKafkaDataProvider<long, string>, OrderDataProvider>();
             collection.AddSingleton<IOrderProducer, OrderProducer>();
-            collection.AddHostedService<NewOrderConsumer>();
-            collection.AddHostedService<OrderConsumer>();
+            collection.AddScoped<OrderConsumeHandler>();
+            collection.AddScoped<NewOrderConsumeHandler>();
+            collection.AddHostedService<OrderConsumerService>();
             return collection;
         }
     }
