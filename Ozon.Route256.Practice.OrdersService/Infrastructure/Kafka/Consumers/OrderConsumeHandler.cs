@@ -12,9 +12,9 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             Converters =
-        {
-            new JsonStringEnumConverter()
-        }
+            {
+                new JsonStringEnumConverter()
+            }
         };
 
         public OrderConsumeHandler(
@@ -27,10 +27,10 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
 
         public  async Task HandleAsync(ConsumeResult<long, string> message, CancellationToken cancellationToken)
         {
-            var order = JsonSerializer.Deserialize<Models.Order>(message.Message.Value, _jsonSerializerOptions);
-            _logger.LogInformation("Begin update order state for order {}. Order state: {}", order.OrderId, order.OrderState);
             try
             {
+                var order = JsonSerializer.Deserialize<Models.Order>(message.Message.Value, _jsonSerializerOptions);
+                _logger.LogInformation("Begin update order state for order {}. Order state: {}", order.OrderId, order.OrderState);
                 await _orderEventHandler.Handle(order, cancellationToken);
             }
             catch (Exception ex)

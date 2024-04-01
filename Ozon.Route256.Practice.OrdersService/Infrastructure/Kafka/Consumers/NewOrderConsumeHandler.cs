@@ -41,9 +41,16 @@ public class NewOrderConsumeHandler : IKafkaConsumeHandler<long, string>
 
     public async Task HandleAsync(ConsumeResult<long, string> message, CancellationToken cancellationToken)
     {
-        var order = JsonSerializer.Deserialize<Models.NewOrder>(message.Message.Value);
-        order = AdjustOrderRegion(order);
-        await _orderRegistrationHandler.Handle(order, cancellationToken);
-        _logger.LogInformation("New order created, {}", message.Message.Value);
+        try
+        {
+            var order = JsonSerializer.Deserialize<Models.NewOrder>(message.Message.Value);
+            order = AdjustOrderRegion(order);
+            await _orderRegistrationHandler.Handle(order, cancellationToken);
+            _logger.LogInformation("New order created, {}", message.Message.Value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+        }
     }
 }
