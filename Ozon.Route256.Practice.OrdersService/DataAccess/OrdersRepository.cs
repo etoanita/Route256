@@ -43,13 +43,12 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             if (!OrdersById.TryGetValue(orderId, out var order))
                 return Task.FromException<OrderEntity>(new NotFoundException($"Order with id={orderId} not found"));
 
-
             var orderBeforeUpdate = order;
             order = order with { State = state};
             if (OrdersById.TryUpdate(orderId, order, orderBeforeUpdate))
                 return Task.CompletedTask;
 
-            return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. Order already cancelled."));
+            return Task.FromException<OrderEntity>(new BadRequestException($"Cannot update order {orderId} to state {state}"));
         }
 
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType,
