@@ -69,7 +69,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
         }
         else
         {
-            _logger.LogWarning("Order {} is not valid", order.Id);
+            _logger.LogWarning("Order {OrderId} is not valid", order.Id);
         }
     }
 
