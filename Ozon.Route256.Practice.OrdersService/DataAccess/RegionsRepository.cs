@@ -13,12 +13,11 @@
             {
                 const int MAX_VALUE = 90;
                 const int MIN_VALUE = -90;
-                _regionsStorage.Add(_regions[i], new RegionData()
-                {
-                    Depots = new List<Coordinate> {
+                _regionsStorage.Add(_regions[i], new RegionData(
+                    new List<Coordinate> {
                         new(rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE, rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE)
                     }
-                });
+                ));
             }
         }
         public Task<IReadOnlyCollection<string>> GetRegionsListAsync(CancellationToken ct = default)
@@ -58,12 +57,12 @@
         }
     }
 
-    public record struct RegionData
+    public record RegionData
     (
         List<Coordinate> Depots
     );
 
-    public record struct Coordinate
+    public record Coordinate
     (
         double OrderLatitude, 
         double OrderLongitude

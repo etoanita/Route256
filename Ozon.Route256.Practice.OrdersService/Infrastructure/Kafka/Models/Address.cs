@@ -1,6 +1,6 @@
 ﻿namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models
 {
-    public record struct Address(
+    public record Address(
         string Region,
         string City,
         string Street,
