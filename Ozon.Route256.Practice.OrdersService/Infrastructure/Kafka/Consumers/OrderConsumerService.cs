@@ -12,7 +12,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
 
         public OrderConsumerService(
             IServiceProvider serviceProvider,
-            IKafkaDataProvider<long, string> kafkaDataProvider,
+            IKafkaDataConsumer<long, string> kafkaDataProvider,
             IOptions<KafkaConfiguration> kafkaConfigurationOptions,
             ILogger<OrderConsumerService> logger) : base(serviceProvider, kafkaDataProvider, logger)
         {

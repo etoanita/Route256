@@ -8,7 +8,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Producers;
 
 internal class OrderProducer : IOrderProducer
 {
-    private readonly IKafkaDataProvider<long, string> _kafkaDataProvider;
+    private readonly IKafkaDataProducer<long, string> _kafkaDataProvider;
     private readonly ILogger<OrderProducer> _logger;
     private const string TopicName = "new_orders";
 
@@ -20,7 +20,7 @@ internal class OrderProducer : IOrderProducer
         }
     };
 
-    public OrderProducer(IKafkaDataProvider<long, string> kafkaDataProvider, ILogger<OrderProducer> logger)
+    public OrderProducer(IKafkaDataProducer<long, string> kafkaDataProvider, ILogger<OrderProducer> logger)
     {
         _kafkaDataProvider = kafkaDataProvider;
         _logger = logger;

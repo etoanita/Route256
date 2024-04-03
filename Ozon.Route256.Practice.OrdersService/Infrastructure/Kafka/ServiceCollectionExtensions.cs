@@ -8,7 +8,8 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure
     {
         public static IServiceCollection AddKafka(this IServiceCollection collection)
         {
-            collection.AddSingleton<IKafkaDataProvider<long, string>, OrderDataProvider>();
+            collection.AddSingleton<IKafkaDataProducer<long, string>, OrderProducerDataProvider>();
+            collection.AddSingleton<IKafkaDataConsumer<long, string>, OrderConsumerDataProvider>();
             collection.AddSingleton<IOrderProducer, OrderProducer>();
             collection.AddScoped<OrderConsumeHandler>();
             collection.AddScoped<NewOrderConsumeHandler>();

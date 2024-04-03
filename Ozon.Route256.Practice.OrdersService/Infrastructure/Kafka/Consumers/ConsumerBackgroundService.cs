@@ -3,14 +3,14 @@
 namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers;
 public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundService
 {
-    private readonly IKafkaDataProvider<TKey, TValue> _kafkaDataProvider;
+    private readonly IKafkaDataConsumer<TKey, TValue> _kafkaDataProvider;
     private readonly ILogger _logger;
     protected readonly IServiceScope _scope;
 
     protected Dictionary<string, IKafkaConsumeHandler<TKey, TValue>> Consumers { get; set; }
     protected ConsumerBackgroundService(
         IServiceProvider serviceProvider,
-        IKafkaDataProvider<TKey, TValue> kafkaDataProvider,
+        IKafkaDataConsumer<TKey, TValue> kafkaDataProvider,
         ILogger logger)
     {
         _kafkaDataProvider = kafkaDataProvider;
