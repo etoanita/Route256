@@ -57,7 +57,10 @@ public abstract class ConsumerBackgroundService<TKey, TValue> : BackgroundServic
 
             _logger.LogInformation("message {} received from topic {}", message.Message.Value, message.Topic);
 
-            await Consumers[message.Topic].HandleAsync(message, cancellationToken);
+            if (Consumers.ContainsKey(message.Topic))
+                await Consumers[message.Topic].HandleAsync(message, cancellationToken);
+            else
+                _logger.LogWarning("no handler for topic {Topic}", message.Topic);
             
             _kafkaDataProvider.Consumer.Commit();
         }
