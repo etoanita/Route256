@@ -1,4 +1,6 @@
-﻿namespace Ozon.Route256.Practice.OrdersService.DataAccess
+﻿using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
+
+namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     public class RegionsRepository : IRegionsRepository
     {
@@ -56,15 +58,4 @@
             Novosibirsk
         }
     }
-
-    public record RegionData
-    (
-        List<Coordinate> Depots
-    );
-
-    public record Coordinate
-    (
-        double OrderLatitude, 
-        double OrderLongitude
-    );
 }

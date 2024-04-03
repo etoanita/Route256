@@ -1,4 +1,6 @@
-﻿namespace Ozon.Route256.Practice.OrdersService.DataAccess
+﻿using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
+
+namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     internal interface IRegionsRepository
     {
