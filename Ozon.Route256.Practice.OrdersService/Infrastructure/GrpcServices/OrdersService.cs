@@ -4,7 +4,7 @@ using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
 using static Ozon.Route256.Practice.LogisticsSimulator.Grpc.LogisticsSimulatorService;
 
-namespace Ozon.Route256.Practice.OrdersService.GrpcServices
+namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 {
     public sealed class OrdersService : Orders.OrdersBase
     {
@@ -49,7 +49,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
                 return response;
             }
         }
-    
+
 
         public override async Task<GetOrderStateResponse> GetOrderState(GetOrderStateRequest request, ServerCallContext context)
         {
@@ -77,10 +77,10 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             var regions = await _regionsRepository.FindNotPresentedAsync(request.Regions.ToList());
             if (regions.Any())
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {String.Join(',', regions)}"));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
-            var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), Converters.ConvertOrderType(request.OrderType), 
-                Converters.ConvertPaginationParameters(request.PaginationParameters), 
+            var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), Converters.ConvertOrderType(request.OrderType),
+                Converters.ConvertPaginationParameters(request.PaginationParameters),
                 Converters.ConvertSortOrder(request.SortingOrder), request.SortingField.ToList(), context.CancellationToken);
             var items = new GetOrdersListResponse();
             items.OrderItem.Add(result.Select(Converters.ConvertOrderEntity));
@@ -92,7 +92,7 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
             var regions = await _regionsRepository.FindNotPresentedAsync(request.Regions.ToList());
             if (regions.Any())
             {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {String.Join(',', regions)}"));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
             var orders = await _ordersRepository.GetOrdersByRegionsAsync(request.StartDate.ToDateTime(), request.Regions.ToList(), context.CancellationToken);
             var result = new GetOrdersByRegionsResponse();

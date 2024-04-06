@@ -13,7 +13,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         private readonly Mock<IRegionsRepository> _regionsRepositoryMock;
         private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
         private readonly Mock<LogisticsSimulatorServiceClient> _logisticSimulatorMock;
-        private OrdersService.GrpcServices.OrdersService _ordersService;
+        private Infrastructure.GrpcServices.OrdersService _ordersService;
         public OrderServiceTests() 
         {
             _regionsRepositoryMock = new Mock<IRegionsRepository>();
@@ -30,7 +30,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
 
         private void SetupOrderService()
         {
-            _ordersService = new OrdersService.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
+            _ordersService = new Infrastructure.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
                 _regionsRepositoryMock.Object, _logisticSimulatorMock.Object);
         }
 
@@ -125,7 +125,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrdersListRegionNotFound()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { "perm" }))
+            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { "perm" }, CancellationToken.None))
                 .Returns(Task.FromResult(new List<string> { "perm" }.AsReadOnly() as IReadOnlyCollection<string>));
             SetupOrderService();
             var request = new GetOrdersListRequest();
@@ -140,7 +140,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrdersListOk()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { }))
+            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { }, CancellationToken.None))
                 .Returns(Task.FromResult(new List<string> { }.AsReadOnly() as IReadOnlyCollection<string>));
             _ordersRepositoryMock.Setup(client => client.GetOrdersListAsync(It.IsAny<List<string>>()
                 , It.IsAny<OrdersService.DataAccess.OrderType>()
@@ -155,7 +155,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrdersByRegionsRegionNotFound()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { "perm" }))
+            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { "perm" }, CancellationToken.None))
                 .Returns(Task.FromResult(new List<string> { "perm" }.AsReadOnly() as IReadOnlyCollection<string>));
             SetupOrderService();
             var request = new GetOrdersByRegionsRequest();
@@ -170,7 +170,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrdersByRegionsOk()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { }))
+            _regionsRepositoryMock.Setup(client => client.FindNotPresentedAsync(new List<string> { }, CancellationToken.None))
                 .Returns(Task.FromResult(new List<string> { }.AsReadOnly() as IReadOnlyCollection<string>));
             _ordersRepositoryMock.Setup(client => client.GetOrdersByRegionsAsync(It.IsAny<DateTime>()
                 , It.IsAny<List<string>>(), CancellationToken.None)).ReturnsAsync(new List<OrderByRegionEntity>());

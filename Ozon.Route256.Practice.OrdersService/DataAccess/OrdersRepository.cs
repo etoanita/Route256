@@ -16,7 +16,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 
             if (order.State != OrderState.SentToCustomer && order.State != OrderState.Created)
                 return Task.FromException<OrderEntity>(new BadRequestException($"Cannot cancel order {orderId}. " +
-                    $"Order is in appropriate state."));
+                    $"Order is in inappropriate state."));
 
             var orderBeforeUpdate = order;
             order = order with { State = OrderState.Cancelled };
@@ -34,6 +34,21 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                 return Task.FromException<OrderState>(new NotFoundException($"Order with id={orderId} not found"));
 
             return Task.FromResult(order.State);
+        }
+
+        public Task UpdateOrderState(long orderId, OrderState state, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (!OrdersById.TryGetValue(orderId, out var order))
+                return Task.FromException<OrderEntity>(new NotFoundException($"Order with id={orderId} not found"));
+
+            var orderBeforeUpdate = order;
+            order = order with { State = state};
+            if (OrdersById.TryUpdate(orderId, order, orderBeforeUpdate))
+                return Task.CompletedTask;
+
+            return Task.FromException<OrderEntity>(new BadRequestException($"Cannot update order {orderId} to state {state}"));
         }
 
         public Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType,
@@ -80,6 +95,22 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 
             IReadOnlyCollection<OrderEntity> rdOnly = result.ToList().AsReadOnly();
             return Task.FromResult(rdOnly);
+        }
+
+        public Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            OrdersById.TryAdd(orderEntity.OrderId, orderEntity);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            return Task.FromResult(OrdersById.ContainsKey(orderId));
         }
 
         private static IEnumerable<T> SortByColumns<T>(IEnumerable<T> items, SortOrder sortOrder, List<string> sortingFields)

@@ -1,7 +1,8 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
 
-namespace Ozon.Route256.Practice.OrdersService.GrpcServices
+namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 {
     public class Converters
     {
@@ -96,6 +97,25 @@ namespace Ozon.Route256.Practice.OrdersService.GrpcServices
                 TotalPrice = orderByRegionEntity.TotalPrice,
                 TotalWeight = orderByRegionEntity.TotalWeight
             };
+        }
+
+        public static OrderEntity CreateOrderEntity(NewOrder order, Customer customer, DateTime orderDate)
+        {
+            return new(
+                order.Id,
+                order.Goods.Count,
+                order.Goods.Sum(x=>x.Price),
+                order.Goods.Sum(x => x.Weight),
+                (DataAccess.OrderType)(order.Source),
+                orderDate,
+                order.Customer.Address.Region,
+                DataAccess.OrderState.Created,
+                order.Customer.Id,
+                customer.FirstName,
+                customer.LastName,
+                order.Customer.Address.ToString(),
+                customer.MobileNumber
+            );
         }
     }
 }
