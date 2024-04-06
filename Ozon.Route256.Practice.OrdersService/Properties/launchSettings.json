@@ -30,6 +30,13 @@
       },
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "Ozon.Route256.Practice.OrdersService.Migrator": {
+      "commandName": "Project",
+      "commandLineArgs": "migrate",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
