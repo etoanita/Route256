@@ -37,4 +37,8 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="DataAccess\Postgres\" />
+	</ItemGroup>
+
 </Project>

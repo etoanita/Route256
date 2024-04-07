@@ -1,9 +1,10 @@
-﻿using Ozon.Route256.Practice.OrdersService.Exceptions;
+﻿using Ozon.Route256.Practice.OrdersService.Bll;
+using Ozon.Route256.Practice.OrdersService.Exceptions;
 using System.Collections.Concurrent;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
-    public class OrdersRepository : IOrdersRepository
+    public class OrdersRepositoryInMemory : IOrdersRepository
     {
         private static readonly ConcurrentDictionary<long, OrderEntity> OrdersById = new();
 
@@ -57,7 +58,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             ct.ThrowIfCancellationRequested();
 
             IEnumerable<OrderEntity> items = OrdersById.Values.Where(x => (!regions.Any() 
-                || regions.Contains(x.Region)) && x.OrderType == orderType)
+                || regions.Contains(x.Region) && x.OrderType == orderType))
                     .Skip((pp.PageNumber - 1) * pp.PageSize).Take(pp.PageSize);
             if (sortOrder != null) {
                 items = SortByColumns(items, sortOrder.Value, sortingFields);
@@ -75,7 +76,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                 .Where(x => x.OrderDate > startDate && (!regions.Any() || regions.Contains(x.Region)));
             var result = items.GroupBy(x => x.Region).Select(x => new OrderByRegionEntity
             (
-                x.Select(x => x.Region).First(), x.Count(), x.Sum(y => y.TotalPrice), 
+                x.Key, x.Count(), x.Sum(y => y.TotalPrice), 
                 x.Sum(y => y.TotalWeight), x.Select(y => y.CustomerId).Distinct().Count())
             );
 

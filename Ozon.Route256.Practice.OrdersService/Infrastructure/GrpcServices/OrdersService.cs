@@ -79,6 +79,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
+          //  var filteredByRegions = _regionsRepository.
             var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), Converters.ConvertOrderType(request.OrderType),
                 Converters.ConvertPaginationParameters(request.PaginationParameters),
                 Converters.ConvertSortOrder(request.SortingOrder), request.SortingField.ToList(), context.CancellationToken);

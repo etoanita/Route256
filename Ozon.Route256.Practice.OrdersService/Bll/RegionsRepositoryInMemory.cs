@@ -1,17 +1,17 @@
-﻿using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
+﻿using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
 
-namespace Ozon.Route256.Practice.OrdersService.DataAccess
+namespace Ozon.Route256.Practice.OrdersService.Bll
 {
-    public class RegionsRepository : IRegionsRepository
+    public class RegionsRepositoryInMemory : IRegionsRepository
     {
-        private readonly List<string> _regions;
+        internal static readonly List<string> RegionsList = Enum.GetNames(typeof(Regions)).ToList();
         private readonly Dictionary<string, RegionData> _regionsStorage;
-        public RegionsRepository()
+        public RegionsRepositoryInMemory()
         {
-            _regions = Enum.GetNames(typeof(Regions)).ToList();
             _regionsStorage = new Dictionary<string, RegionData>();
             Random rnd = new();
-            for (int i = 0; i < _regions.Count; i++)
+            for (int i = 0; i < RegionsList.Count; i++)
             {
                 const int MAX_VALUE = 90;
                 const int MIN_VALUE = -90;
@@ -41,14 +41,15 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             ct.ThrowIfCancellationRequested();
 
             List<string> result = new();
-            foreach (var region in regions) { 
+            foreach (var region in regions)
+            {
                 if (!_regions.Contains(region))
                 {
                     result.Add(region);
                 }
             }
             IReadOnlyCollection<string> roResult = result.AsReadOnly();
-            return Task.FromResult(roResult); 
+            return Task.FromResult(roResult);
         }
 
         private enum Regions

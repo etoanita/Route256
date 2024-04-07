@@ -1,6 +1,7 @@
 ﻿using FluentMigrator.Runner;
 using FluentMigrator.Runner.Processors;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
+using Ozon.Route256.Practice.OrdersService.Bll;
 using Ozon.Route256.Practice.OrdersService.ClientBalancing;
 using Ozon.Route256.Practice.OrdersService.Configurations;
 using Ozon.Route256.Practice.OrdersService.Dal.Common;
@@ -58,8 +59,8 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSingleton<IDbStore, DbStore>();
             serviceCollection.AddHostedService<SdConsumerHostedService>();
-            serviceCollection.AddScoped<IRegionsRepository, RegionsRepository>();
-            serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
+            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryInMemory>();
+            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryInMemory>();
             serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
             serviceCollection.AddKafka().AddHandlers();
             serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));
