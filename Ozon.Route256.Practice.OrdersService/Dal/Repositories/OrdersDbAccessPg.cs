@@ -51,22 +51,30 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
             throw new NotImplementedException();
         }
 
-        public async Task<OrderDal> Update(OrderDal order, CancellationToken token = default)
+        public async Task<OrderState> GetOrderState(long id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-        }
+            const string sql = @$"
+            select state
+            from {Table} orders
+            where id = :id;
+        ";
 
-        public async Task<OrderState> GetOrderState(long orderId, CancellationToken token = default)
-        {
-            throw new NotImplementedException();
+            await using var connection = _connectionFactory.GetConnection();
+            await using var command = new NpgsqlCommand(sql, connection);
+            command.Parameters.Add("id", id);
+
+            await connection.OpenAsync(token);
+            await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
+
+            var result = await ReadStateDal(reader, token);
+            return result;
         }
 
         public async Task Insert(OrderDal order, CancellationToken token = default)
         {
             const string sql = @$"
             insert into {Table} ({FieldsForInsert})
-            values (:items_count, :total_price, :total_weight, :order_type, :order_date, :region_name, :state, :customer_id);
-        ";
+            values (:items_count, :total_price, :total_weight, :order_type, :order_date, :region_name, :state, :customer_id);";
 
             using var connection = _connectionFactory.GetConnection();
             await using var command = new NpgsqlCommand(sql, connection);
@@ -83,17 +91,21 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
             await command.ExecuteNonQueryAsync(token);
         }
         
-        public async Task<bool> IsExists(long orderId, CancellationToken token = default)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task UpdateOrderState(long orderId, OrderState orderState, CancellationToken token = default)
         {
-            throw new NotImplementedException();
+            const string sql = @$"
+            UPDATE {Table} SET state = :state WHERE id = :order_id;";
+
+            using var connection = _connectionFactory.GetConnection();
+            await using var command = new NpgsqlCommand(sql, connection);
+            command.Parameters.Add("order_id", orderId);
+            command.Parameters.Add("state", orderState);
+
+            await connection.OpenAsync(token);
+            await command.ExecuteNonQueryAsync(token);
         }
 
-        //private const string Fields = "id, items_count, total_price, total_weight, order_type, order_date, region_name, state, customer_id";
+
         private static async Task<OrderDal[]> ReadOrderDal(NpgsqlDataReader reader, CancellationToken token)
         {
             var result = new List<OrderDal>();
@@ -114,6 +126,17 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
             }
 
             return result.ToArray();
+        }
+
+        private static async Task<OrderState> ReadStateDal(NpgsqlDataReader reader, CancellationToken token)
+        {
+            OrderState result = OrderState.Created;
+            while (await reader.ReadAsync(token))
+            {
+                result = reader.GetFieldValue<OrderState>(0);
+            }
+
+            return result;
         }
     }
 }

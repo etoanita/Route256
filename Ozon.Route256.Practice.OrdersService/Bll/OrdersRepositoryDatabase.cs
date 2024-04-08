@@ -28,7 +28,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                     $"Order is in inappropriate state.");
 
             order = order with { State = OrderState.Cancelled };
-            await _ordersDbAccess.Update(order);
+            await _ordersDbAccess.UpdateOrderState(order.Id, OrderState.Cancelled, ct);
         }
 
         public async Task<IReadOnlyCollection<OrderEntity>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, PaginationParameters pp, CancellationToken ct = default)
@@ -82,12 +82,19 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         public async Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            return await _ordersDbAccess.IsExists(orderId, ct);
+            var order = await _ordersDbAccess.Find(orderId, ct);
+            return order != null;
         }
 
         public async Task UpdateOrderState(long orderId, OrderState state, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            var order = await _ordersDbAccess.Find(orderId, ct);
+            bool isExists = order != null;
+            if (!isExists )
+            {
+                throw new Exception($"Order {orderId} was not founf");
+            }
             await _ordersDbAccess.UpdateOrderState(orderId, state, ct);
         }
     }
