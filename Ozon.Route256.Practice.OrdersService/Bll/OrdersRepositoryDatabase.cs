@@ -36,7 +36,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             ct.ThrowIfCancellationRequested();
 
             var result = await _ordersDbAccess.FindByCustomerId(clientId, startFrom, pp, ct);
-            return result.Select(Converters.ConvertOrder).ToList().AsReadOnly();
+            var customer = await _customerDbAccess.Find(clientId);
+            return result.Select(x=> Converters.ConvertOrder(x, customer)).ToList().AsReadOnly();
         }
 
         public async Task<IReadOnlyCollection<OrderByRegionEntity>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default)
@@ -52,7 +53,10 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             ct.ThrowIfCancellationRequested();
 
             var result = await _ordersDbAccess.Find(regions, orderType, pp, sortOrder, sortingFields, ct);
-            return result.Select(Converters.ConvertOrder).ToList().AsReadOnly();
+            var customerIds = result.Select(x => x.CustomerId).Distinct().ToList();
+            var customers = await _customerDbAccess.FindMany(customerIds);
+            var custmoersDict = customers.ToDictionary(x => x.Id);
+            return result.Select(x=> Converters.ConvertOrder(x, custmoersDict[x.CustomerId])).ToList().AsReadOnly();
         }
 
         public async Task<OrderState> GetOrderStateAsync(long orderId, CancellationToken ct = default)
@@ -93,7 +97,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             bool isExists = order != null;
             if (!isExists )
             {
-                throw new Exception($"Order {orderId} was not founf");
+                throw new Exception($"Order {orderId} was not found");
             }
             await _ordersDbAccess.UpdateOrderState(orderId, state, ct);
         }

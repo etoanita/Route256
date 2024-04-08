@@ -5,9 +5,12 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
 {
     public static class Converters
     {
-        public static OrderEntity ConvertOrder(OrderDal order)
+        public static OrderEntity ConvertOrder(OrderDal order, CustomerDal customer)
         {
-            return null;
+            return new OrderEntity(order.Id, order.ItemsCount, order.TotalPrice, order.TotalWeight, order.OrderType,
+                order.OrderDate, order.Region, order.State, customer.Id,
+                customer.Name, customer.Surname, customer.Address, customer.Phone
+            );
         }
 
         public static OrderDal ConvertOrder(OrderEntity order)
@@ -18,7 +21,7 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
 
         public static OrderByRegionEntity ConvertOrderByRegion(OrderByRegionDal order)
         {
-            return null;
+            return new OrderByRegionEntity(order.Region, order.OrdersCount, order.TotalPrice, order.TotalWeight, order.ClientsCount); ;
         }
     }
 }

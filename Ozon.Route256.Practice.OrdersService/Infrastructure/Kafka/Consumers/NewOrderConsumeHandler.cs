@@ -33,7 +33,7 @@ public class NewOrderConsumeHandler : IKafkaConsumeHandler<long, string>
             {
                 Address =  order.Customer.Address with
                 {
-                    Region = Enum.GetName((Regions)_random.Next(1, 3))
+                    Region = Enum.GetName((Regions)_random.Next(0, 2))
                 }
             }
         };

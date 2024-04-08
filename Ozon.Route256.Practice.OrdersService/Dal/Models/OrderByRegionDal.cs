@@ -1,6 +1,11 @@
 ﻿namespace Ozon.Route256.Practice.OrdersService.Dal.Models
 {
-    public class OrderByRegionDal
-    {
-    }
+    public record OrderByRegionDal
+    (
+        string Region,
+        int OrdersCount,
+        double TotalPrice,
+        long TotalWeight,
+        int ClientsCount
+    );
 }
