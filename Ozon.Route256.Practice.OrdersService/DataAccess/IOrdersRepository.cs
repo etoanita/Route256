@@ -2,7 +2,7 @@
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
-    internal interface IOrdersRepository
+    public interface IOrdersRepository
     {
         Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default);
 

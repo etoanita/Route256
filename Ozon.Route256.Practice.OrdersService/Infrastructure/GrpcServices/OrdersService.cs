@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
@@ -11,23 +12,32 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
         private readonly IOrdersRepository _ordersRepository;
         private readonly IRegionsRepository _regionsRepository;
         private readonly LogisticsSimulatorServiceClient _logisticsSimulatorServiceClient;
-        internal OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
+        public OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
         {
             _ordersRepository = ordersRepository;
             _regionsRepository = regionsRepository;
             _logisticsSimulatorServiceClient = logisticsSimulatorServiceClient;
         }
+
+        public override async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request, ServerCallContext context)
+        {
+            await _ordersRepository.InsertAsync(new OrderEntity(0, request.ItemsCount, request.TotalPrice, request.TotalWeight, 
+                Converters.ConvertOrderType(request.OrderType), request.OrderDate.ToDateTime(), request.Region, 
+                Converters.ConvertOrderState(request.State), request.CustomerId,
+                request.CustomerName, request.CustomerSurname, request.Address, request.Phone));
+            return new();
+        }
         public override async Task<CancelOrderResponse> CancelOrder(CancelOrderRequest request, ServerCallContext context)
         {
             try
             {
-                var result = await _logisticsSimulatorServiceClient.OrderCancelAsync(new Order { Id = request.OrderId });
+               /* var result = await _logisticsSimulatorServiceClient.OrderCancelAsync(new Order { Id = request.OrderId });
                 if (!result.Success)
                 {
                     if (result.Error.Contains("not found")) //todo: handle correctly
                         throw new RpcException(new Status(StatusCode.NotFound, result.Error));
                     return new CancelOrderResponse { Success = false, Message = result.Error };
-                }
+                }*/
                 await _ordersRepository.CancelOrderAsync(request.OrderId, context.CancellationToken);
                 CancelOrderResponse response = new()
                 {

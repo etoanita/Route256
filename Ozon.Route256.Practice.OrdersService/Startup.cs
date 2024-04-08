@@ -6,6 +6,7 @@ using Ozon.Route256.Practice.OrdersService.ClientBalancing;
 using Ozon.Route256.Practice.OrdersService.Configurations;
 using Ozon.Route256.Practice.OrdersService.Dal.Common;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrdersService.Handlers;
 using Ozon.Route256.Practice.OrdersService.Infrastructure;
 using StackExchange.Redis;
@@ -59,15 +60,18 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSingleton<IDbStore, DbStore>();
             serviceCollection.AddHostedService<SdConsumerHostedService>();
-            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryInMemory>();
-            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryInMemory>();
+            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryDatabase>();
+            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryDatabase>();
+            serviceCollection.AddScoped<OrdersDbAccessPg>();
+            serviceCollection.AddScoped<RegionsDbAccessPg>();
+            serviceCollection.AddScoped<CustomerDbAccessPg>();
             serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
             serviceCollection.AddKafka().AddHandlers();
             serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));
             serviceCollection.AddSingleton<IConnectionMultiplexer>(
                 _ =>
                 {
-                    var connection = ConnectionMultiplexer.Connect("redis");
+                    var connection = ConnectionMultiplexer.Connect("redis", x => x.AbortOnConnectFail = false);
 
                     return connection;
                 });

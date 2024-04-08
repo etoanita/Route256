@@ -2,14 +2,13 @@
 {
     public record OrderDal
     (
-        long OrderId,
+        long Id,
         int ItemsCount,
         double TotalPrice,
         long TotalWeight,
-        OrderType OrderType,
+        DataAccess.OrderType OrderType,
         DateTime OrderDate,
-        int RegionId,
-        int DepotId,
+        string Region,
         DataAccess.OrderState State,
         int CustomerId
     );

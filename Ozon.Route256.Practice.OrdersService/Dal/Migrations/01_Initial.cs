@@ -8,8 +8,8 @@ public class Initial: SqlMigration
 {
 protected override string GetUpSql(IServiceProvider services) => @"
 
-create type order_type AS ENUM ('Web', 'Api', 'Mobile');
-create type order_state AS ENUM ('Created', 'SentToCustomer', 'Delivered', 'Lost', 'Cancelled');
+create type order_type AS ENUM ('web', 'api', 'mobile');
+create type order_state AS ENUM ('created', 'sentToCustomer', 'delivered', 'lost', 'cancelled');
 
 create table if not exists orders(
     id bigserial primary key,
@@ -20,7 +20,7 @@ create table if not exists orders(
     order_date timestamp,
     region_name text,
     state order_state,
-    customer_id text
+    customer_id int
 );
 
 create table if not exists customers(

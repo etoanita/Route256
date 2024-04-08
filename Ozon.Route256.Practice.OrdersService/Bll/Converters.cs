@@ -12,7 +12,8 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
 
         public static OrderDal ConvertOrder(OrderEntity order)
         {
-            return null;
+            return new OrderDal(order.OrderId, order.ItemsCount, order.TotalPrice, order.TotalWeight,
+                order.OrderType, order.OrderDate, order.Region, order.State, order.CustomerId);
         }
 
         public static OrderByRegionEntity ConvertOrderByRegion(OrderByRegionDal order)

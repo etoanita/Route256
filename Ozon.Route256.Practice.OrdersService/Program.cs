@@ -40,6 +40,7 @@ public static class ProgramExtension
             using var scope = host.Services.CreateScope();
             var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
             runner.MigrateUp();
+            //runner.MigrateDown(0);
         }
         else
             host.Run();

@@ -1,20 +1,21 @@
 ﻿using Ozon.Route256.Practice.OrdersService.Bll;
 using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
+using System.Transactions;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     public class OrdersRepositoryDatabase : IOrdersRepository
     {
         private readonly OrdersDbAccessPg _ordersDbAccess;
-        private readonly RegionsDbAccessPg _regionsDbAccessPg;
+        private readonly CustomerDbAccessPg _customerDbAccess;
 
         public OrdersRepositoryDatabase(
             OrdersDbAccessPg ordersDbAccess,
-            RegionsDbAccessPg regionsDbAccessPg)
+            CustomerDbAccessPg customerDbAccess)
         {
             _ordersDbAccess = ordersDbAccess;
-            _regionsDbAccessPg = regionsDbAccessPg;
+            _customerDbAccess = customerDbAccess;
         }
         public async Task CancelOrderAsync(long orderId, CancellationToken ct = default)
         {
@@ -42,7 +43,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
 
-            var result = await _ordersDbAccess.FindByRegions(regions, startDate, pp);
+            var result = await _ordersDbAccess.FindByRegions(regions, startDate, ct);
             return result.Select(Converters.ConvertOrderByRegion).ToList().AsReadOnly();
         }
 
@@ -50,8 +51,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         {
             ct.ThrowIfCancellationRequested();
 
-            var result = await _ordersDbAccess.FindByRegions(regions, startDate, pp);
-            return result.Select(Converters.ConvertOrderByRegion).ToList().AsReadOnly();
+            var result = await _ordersDbAccess.Find(regions, orderType, pp, sortOrder, sortingFields, ct);
+            return result.Select(Converters.ConvertOrder).ToList().AsReadOnly();
         }
 
         public async Task<OrderState> GetOrderStateAsync(long orderId, CancellationToken ct = default)
@@ -63,7 +64,19 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         public async Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            using var ts = new TransactionScope(
+            TransactionScopeOption.Required,
+            new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted,
+                Timeout = TimeSpan.FromSeconds(5)
+            },
+            TransactionScopeAsyncFlowOption.Enabled);
+
+            await _customerDbAccess.CreateOrUpdate(orderEntity.CustomerId, orderEntity.CustomerName, orderEntity.CustomerSurname, orderEntity.Address, orderEntity.Phone, ct);
             await _ordersDbAccess.Insert(Converters.ConvertOrder(orderEntity), ct);
+
+            ts.Complete();
         }
 
         public async Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)

@@ -5,13 +5,13 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
 {
     public class RegionsRepositoryInMemory : IRegionsRepository
     {
-        internal static readonly List<string> RegionsList = Enum.GetNames(typeof(Regions)).ToList();
+        private static readonly List<string> _regions = Enum.GetNames(typeof(Regions)).ToList();
         private readonly Dictionary<string, RegionData> _regionsStorage;
         public RegionsRepositoryInMemory()
         {
             _regionsStorage = new Dictionary<string, RegionData>();
             Random rnd = new();
-            for (int i = 0; i < RegionsList.Count; i++)
+            for (int i = 0; i < _regions.Count; i++)
             {
                 const int MAX_VALUE = 90;
                 const int MIN_VALUE = -90;
