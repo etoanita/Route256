@@ -1,7 +1,12 @@
-﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
+﻿using FluentMigrator.Runner;
+using FluentMigrator.Runner.Processors;
+using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
+using Ozon.Route256.Practice.OrdersService.Bll;
 using Ozon.Route256.Practice.OrdersService.ClientBalancing;
 using Ozon.Route256.Practice.OrdersService.Configurations;
+using Ozon.Route256.Practice.OrdersService.Dal.Common;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrdersService.Handlers;
 using Ozon.Route256.Practice.OrdersService.Infrastructure;
 using StackExchange.Redis;
@@ -55,18 +60,39 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSingleton<IDbStore, DbStore>();
             serviceCollection.AddHostedService<SdConsumerHostedService>();
-            serviceCollection.AddScoped<IRegionsRepository, RegionsRepository>();
-            serviceCollection.AddScoped<IOrdersRepository, OrdersRepository>();
+            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryDatabase>();
+            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryDatabase>();
+            serviceCollection.AddScoped<OrdersDbAccessPg>();
+            serviceCollection.AddScoped<RegionsDbAccessPg>();
+            serviceCollection.AddScoped<CustomerDbAccessPg>();
             serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
             serviceCollection.AddKafka().AddHandlers();
             serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));
             serviceCollection.AddSingleton<IConnectionMultiplexer>(
                 _ =>
                 {
-                    var connection = ConnectionMultiplexer.Connect("redis");
+                    var connection = ConnectionMultiplexer.Connect("redis", x => x.AbortOnConnectFail = false);
 
                     return connection;
                 });
+            var connectionString = _configuration.GetConnectionString("OrderDatabase");
+            serviceCollection.AddFluentMigratorCore()
+                .ConfigureRunner(
+                    builder => builder
+                        .AddPostgres()
+                        .ScanIn(GetType().Assembly)
+                        .For.Migrations())
+                .AddOptions<ProcessorOptions>()
+                .Configure(
+                    options =>
+                    {
+                        options.ProviderSwitches = "Force Quote=false";
+                        options.Timeout = TimeSpan.FromMinutes(10);
+                        options.ConnectionString = connectionString;
+                    });
+            PostgresMapping.MapCompositeTypes();
+
+            serviceCollection.AddSingleton<IPostgresConnectionFactory>(_ => new PostgresConnectionFactory(connectionString));
 
         }
 

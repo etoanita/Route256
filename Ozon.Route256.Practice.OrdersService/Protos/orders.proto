@@ -6,12 +6,32 @@ option csharp_namespace = "Ozon.Route256.Practice";
 
 service Orders
 {
+  rpc CreateOrder(CreateOrderRequest) returns(CreateOrderResponse);
   rpc CancelOrder(CancelOrderRequest) returns(CancelOrderResponse);
   rpc GetOrderState(GetOrderStateRequest) returns(GetOrderStateResponse);
   rpc GetRegionsList(GetRegionsListRequest) returns(GetRegionsListResponse);
   rpc GetOrdersList(GetOrdersListRequest) returns(GetOrdersListResponse);
   rpc GetOrdersByRegions(GetOrdersByRegionsRequest) returns(GetOrdersByRegionsResponse);
   rpc GetOrdersByClientId(GetOrdersByClientIdRequest) returns(GetOrdersByClientIdResponse);
+}
+
+message CreateOrderRequest {
+	int32 items_count = 1;
+	double total_price = 2;
+	int64 total_weight = 3;
+	OrderType order_type = 4;
+	google.protobuf.Timestamp order_date = 5;
+	string region = 6;
+	OrderState state = 7;
+	int32 customer_id = 8;
+	string customer_name = 9;
+	string customer_surname = 10;
+	string address = 11;
+	string phone = 12;
+}
+
+message CreateOrderResponse {
+
 }
 
 message CancelOrderRequest {

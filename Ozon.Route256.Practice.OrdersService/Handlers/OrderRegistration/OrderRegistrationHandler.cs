@@ -34,7 +34,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
         if (orderAlreadyRegistered)
             throw new Exception($"Order {order.Id} already registered");
 
-        Customer customer;
+        Customer? customer;
         try
         {
             customer = await _customersRepository.Find(order.Customer.Id, token);
@@ -42,6 +42,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
             {
                 var result = await _customersClient.GetCustomerByIdAsync(new GetCustomerByIdRequest { Id = order.Customer.Id }, cancellationToken: token);
                 customer = result.Customer;
+                await _customersRepository.Insert(customer, token);
             }
             else
                 _logger.LogInformation("Get customer data from redis cache");
@@ -61,7 +62,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
         await _orderRepository.InsertAsync(orderEntity, token);
 
         var custAddress = order.Customer.Address;
-        var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region);
+        var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region, token);
         var depot = region.Depots.First();
         if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.OrderLatitude, depot.OrderLongitude))
         {
