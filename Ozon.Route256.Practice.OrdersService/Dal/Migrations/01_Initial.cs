@@ -1,10 +1,11 @@
 ﻿using FluentMigrator;
+using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 using Ozon.Route256.Practice.OrdersService.Dal.Common;
 
 namespace Ozon.Route256.Practice.OrdersService.Dal.Migrations;
 
 [Migration(1, "Initial migration")]
-public class Initial: SqlMigration
+public class Initial: ShardSqlMigration
 {
 protected override string GetUpSql(IServiceProvider services) => @"
 
@@ -42,8 +43,8 @@ create table if not exists depots (
     longitude double precision
 )";
 
-protected override string GetDownSql(
-    IServiceProvider services) => @"
+    protected override string GetDownSql(
+        IServiceProvider services) => @"
 
     drop table if exists customers;
     drop table if exists orders;
@@ -51,4 +52,5 @@ protected override string GetDownSql(
     drop table if exists depots;
     drop type order_type;
     drop type order_state";
+
 }

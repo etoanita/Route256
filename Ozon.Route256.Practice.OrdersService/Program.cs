@@ -2,9 +2,10 @@ using FluentMigrator.Runner;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Ozon.Route256.Practice.OrdersService;
+using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 using System.Net;
 
- Host
+ await Host
     .CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>()
         .ConfigureKestrel(option =>
@@ -31,18 +32,19 @@ public static class ProgramExtension
         }
     }
 
-    public static void RunOrMigrate(
-    this IHost host,
-    string[] args)
+    public static async Task RunOrMigrate(
+        this IHost host,
+        string[] args)
     {
-        if (args.Length > 0 && args[0].Equals("migrate", StringComparison.InvariantCultureIgnoreCase))
+        var needMigration = args.Length > 0 && args[0].Equals("migrate", StringComparison.InvariantCultureIgnoreCase);
+        if (needMigration)
         {
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(1));
             using var scope = host.Services.CreateScope();
-            var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-            runner.MigrateUp();
-            //runner.MigrateDown(0);
+            var runner = scope.ServiceProvider.GetRequiredService<IShardMigrator>();
+            await runner.Migrate(cts.Token);
         }
         else
-            host.Run();
+            await host.RunAsync();
     }
 }

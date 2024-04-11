@@ -7,42 +7,7 @@ volumes:
     name: orders-service-db-volume
 
 services:
-  orders-service-1:
-    build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
-    container_name: orders-service-1
-    depends_on: 
-      - orders-service-db
-      - service-discovery
-      - broker-1
-      - broker-2
-      - broker-3
-    environment:
-      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
-      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
-      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
-      "ROUTE256_GRPC_PORT": "5010"
-
-  orders-service-2:
-    build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
-    container_name: orders-service-2
-    ports:
-      - 5010:5010 
-    depends_on: 
-      - orders-service-db
-      - service-discovery 
-      - broker-1
-      - broker-2
-      - broker-3
-    environment:
-      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
-      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
-      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
-      "ROUTE256_GRPC_PORT": "5010"
-
+ 
   gateway-service:
     build:
       context: ./Ozon.Route256.Practice.GatewayService
@@ -111,7 +76,7 @@ services:
       - "6081:80"
     environment:
       - >-
-        ROUTE256_DB_STATE=cluster:0-9:db1:1543;cluster:10-19:db2:1543;cluster1:0:db3:1543
+        ROUTE256_DB_STATE=cluster:0-3:localhost:5401;cluster:4-7:localhost:5402;
       - ROUTE256_UPDATE_TIMEOUT=10
 
   customer-service-db:
@@ -126,18 +91,26 @@ services:
     volumes:
       - 'customer-service-db-volume:/var/lib/postgresql/data'
 
-  orders-service-db:
+  orders-service-db-1:
     image: 'postgres:latest'
-    container_name: orders-service-db
+    container_name: orders-service-db-1
+    environment:
+      - POSTGRES_DB=orders-service
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test     
+    ports:
+      - '5401:5432'
+
+  orders-service-db-2:
+    image: 'postgres:latest'
+    container_name: orders-service-db-2
     environment:
       - POSTGRES_DB=orders-service
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
     ports:
-      - '5401:5432'
-    volumes:
-      - 'orders-service-db-volume:/var/lib/postgresql/data'
-
+      - '5402:5432'
+ 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.2
     container_name: zookeeper

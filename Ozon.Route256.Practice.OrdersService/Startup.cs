@@ -1,5 +1,4 @@
-﻿using FluentMigrator.Runner;
-using FluentMigrator.Runner.Processors;
+﻿using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.Bll;
 using Ozon.Route256.Practice.OrdersService.ClientBalancing;
@@ -76,23 +75,29 @@ namespace Ozon.Route256.Practice.OrdersService
                     return connection;
                 });
             var connectionString = _configuration.GetConnectionString("OrderDatabase");
-            serviceCollection.AddFluentMigratorCore()
-                .ConfigureRunner(
-                    builder => builder
-                        .AddPostgres()
-                        .ScanIn(GetType().Assembly)
-                        .For.Migrations())
-                .AddOptions<ProcessorOptions>()
-                .Configure(
-                    options =>
-                    {
-                        options.ProviderSwitches = "Force Quote=false";
-                        options.Timeout = TimeSpan.FromMinutes(10);
-                        options.ConnectionString = connectionString;
-                    });
+            //serviceCollection.AddFluentMigratorCore()
+            //    .ConfigureRunner(
+            //        builder => builder
+            //            .AddPostgres()
+            //            .ScanIn(GetType().Assembly)
+            //            .For.Migrations())
+            //    .AddOptions<ProcessorOptions>()
+            //    .Configure(
+            //        options =>
+            //        {
+            //            options.ProviderSwitches = "Force Quote=false";
+            //            options.Timeout = TimeSpan.FromMinutes(10);
+            //            options.ConnectionString = connectionString;
+            //        });
             PostgresMapping.MapCompositeTypes();
 
             serviceCollection.AddSingleton<IPostgresConnectionFactory>(_ => new PostgresConnectionFactory(connectionString));
+
+            serviceCollection.Configure<DbOptions>(_configuration.GetSection(nameof(DbOptions)));
+            serviceCollection.AddSingleton<IShardPostgresConnectionFactory, ShardConnectionFactory>();
+            serviceCollection.AddSingleton<IShardingRule<int>, IntShardingRule>();
+          //  serviceCollection.AddSingleton<IShardingRule<string>, StringShardingRule>();
+            serviceCollection.AddSingleton<IShardMigrator, ShardMigrator>();
 
         }
 
