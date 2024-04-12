@@ -2,6 +2,7 @@ namespace Ozon.Route256.Practice.OrdersService.ClientBalancing;
 
 public interface IDbStore
 {
+    DbEndpoint GetEndpointByBucket(int bucketId);
     Task UpdateEndpointAsync(IReadOnlyCollection<DbEndpoint> dbEndpoints);
     int BucketsCount { get; }
 }

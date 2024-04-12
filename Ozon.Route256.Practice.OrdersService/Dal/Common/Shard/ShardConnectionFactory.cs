@@ -8,7 +8,7 @@ namespace Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 
 public interface IShardPostgresConnectionFactory
 {
-    //ShardNpgsqlConnection GetConnectionByBucketId(int bucketId);
+    ShardNpgsqlConnection GetConnectionByBucketId(int bucketId);
     IEnumerable<int> GetAllBuckets();
 }
 
@@ -34,13 +34,13 @@ public class ShardConnectionFactory: IShardPostgresConnectionFactory
         }
     }
 
-  /*  public ShardNpgsqlConnection GetConnectionByBucketId(
+    public ShardNpgsqlConnection GetConnectionByBucketId(
         int bucketId)
     {
         var endpoint = _dbStore.GetEndpointByBucket(bucketId);
         var connectionString = GetConnectionString(endpoint);
         return new ShardNpgsqlConnection(new NpgsqlConnection(connectionString), bucketId);
-    }*/
+    }
 
     private string GetConnectionString(
         DbEndpoint endpoint)

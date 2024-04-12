@@ -61,9 +61,9 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddHostedService<SdConsumerHostedService>();
             serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryDatabase>();
             serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryDatabase>();
-            serviceCollection.AddScoped<OrdersDbAccessPg>();
-            serviceCollection.AddScoped<RegionsDbAccessPg>();
-            serviceCollection.AddScoped<CustomerDbAccessPg>();
+            serviceCollection.AddScoped<ShardOrdersDbAccess>();
+            serviceCollection.AddScoped<ShardRegionsDbAccess>();
+            serviceCollection.AddScoped<ShardCustomerDbAccess>();
             serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
             serviceCollection.AddKafka().AddHandlers();
             serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));

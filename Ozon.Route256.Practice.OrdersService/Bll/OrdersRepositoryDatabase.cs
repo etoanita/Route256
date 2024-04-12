@@ -7,12 +7,12 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     public class OrdersRepositoryDatabase : IOrdersRepository
     {
-        private readonly OrdersDbAccessPg _ordersDbAccess;
-        private readonly CustomerDbAccessPg _customerDbAccess;
+        private readonly ShardOrdersDbAccess _ordersDbAccess;
+        private readonly ShardCustomerDbAccess _customerDbAccess;
 
         public OrdersRepositoryDatabase(
-            OrdersDbAccessPg ordersDbAccess,
-            CustomerDbAccessPg customerDbAccess)
+            ShardOrdersDbAccess ordersDbAccess,
+            ShardCustomerDbAccess customerDbAccess)
         {
             _ordersDbAccess = ordersDbAccess;
             _customerDbAccess = customerDbAccess;

@@ -17,7 +17,8 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
                 const int MIN_VALUE = -90;
                 _regionsStorage.Add(_regions[i], new RegionData(
                     new List<Coordinate> {
-                        new(rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE, rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE)
+                        new() { Latitude = rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE,
+                            Longitude = rnd.NextDouble() * (MAX_VALUE - MIN_VALUE) + MIN_VALUE }
                     }
                 ));
             }

@@ -7,7 +7,44 @@ volumes:
     name: orders-service-db-volume
 
 services:
- 
+  orders-service-1:
+    build:
+      context: ./Ozon.Route256.Practice.OrdersService
+      dockerfile: Dockerfile
+    container_name: orders-service-1
+    depends_on: 
+    - orders-service-db-1
+    - orders-service-db-2
+    - service-discovery
+    - broker-1
+    - broker-2
+    - broker-3
+    environment:
+      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
+      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
+      "ROUTE256_GRPC_PORT": "5010"
+
+  orders-service-2:
+    build:
+      context: ./Ozon.Route256.Practice.OrdersService
+      dockerfile: Dockerfile
+    container_name: orders-service-2
+    ports:
+      - 5010:5010 
+    depends_on: 
+      - orders-service-db-1
+      - orders-service-db-2
+      - service-discovery 
+      - broker-1
+      - broker-2
+      - broker-3
+    environment:
+      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
+      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
+      "ROUTE256_GRPC_PORT": "5010"
+
   gateway-service:
     build:
       context: ./Ozon.Route256.Practice.GatewayService
@@ -76,7 +113,7 @@ services:
       - "6081:80"
     environment:
       - >-
-        ROUTE256_DB_STATE=cluster:0-3:localhost:5401;cluster:4-7:localhost:5402;
+        ROUTE256_DB_STATE=cluster:0-3:orders-service-db-1:5432;cluster:4-7:orders-service-db-2:5432;
       - ROUTE256_UPDATE_TIMEOUT=10
 
   customer-service-db:
