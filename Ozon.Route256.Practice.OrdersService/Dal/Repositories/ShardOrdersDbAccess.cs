@@ -189,7 +189,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
             param.Add("items_count", order.ItemsCount);
             param.Add("total_price", order.TotalPrice);
             param.Add("total_weight", order.TotalWeight);
-            param.Add("order_type", ((OrderTypeDb)(int)order.OrderType));
+            param.Add("order_type", order.OrderType);
             param.Add("order_date", order.OrderDate);
             param.Add("region_name", order.RegionName);
             param.Add("state", order.State);

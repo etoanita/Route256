@@ -6,18 +6,18 @@ namespace Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 
 public class StringShardingRule: IShardingRule<string>
 {
-    private readonly int _bucketCount;
+    private readonly IDbStore _dbStore;
 
     public StringShardingRule(IDbStore dbStore)
     {
-        _bucketCount = dbStore.BucketsCount;
+        _dbStore = dbStore;
     }
 
     public int GetBucketId(string shardKey)
     {
         var shardKeyHashCode = GetShardKeyHashCode(shardKey);
 
-        return Math.Abs(shardKeyHashCode) % _bucketCount;
+        return Math.Abs(shardKeyHashCode) % _dbStore.BucketsCount;
     }
 
     private static int GetShardKeyHashCode(string shardKey)

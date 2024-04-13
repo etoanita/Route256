@@ -1,6 +1,8 @@
 ﻿using Dapper;
+using Google.Protobuf.WellKnownTypes;
 using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 using Ozon.Route256.Practice.OrdersService.Dal.Models;
+using System.Collections.Generic;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
 public class ShardCustomerDbAccess : BaseShardRepository
@@ -36,7 +38,7 @@ public class ShardCustomerDbAccess : BaseShardRepository
             const string sql = @$"
                 select {Fields}
                 from {Table}
-                where id in (:ids);
+                where id = any (:ids);
             ";
 
             await using var connection = GetConnectionByBucket(bucketId, token);

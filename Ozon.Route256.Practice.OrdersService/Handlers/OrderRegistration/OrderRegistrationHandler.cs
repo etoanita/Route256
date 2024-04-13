@@ -59,7 +59,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
             };
         }
         var orderEntity = Converters.CreateOrderEntity(order, customer, DateTime.UtcNow);
-            //        await _orderRepository.InsertAsync(orderEntity, token);
+        await _orderRepository.InsertAsync(orderEntity, token);
 
         var custAddress = order.Customer.Address;
         try
