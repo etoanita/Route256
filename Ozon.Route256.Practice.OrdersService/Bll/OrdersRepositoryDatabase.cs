@@ -27,7 +27,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
                 throw new BadRequestException($"Cannot cancel order {orderId}. " +
                     $"Order is in inappropriate state.");
 
-            order = order with { State = OrderState.Cancelled };
+            order.State = OrderState.Cancelled;
             await _ordersDbAccess.UpdateOrderState(order.Id, OrderState.Cancelled, ct);
         }
 
@@ -68,19 +68,19 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         public async Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
-            using var ts = new TransactionScope(
-            TransactionScopeOption.Required,
-            new TransactionOptions
-            {
-                IsolationLevel = IsolationLevel.ReadCommitted,
-                Timeout = TimeSpan.FromSeconds(5)
-            },
-            TransactionScopeAsyncFlowOption.Enabled);
+            //using var ts = new TransactionScope(
+            //TransactionScopeOption.Required,
+            //new TransactionOptions
+            //{
+            //    IsolationLevel = IsolationLevel.ReadCommitted,
+            //    Timeout = TimeSpan.FromSeconds(5)
+            //},
+            //TransactionScopeAsyncFlowOption.Enabled);
 
             await _customerDbAccess.CreateOrUpdate(orderEntity.CustomerId, orderEntity.CustomerName, orderEntity.CustomerSurname, orderEntity.Address, orderEntity.Phone, ct);
             await _ordersDbAccess.Insert(Converters.ConvertOrder(orderEntity), ct);
 
-            ts.Complete();
+            //ts.Complete();
         }
 
         public async Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default)

@@ -26,6 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="DataAccess\Postgres\**" />
+    <Content Remove="DataAccess\Postgres\**" />
+    <EmbeddedResource Remove="DataAccess\Postgres\**" />
+    <None Remove="DataAccess\Postgres\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Protos\customers.proto" />
     <None Remove="protos\logisticsSimulator.proto" />
   </ItemGroup>
@@ -37,10 +44,6 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
 		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="DataAccess\Postgres\" />
 	</ItemGroup>
 
 </Project>

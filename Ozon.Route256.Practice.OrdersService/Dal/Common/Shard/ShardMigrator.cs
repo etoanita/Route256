@@ -43,7 +43,8 @@ public class ShardMigrator: IShardMigrator
                  var context = scope.ServiceProvider.GetRequiredService<BucketMigrationContext>();
                  context.UpdateCurrentDbSchema(bucketId);
                  var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-                 runner.MigrateUp();
+                runner.MigrateUp();
+                //runner.MigrateDown(0);
              }
          }
     }

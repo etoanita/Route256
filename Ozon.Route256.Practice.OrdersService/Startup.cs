@@ -95,8 +95,8 @@ namespace Ozon.Route256.Practice.OrdersService
 
             serviceCollection.Configure<DbOptions>(_configuration.GetSection(nameof(DbOptions)));
             serviceCollection.AddSingleton<IShardPostgresConnectionFactory, ShardConnectionFactory>();
-            serviceCollection.AddSingleton<IShardingRule<int>, IntShardingRule>();
-          //  serviceCollection.AddSingleton<IShardingRule<string>, StringShardingRule>();
+            serviceCollection.AddSingleton<IShardingRule<long>, LongShardingRule>();
+            serviceCollection.AddSingleton<IShardingRule<string>, StringShardingRule>();
             serviceCollection.AddSingleton<IShardMigrator, ShardMigrator>();
 
         }

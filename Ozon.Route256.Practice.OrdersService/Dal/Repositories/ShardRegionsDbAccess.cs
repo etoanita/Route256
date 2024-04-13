@@ -7,7 +7,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
     public class ShardRegionsDbAccess : BaseShardRepository
     {
         public ShardRegionsDbAccess(IShardPostgresConnectionFactory connectionFactory,
-            IShardingRule<int> shardingRule) : base(connectionFactory, shardingRule)
+            IShardingRule<long> shardingRule, IShardingRule<string>  stringShardingRule)
+            : base(connectionFactory, shardingRule, stringShardingRule)
         {
         }
         public async Task<IReadOnlyCollection<string>> FindAll(CancellationToken token = default)

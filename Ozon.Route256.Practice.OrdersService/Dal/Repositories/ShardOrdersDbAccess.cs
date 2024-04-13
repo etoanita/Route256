@@ -1,217 +1,270 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Npgsql;
-using Ozon.Route256.Practice.OrdersService.Dal.Common;
+﻿using Dapper;
 using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 using Ozon.Route256.Practice.OrdersService.Dal.Models;
-using System.Data;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
 {
     public class ShardOrdersDbAccess : BaseShardRepository
     {
         private const string Fields = "id, items_count, total_price, total_weight, order_type, order_date, region_name, state, customer_id";
-        private const string FieldsForInsert = "items_count, total_price, total_weight, order_type, order_date, region_name, state, customer_id";
-        private const string Table = "orders";
+        private const string FieldsForInsert = "id, items_count, total_price, total_weight, order_type, order_date, region_name, state, customer_id";
+        private const string Table = $"{ShardsHelper.BucketPlaceholder}.orders";
 
         ILogger<ShardOrdersDbAccess> _logger;
 
         public ShardOrdersDbAccess(IShardPostgresConnectionFactory connectionFactory,
-            IShardingRule<int> shardingRule,
+            IShardingRule<long> shardingRule,
+            IShardingRule<string> stringShardingRule,
             ILogger<ShardOrdersDbAccess> logger)
-             : base(connectionFactory, shardingRule)
+             : base(connectionFactory, shardingRule, stringShardingRule)
         {
             _logger = logger;
         }
         public async Task<OrderDal?> Find(long id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //    const string sql = @$"
-            //    select {Fields}
-            //    from {Table} orders
-            //    where id = :id;
-            //";
+            const string sql = @$"
+                select {Fields}
+                from {Table} orders
+                where id = :id;
+            ";
 
-            //    await using var connection = _connectionFactory.GetConnection();
-            //    await using var command = new NpgsqlCommand(sql, connection);
-            //    command.Parameters.Add("id", id);
-
-            //    await connection.OpenAsync(token);
-            //    await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
-
-            //    var result = await ReadOrderDal(reader, token);
-            //    return result.FirstOrDefault();
+            await using var connection = GetConnectionByShardKey(id);
+            var param = new DynamicParameters();
+            param.Add("id", id);
+            var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+            return await connection.QueryFirstOrDefaultAsync<OrderDal>(cmd);
         }
 
         public async Task<IReadOnlyCollection<OrderDal>> FindByCustomerId(int customerId, DateTime startFrom, PaginationParameters pp, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //    const string sql = @$"
-            //    select {Fields}
-            //    from {Table} orders
-            //    where customer_id = :customer_id and order_date > :start_from offset :skip limit :take; 
-            //";
+            const string sqlIndex = @$"
+                select order_id
+                from {ShardsHelper.BucketPlaceholder}.idx_orders_customer_id
+                where customer_id = :customer_id and order_date > :start_from offset :skip limit :take; 
+            ";
 
-            //    await using var connection = _connectionFactory.GetConnection();
-            //    await using var command = new NpgsqlCommand(sql, connection);
-            //    command.Parameters.Add("customer_id", customerId);
-            //    command.Parameters.Add("start_from", startFrom);
-            //    command.Parameters.Add("skip", (pp.PageNumber - 1) * pp.PageSize);
-            //    command.Parameters.Add("take", pp.PageSize);
-
-            //    await connection.OpenAsync(token);
-            //    await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
-
-            //    return await ReadOrderDal(reader, token);
+            IEnumerable<int> orders = new List<int>();
+            await using (var connection = GetConnectionByShardKey(customerId)) {
+                var param = new DynamicParameters();
+                param.Add("customer_id", customerId);
+                param.Add("start_from", startFrom);
+                param.Add("skip", (pp.PageNumber - 1) * pp.PageSize);
+                param.Add("take", pp.PageSize);
+                var cmd = new CommandDefinition(sqlIndex, param, cancellationToken: token);
+                orders = await connection.QueryAsync<int>(cmd);
+            }
+            List<OrderDal> result = new();
+            const string sql = @$"
+                select {Fields}
+                from {Table} orders
+                where id = :order_id;";
+            for (int i = 0; i < orders.Count(); i++)
+            {
+                await using (var connection = GetConnectionByShardKey(i))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("order_id", i);
+                    var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+                    result.AddRange(await connection.QueryAsync<OrderDal>(cmd));
+                } 
+            }
+            return result;
         }
 
         public async Task<IReadOnlyCollection<OrderByRegionDal>> FindByRegions(List<string> regions, DateTime startFrom, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //    string sql = @$"
-            //    SELECT region_name, COUNT(*) AS orders_count, SUM(total_price) AS total_price, SUM(total_weight) AS total_weight, COUNT(DISTINCT(customer_id)) as clients_count
-            //    FROM {Table}
-            //    GROUP BY region_name
-            //";
-
-            //    await using var connection = _connectionFactory.GetConnection();
-            //    await using var command = new NpgsqlCommand(sql, connection);
-            //    await connection.OpenAsync(token);
-            //    await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
-
-            //    return await ReadOrderByRegionDal(reader, token);
+            const string sqlIndex = @$"
+                select order_id
+                from {ShardsHelper.BucketPlaceholder}.idx_orders_region_name
+                where region_name = :region and order_date > :start_from; 
+            ";
+            List<int> ordersId = new();
+            foreach (var region in regions)
+            {
+                await using (var connection = GetConnectionBySearchKey(region))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("region", region);
+                    param.Add("start_from", startFrom);
+                    var cmd = new CommandDefinition(sqlIndex, param, cancellationToken: token);
+                    ordersId.AddRange(await connection.QueryAsync<int>(cmd));
+                }
+            }
+            const string sql = @$"
+                select {Fields}
+                from {Table} orders
+                where id = :id;
+            ";
+            List<OrderDal> result = new List<OrderDal>();
+            foreach (var orderId in ordersId)
+            {
+                await using (var connection = GetConnectionByShardKey(orderId))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("id", orderId);
+                    var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+                    result.AddRange(await connection.QueryAsync<OrderDal>(cmd));
+                }
+            }
+            return result.AsEnumerable().GroupBy(x => x.RegionName).Select(x => new OrderByRegionDal
+            (
+                x.Key, x.Count(), x.Sum(y => y.TotalPrice),
+                x.Sum(y => y.TotalWeight), x.Select(y => y.CustomerId).Distinct().Count())
+            ).ToList();
         }
 
         public async Task<IReadOnlyCollection<OrderDal>> Find(List<string> regions, OrderType orderType, PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //    sortOrder ??= SortOrder.ASC;
-            //    sortingFields = sortingFields.Any() ? sortingFields : new List<string> { "region_name"};
-            //    string sql = @$"
-            //    select {Fields}
-            //    from {Table}
-            //    where region_name in (:regions) and order_type = :order_type 
-            //    order by {sortingFields.First()} {sortOrder} offset :skip limit :take; 
-            //";
-            //    _logger.LogInformation(sql);
-            //    await using var connection = _connectionFactory.GetConnection();
-            //    await using var command = new NpgsqlCommand(sql, connection);
-            //    command.Parameters.Add(":regions", regions);
-            //    command.Parameters.Add(":order_type", orderType);
-            //    command.Parameters.Add(":skip", (pp.PageNumber - 1) * pp.PageSize);
-            //    command.Parameters.Add(":take", pp.PageSize);
+            const string sqlIndex = @$"
+                select order_id
+                from {ShardsHelper.BucketPlaceholder}.idx_orders_region_name
+                where region_name = :region and order_type > :order_type; 
+            ";
+            List<int> ordersId = new();
+            foreach (var region in regions)
+            {
+                await using (var connection = GetConnectionBySearchKey(region))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("region", region);
+                    param.Add("order_type", orderType);
+                    var cmd = new CommandDefinition(sqlIndex, param, cancellationToken: token);
+                    ordersId.AddRange(await connection.QueryAsync<int>(cmd));
+                }
+            }
+            sortOrder ??= SortOrder.ASC;
+            sortingFields = sortingFields.Any() ? sortingFields : new List<string> { "region_name" };
+            string sql = @$"
+                select {Fields}
+                from {Table}
+                where id = :id; 
+            ";
 
-            //    await connection.OpenAsync(token);
-            //    await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
+            List<OrderDal> result = new List<OrderDal>();
+            foreach (var orderId in ordersId)
+            {
+                await using (var connection = GetConnectionByShardKey(orderId))
+                {
+                    var param = new DynamicParameters();
+                    param.Add("id", orderId);
 
-            //    return await ReadOrderDal(reader, token);
+                    var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+                    result.AddRange(await connection.QueryAsync<OrderDal>(cmd));
+                }
+            }
+
+            if (sortOrder != null)
+            {
+                result = SortByColumns(result, sortOrder.Value, sortingFields).ToList();
+            }
+            return result.Skip((pp.PageNumber - 1) * pp.PageSize).Take(pp.PageSize).ToList();
         }
 
         public async Task<OrderState> GetOrderState(long id, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //    const string sql = @$"
-            //    select state
-            //    from {Table} orders
-            //    where id = :id;
-            //";
+            const string sql = @$"
+                select state
+                from {Table} orders
+                where id = :id;
+            ";
 
-            //    await using var connection = _connectionFactory.GetConnection();
-            //    await using var command = new NpgsqlCommand(sql, connection);
-            //    command.Parameters.Add("id", id);
+            await using (var connection = GetConnectionByShardKey(id))
+            {
+                var param = new DynamicParameters();
+                param.Add("id", id);
 
-            //    await connection.OpenAsync(token);
-            //    await using var reader = await command.ExecuteReaderAsync(CommandBehavior.SingleRow, token);
-
-            //    var result = await ReadStateDal(reader, token);
-            //    return result;
+                var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+                return await connection.QueryFirstOrDefaultAsync<OrderState>(cmd);
+            }
         }
 
         public async Task Insert(OrderDal order, CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //const string sql = @$"
-            //insert into {Table} ({FieldsForInsert})
-            //values (:items_count, :total_price, :total_weight, :order_type, :order_date, :region_name, :state, :customer_id);";
+            const string sql = @$"
+            insert into {Table} ({FieldsForInsert})
+            values (:id, :items_count, :total_price, :total_weight, :order_type, :order_date, :region_name, :state, :customer_id);";
 
-            //using var connection = _connectionFactory.GetConnection();
-            //await using var command = new NpgsqlCommand(sql, connection);
-            //command.Parameters.Add("items_count", order.ItemsCount);
-            //command.Parameters.Add("total_price", order.TotalPrice);
-            //command.Parameters.Add("total_weight", order.TotalWeight);
-            //command.Parameters.Add("order_type", order.OrderType);
-            //command.Parameters.Add("order_date", order.OrderDate);
-            //command.Parameters.Add("region_name", order.Region);
-            //command.Parameters.Add("state", order.State);
-            //command.Parameters.Add("customer_id", order.CustomerId);
+            var param = new DynamicParameters();
+            param.Add("id", order.Id);
+            param.Add("items_count", order.ItemsCount);
+            param.Add("total_price", order.TotalPrice);
+            param.Add("total_weight", order.TotalWeight);
+            param.Add("order_type", ((OrderTypeDb)(int)order.OrderType));
+            param.Add("order_date", order.OrderDate);
+            param.Add("region_name", order.RegionName);
+            param.Add("state", order.State);
+            param.Add("customer_id", order.CustomerId);
 
-            //await connection.OpenAsync(token);
-            //await command.ExecuteNonQueryAsync(token);
+            await using (var connection = GetConnectionByShardKey(order.Id))
+            {
+                var cmd = new CommandDefinition(sql, param, cancellationToken: token);
+                await connection.ExecuteAsync(cmd);
+            }
+
+            const string indexSql = $@"
+            insert into  {ShardsHelper.BucketPlaceholder}.idx_orders_customer_id 
+            (order_id, customer_id, order_date)
+            VALUES (:order_id, :customer_id, :order_date)";
+            param = new DynamicParameters();
+            param.Add("order_id", order.Id);
+            param.Add("customer_id", order.CustomerId);
+            param.Add("order_date", order.OrderDate);
+            await using (var connection = GetConnectionByShardKey(order.CustomerId))
+            {
+                await connection.ExecuteAsync(indexSql, param);
+            }
+
+            const string indexSql2 = $@"
+            insert into  {ShardsHelper.BucketPlaceholder}.idx_orders_region_name 
+            (order_id, region_name, order_date, order_type)
+            VALUES (:order_id, :region_name, :order_date, :order_type)";
+            param = new DynamicParameters();
+            param.Add("order_id", order.Id);
+            param.Add("customer_id", order.CustomerId);
+            param.Add("region_name", order.RegionName);
+            param.Add("order_date", order.OrderDate);
+            param.Add("order_type", order.OrderType);
+            await using (var connection = GetConnectionByShardKey(order.CustomerId))
+            {
+                await connection.ExecuteAsync(indexSql2, param);
+            }
         }
         
         public async Task UpdateOrderState(long orderId, OrderState orderState, CancellationToken token = default)
         {
-            //const string sql = @$"
-            //UPDATE {Table} SET state = :state WHERE id = :order_id;";
+            const string sql = @$"
+            UPDATE {Table} SET state = :state WHERE id = :order_id;";
 
-            //using var connection = _connectionFactory.GetConnection();
-            //await using var command = new NpgsqlCommand(sql, connection);
-            //command.Parameters.Add("order_id", orderId);
-            //command.Parameters.Add("state", orderState);
+            await using (var connection = GetConnectionByShardKey(orderId))
+            {
+                var param = new DynamicParameters();
+                param.Add("order_id", orderId);
+                param.Add("state", orderState);
 
-            //await connection.OpenAsync(token);
-            //await command.ExecuteNonQueryAsync(token);
+                await connection.ExecuteAsync(sql, param);
+            }
         }
 
-
-        private static async Task<OrderDal[]> ReadOrderDal(NpgsqlDataReader reader, CancellationToken token)
+        private static IEnumerable<T> SortByColumns<T>(IEnumerable<T> items, SortOrder sortOrder, List<string> sortingFields)
         {
-            var result = new List<OrderDal>();
-            while (await reader.ReadAsync(token))
+            IOrderedEnumerable<T> sorted;
+            if (sortOrder == SortOrder.ASC)
             {
-                result.Add(
-                    new OrderDal(
-                        Id: reader.GetFieldValue<long>(0),
-                        ItemsCount: reader.GetFieldValue<int>(1),
-                        TotalPrice: reader.GetFieldValue<double>(2),
-                        TotalWeight: reader.GetFieldValue<long>(3),
-                        OrderType: reader.GetFieldValue<OrderType>(4),
-                        OrderDate: reader.GetFieldValue<DateTime>(5),
-                        Region: reader.GetFieldValue<string>(6),
-                        State: reader.GetFieldValue<OrderState>(7),
-                        CustomerId: reader.GetFieldValue<int>(8)
-                    ));
+                sorted = items.OrderBy(p => p.GetType().GetProperty(sortingFields.First())?.GetValue(p, null));
+                foreach (var sortField in sortingFields.Skip(1))
+                {
+                    sorted = sorted.ThenBy(p => p.GetType().GetProperty(sortField)?.GetValue(p, null));
+                }
             }
-
-            return result.ToArray();
-        }
-
-        private static async Task<OrderByRegionDal[]> ReadOrderByRegionDal(NpgsqlDataReader reader, CancellationToken token)
-        {
-            var result = new List<OrderByRegionDal>();
-            while (await reader.ReadAsync(token))
+            else
             {
-                result.Add(
-                    new OrderByRegionDal(
-                        Region: reader.GetFieldValue<string>(0),
-                        OrdersCount: reader.GetFieldValue<int>(1),
-                        TotalPrice: reader.GetFieldValue<double>(2),
-                        TotalWeight: reader.GetFieldValue<long>(3),
-                        ClientsCount: reader.GetFieldValue<int>(4)                    
-                ));
+                sorted = items.OrderByDescending(p => p.GetType().GetProperty(sortingFields.First())?.GetValue(p, null));
+                foreach (var sortField in sortingFields.Skip(1))
+                {
+                    sorted = sorted.ThenByDescending(p => p.GetType().GetProperty(sortField)?.GetValue(p, null));
+                }
             }
-
-            return result.ToArray();
-        }
-
-        private static async Task<OrderState> ReadStateDal(NpgsqlDataReader reader, CancellationToken token)
-        {
-            OrderState result = OrderState.Created;
-            while (await reader.ReadAsync(token))
-            {
-                result = reader.GetFieldValue<OrderState>(0);
-            }
-
-            return result;
+            return sorted;
         }
     }
 }

@@ -9,21 +9,22 @@ public class ShardCustomerDbAccess : BaseShardRepository
     private const string Table = $"{ShardsHelper.BucketPlaceholder}.customers";
 
     public ShardCustomerDbAccess(IShardPostgresConnectionFactory connectionFactory,
-        IShardingRule<int> shardingRule) : base(connectionFactory,
-        shardingRule)
+        IShardingRule<long> shardingRule, IShardingRule<string> stringShardingRule) : base(connectionFactory,
+        shardingRule, stringShardingRule)
     {
     }
 
     public async Task<CustomerDal?> Find(int customerId, CancellationToken token = default)
     {
         const string sql = @$"
-            select 
-        {Fields}
+            select {Fields}
             from {Table}
             where id = :id;
         ";
         await using var connection = GetConnectionByShardKey(customerId);
-        var cmd = new CommandDefinition(sql, new { customerId }, cancellationToken: token);
+        var param = new DynamicParameters();
+        param.Add("id", customerId);
+        var cmd = new CommandDefinition(sql, param, cancellationToken: token);
         return await connection.QueryFirstOrDefaultAsync<CustomerDal>(cmd);
     }
 

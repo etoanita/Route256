@@ -1,10 +1,10 @@
 ﻿using FluentMigrator;
-using Ozon.Route256.Practice.OrdersService.Dal.Common;
+using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
 
 namespace Ozon.Route256.Practice.OrdersService.Dal.Migrations
 {
     [Migration(2, "Fill regions and depots")]
-    public class FillRegionsAndDepots : SqlMigration
+    public class FillRegionsAndDepots : ShardSqlMigration
     {
         protected override string GetUpSql(IServiceProvider services) => @"
             INSERT INTO regions

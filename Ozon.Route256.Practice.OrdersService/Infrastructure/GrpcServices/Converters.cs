@@ -76,7 +76,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             {
                 Address = orderEntity.Address,
                 ItemsCount = orderEntity.ItemsCount,
-                OrderDate = Timestamp.FromDateTime(orderEntity.OrderDate),
+                OrderDate = Timestamp.FromDateTimeOffset(orderEntity.OrderDate),
                 OrderId = orderEntity.OrderId,
                 OrderType = ConvertOrderType(orderEntity.OrderType),
                 Phone = orderEntity.Phone,
