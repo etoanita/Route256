@@ -63,7 +63,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
                 await using (var connection = GetConnectionByShardKey(i))
                 {
                     var param = new DynamicParameters();
-                    param.Add("order_id", i);
+                    param.Add("order_id", orders.ElementAt(i));
                     var cmd = new CommandDefinition(sql, param, cancellationToken: token);
                     result.AddRange(await connection.QueryAsync<OrderDal>(cmd));
                 } 
