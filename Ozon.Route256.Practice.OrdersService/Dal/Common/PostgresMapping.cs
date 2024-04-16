@@ -8,8 +8,5 @@ public static class PostgresMapping
     public static void MapCompositeTypes()
     {
         DefaultTypeMap.MatchNamesWithUnderscores = true;
-        var mapper = NpgsqlConnection.GlobalTypeMapper;
-       
-
     }
 }
