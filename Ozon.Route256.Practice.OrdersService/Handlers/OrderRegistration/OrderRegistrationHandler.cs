@@ -29,10 +29,10 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
 
     public async Task Handle(NewOrder order, CancellationToken token)
     {
-        var orderAlreadyRegistered = await _orderRepository.IsExistsAsync(order.Id, token);
+        // var orderAlreadyRegistered = await _orderRepository.IsExistsAsync(order.Id, token);
 
-        if (orderAlreadyRegistered)
-            throw new Exception($"Order {order.Id} already registered");
+        //if (orderAlreadyRegistered)
+        //    throw new Exception($"Order {order.Id} already registered");
 
         Customer? customer;
         try
@@ -62,15 +62,23 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
         await _orderRepository.InsertAsync(orderEntity, token);
 
         var custAddress = order.Customer.Address;
-        var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region, token);
-        var depot = region.Depots.First();
-        if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.OrderLatitude, depot.OrderLongitude))
+        try
         {
-            await _producer.ProduceAsync( new[] { new OrderShort(order.Id) }, token);
+            var region = await _regionsRepository.FindRegionAsync(order.Customer.Address.Region, token);
+            var depot = region.Depots.First();
+            if (IsOrderValid(custAddress.Latitude, custAddress.Longitude, depot.Latitude, depot.Longitude))
+            {
+                await _producer.ProduceAsync( new[] { new OrderShort(order.Id) }, token);
+            }
+            else
+            {
+                _logger.LogWarning("Order {OrderId} is not valid", order.Id);
+            }
         }
-        else
+        catch (Exception e)
         {
-            _logger.LogWarning("Order {OrderId} is not valid", order.Id);
+            _logger.LogError(e.Message);
+            throw;
         }
     }
 

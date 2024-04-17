@@ -1,8 +1,12 @@
 ﻿namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models
 {
-    public record Coordinate
-    (
-        double OrderLatitude,
-        double OrderLongitude
-    );
+    public class Coordinate
+    {
+        public Coordinate()
+        {
+            
+        }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    };
 }

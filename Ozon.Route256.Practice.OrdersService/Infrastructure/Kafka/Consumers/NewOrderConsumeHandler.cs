@@ -20,9 +20,9 @@ public class NewOrderConsumeHandler : IKafkaConsumeHandler<long, string>
 
     private enum Regions
     {
-        Moscow,
-        StPetersburg,
-        Novosibirsk
+        Moscow = 0,
+        StPetersburg = 1,
+        Novosibirsk = 2
     }
 
     Models.NewOrder AdjustOrderRegion(Models.NewOrder order)
@@ -46,7 +46,7 @@ public class NewOrderConsumeHandler : IKafkaConsumeHandler<long, string>
             var order = JsonSerializer.Deserialize<Models.NewOrder>(message.Message.Value);
             order = AdjustOrderRegion(order);
             await _orderRegistrationHandler.Handle(order, cancellationToken);
-            _logger.LogInformation("New order created, {}", message.Message.Value);
+            _logger.LogInformation("New order created, {Order}", message.Message.Value);
         }
         catch (Exception ex)
         {

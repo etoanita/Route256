@@ -30,7 +30,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Consumers
             try
             {
                 var order = JsonSerializer.Deserialize<Models.Order>(message.Message.Value, _jsonSerializerOptions);
-                _logger.LogInformation("Begin update order state for order {}. Order state: {}", order.OrderId, order.OrderState);
+                _logger.LogInformation("Begin update order state for order {OrderId}. Order state: {OrderState}", order.OrderId, order.OrderState);
                 await _orderEventHandler.Handle(order, cancellationToken);
             }
             catch (Exception ex)

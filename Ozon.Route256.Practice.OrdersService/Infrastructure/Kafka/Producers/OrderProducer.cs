@@ -47,7 +47,7 @@ internal class OrderProducer : IOrderProducer
                 Key = key,
                 Value = value
             };
-            _logger.LogInformation("Message {} was added to queue to produce", message.Value);
+            _logger.LogInformation("Message {Message} was added to queue to produce", message.Value);
             var task = _kafkaDataProvider.Producer.ProduceAsync(TopicName, message, token);
             tasks.Add(task);
         }

@@ -8,7 +8,7 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
         public static OrderEntity ConvertOrder(OrderDal order, CustomerDal customer)
         {
             return new OrderEntity(order.Id, order.ItemsCount, order.TotalPrice, order.TotalWeight, order.OrderType,
-                order.OrderDate, order.Region, order.State, customer.Id,
+                order.OrderDate, order.RegionName, order.State, customer.Id,
                 customer.Name, customer.Surname, customer.Address, customer.Phone
             );
         }

@@ -6,10 +6,9 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
 {
     public class RegionsRepositoryDatabase : IRegionsRepository
     {
-        private readonly RegionsDbAccessPg _regionsDbAccess;
-        private readonly RegionsRepositoryInMemory _regionsRepository = new RegionsRepositoryInMemory();
+        private readonly ShardRegionsDbAccess _regionsDbAccess;
 
-        public RegionsRepositoryDatabase(RegionsDbAccessPg regionsDbAccess)
+        public RegionsRepositoryDatabase(ShardRegionsDbAccess regionsDbAccess)
         {
             _regionsDbAccess = regionsDbAccess;
         }
@@ -28,17 +27,14 @@ namespace Ozon.Route256.Practice.OrdersService.Bll
             return roResult;
         }
 
-
-        //todo: use db accesss
         public async Task<RegionData> FindRegionAsync(string region, CancellationToken ct = default)
         {
-            return await _regionsRepository.FindRegionAsync(region, ct);
-           // return await _regionsDbAccess.FindRegion(region);
+            return await _regionsDbAccess.FindRegionDepots(region, ct);
         }
 
         public async Task<IReadOnlyCollection<string>> GetRegionsListAsync(CancellationToken ct = default)
         {
-            return await _regionsDbAccess.FindAll();
+            return await _regionsDbAccess.FindAll(ct);
         }
     }
 }
