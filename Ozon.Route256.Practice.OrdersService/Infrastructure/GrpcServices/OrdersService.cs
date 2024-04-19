@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
@@ -21,10 +20,10 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 
         public override async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request, ServerCallContext context)
         {
-            await _ordersRepository.InsertAsync(new OrderEntity(0, request.ItemsCount, request.TotalPrice, request.TotalWeight, 
+            await _ordersRepository.InsertAsync(OrderService.Domain.OrderAggregate.CreateInstance(OrderService.Domain.Order.CreateInstance(0, request.ItemsCount, request.TotalPrice, request.TotalWeight, 
                 Converters.ConvertOrderType(request.OrderType), request.OrderDate.ToDateTime(), request.Region, 
-                Converters.ConvertOrderState(request.State), request.CustomerId,
-                request.CustomerName, request.CustomerSurname, request.Address, request.Phone));
+                Converters.ConvertOrderState(request.State), request.CustomerId), OrderService.Domain.Customer.CreateInstance(
+                request.CustomerId, request.CustomerName, request.CustomerSurname, request.Address, request.Phone)));
             return new();
         }
         public override async Task<CancelOrderResponse> CancelOrder(CancelOrderRequest request, ServerCallContext context)
@@ -66,7 +65,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             try
             {
                 var state = await _ordersRepository.GetOrderStateAsync(request.OrderId, context.CancellationToken);
-                return new GetOrderStateResponse { State = Converters.ConvertOrderState(state) };
+                return new GetOrderStateResponse { State = state };
             }
             catch (NotFoundException ex)
             {
@@ -89,13 +88,14 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
-          //  var filteredByRegions = _regionsRepository.
-            var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), Converters.ConvertOrderType(request.OrderType),
-                Converters.ConvertPaginationParameters(request.PaginationParameters),
-                Converters.ConvertSortOrder(request.SortingOrder), request.SortingField.ToList(), context.CancellationToken);
-            var items = new GetOrdersListResponse();
-            items.OrderItem.Add(result.Select(Converters.ConvertOrderEntity));
-            return items;
+            //  var filteredByRegions = _regionsRepository.
+            //var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), request.OrderType,
+            //     Converters.ConvertPaginationParameters(request.PaginationParameters),
+            //     Converters.ConvertSortOrder(request.SortingOrder), request.SortingField.ToList(), context.CancellationToken);
+            // var items = new GetOrdersListResponse();
+            // items.OrderItem.Add(result.Select(Converters.ConvertOrderEntity));
+            // return items;
+            return new();
         }
 
         public override async Task<GetOrdersByRegionsResponse> GetOrdersByRegions(GetOrdersByRegionsRequest request, ServerCallContext context)
@@ -114,9 +114,9 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
         public override async Task<GetOrdersByClientIdResponse> GetOrdersByClientId(GetOrdersByClientIdRequest request, ServerCallContext context)
         {
             var orders = await _ordersRepository.GetOrdersByClientIdAsync(request.ClientId, request.StartDate.ToDateTime(),
-                Converters.ConvertPaginationParameters(request.PaginationParameters));
+                request.PaginationParameters);
             var result = new GetOrdersByClientIdResponse();
-            result.OrderItems.Add(orders.Select(Converters.ConvertOrderEntity));
+            //result.OrderItems.Add(orders.Select(Converters.ConvertOrderEntity));
             return result;
         }
     }

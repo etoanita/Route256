@@ -10,10 +10,10 @@
             int ItemsCount,
             double TotalPrice,
             long TotalWeight,
-            DataAccess.OrderType OrderType,
+            OrderType OrderType,
             DateTime OrderDate,
             string RegionName,
-            DataAccess.OrderState State,
+            OrderState State,
             int CustomerId)
         {
             this.Id = Id;
@@ -31,13 +31,13 @@
         public int ItemsCount { get; init; }
         public double TotalPrice { get; init; }
         public long TotalWeight { get; init; }
-        public DataAccess.OrderType OrderType { get; init; }
+        public OrderType OrderType { get; init; }
         public DateTime OrderDate { get; init; }
         public string RegionName { get; init; }
-        public DataAccess.OrderState State { get; set; }
+        public OrderState State { get; set; }
         public int CustomerId { get; init; }
 
-        public void Deconstruct(out long Id, out int ItemsCount, out double TotalPrice, out long TotalWeight, out DataAccess.OrderType OrderType, out DateTime OrderDate, out string RegionName, out DataAccess.OrderState State, out int CustomerId)
+        public void Deconstruct(out long Id, out int ItemsCount, out double TotalPrice, out long TotalWeight, out OrderType OrderType, out DateTime OrderDate, out string RegionName, out OrderState State, out int CustomerId)
         {
             Id = this.Id;
             ItemsCount = this.ItemsCount;

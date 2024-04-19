@@ -1,10 +1,11 @@
 ﻿using Grpc.Core;
+using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrdersService.DataAccess
 {
     public interface IOrdersRepository
     {
-        Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default);
+        Task InsertAsync(OrderAggregate orderEntity, CancellationToken ct = default);
 
         Task CancelOrderAsync(long orderId, CancellationToken ct = default);
 
@@ -14,11 +15,11 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 
         Task<OrderState> GetOrderStateAsync(long orderId, CancellationToken ct = default);
 
-        Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType,
+        Task<IReadOnlyCollection<OrderInfo>> GetOrdersListAsync(List<string> regions, OrderType orderType,
         PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default);
 
-        Task<IReadOnlyCollection<OrderByRegionEntity>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default);
+        Task<IReadOnlyCollection<OrderByRegion>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default);
 
-        Task<IReadOnlyCollection<OrderEntity>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, PaginationParameters pp, CancellationToken ct = default);
+        Task<IReadOnlyCollection<OrderInfo>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, PaginationParameters pp, CancellationToken ct = default);
     }
 }

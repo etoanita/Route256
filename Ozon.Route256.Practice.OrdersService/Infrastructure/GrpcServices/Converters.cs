@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+using Ozon.Route256.Practice.OrderService.Domain;
 using Ozon.Route256.Practice.OrdersService.DataAccess;
 using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
 
@@ -6,80 +7,80 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 {
     public class Converters
     {
-        public static DataAccess.OrderType ConvertOrderType(OrderType orderType)
+        public static OrderService.Domain.OrderType ConvertOrderType(OrderType orderType)
         {
             return orderType switch
             {
-                OrderType.Web => DataAccess.OrderType.Web,
-                OrderType.Api => DataAccess.OrderType.Api,
-                OrderType.Mobile => DataAccess.OrderType.Mobile,
+                OrderType.Web => OrderService.Domain.OrderType.Web,
+                OrderType.Api => OrderService.Domain.OrderType.Api,
+                OrderType.Mobile => OrderService.Domain.OrderType.Mobile,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static OrderType ConvertOrderType(DataAccess.OrderType orderType)
+        public static OrderType ConvertOrderType(OrderService.Domain.OrderType orderType)
         {
             return orderType switch
             {
-                DataAccess.OrderType.Web => OrderType.Web,
-                DataAccess.OrderType.Api => OrderType.Api,
-                DataAccess.OrderType.Mobile => OrderType.Mobile,
+                OrderService.Domain.OrderType.Web => OrderType.Web,
+                OrderService.Domain.OrderType.Api => OrderType.Api,
+                OrderService.Domain.OrderType.Mobile => OrderType.Mobile,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static DataAccess.PaginationParameters ConvertPaginationParameters(PaginationParameters paginationParameters)
+        public static OrderService.Domain.PaginationParameters ConvertPaginationParameters(PaginationParameters paginationParameters)
         {
-            return new DataAccess.PaginationParameters(paginationParameters.PageNumber, paginationParameters.PageSize);
+            return new OrderService.Domain.PaginationParameters(paginationParameters.PageNumber, paginationParameters.PageSize);
         }
 
-        public static DataAccess.SortOrder ConvertSortOrder(SortOrder sortOrder)
+        public static OrderService.Domain.SortOrder ConvertSortOrder(SortOrder sortOrder)
         {
             return sortOrder switch
             {
-                SortOrder.Asc => DataAccess.SortOrder.ASC,
-                SortOrder.Desc => DataAccess.SortOrder.DESC,
+                SortOrder.Asc => OrderService.Domain.SortOrder.ASC,
+                SortOrder.Desc => OrderService.Domain.SortOrder.DESC,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static DataAccess.OrderState ConvertOrderState(OrderState orderState)
+        public static OrderService.Domain.OrderState ConvertOrderState(OrderState orderState)
         {
             return orderState switch
             {
-                OrderState.Created => DataAccess.OrderState.Created,
-                OrderState.Delivered => DataAccess.OrderState.Delivered,
-                OrderState.SentToCustomer => DataAccess.OrderState.SentToCustomer,
-                OrderState.Cancelled => DataAccess.OrderState.Cancelled,
-                OrderState.Lost => DataAccess.OrderState.Lost,
+                OrderState.Created => OrderService.Domain.OrderState.Created,
+                OrderState.Delivered => OrderService.Domain.OrderState.Delivered,
+                OrderState.SentToCustomer => OrderService.Domain.OrderState.SentToCustomer,
+                OrderState.Cancelled => OrderService.Domain.OrderState.Cancelled,
+                OrderState.Lost => OrderService.Domain.OrderState.Lost,
                 _ => throw new NotImplementedException(),
             };
         }
 
 
-        public static OrderState ConvertOrderState(DataAccess.OrderState orderState)
+        public static OrderState ConvertOrderState(OrderService.Domain.OrderState orderState)
         {
             return orderState switch
             {
-                DataAccess.OrderState.Created => OrderState.Created,
-                DataAccess.OrderState.Delivered => OrderState.Delivered,
-                DataAccess.OrderState.SentToCustomer => OrderState.SentToCustomer,
-                DataAccess.OrderState.Cancelled => OrderState.Cancelled,
-                DataAccess.OrderState.Lost => OrderState.Lost,
+                OrderService.Domain.OrderState.Created => OrderState.Created,
+                OrderService.Domain.OrderState.Delivered => OrderState.Delivered,
+                OrderService.Domain.OrderState.SentToCustomer => OrderState.SentToCustomer,
+                OrderService.Domain.OrderState.Cancelled => OrderState.Cancelled,
+                OrderService.Domain.OrderState.Lost => OrderState.Lost,
                 _ => throw new NotImplementedException(),
             };
         }
 
-        public static OrderItem ConvertOrderEntity(OrderEntity orderEntity)
+        public static OrderItem ConvertOrderEntity(OrderService.Domain.Order orderEntity)
         {
             return new()
             {
-                Address = orderEntity.Address,
+                //Address = orderEntity.Address,
                 ItemsCount = orderEntity.ItemsCount,
                 OrderDate = Timestamp.FromDateTimeOffset(orderEntity.OrderDate),
-                OrderId = orderEntity.OrderId,
+                OrderId = orderEntity.Id,
                 OrderType = ConvertOrderType(orderEntity.OrderType),
-                Phone = orderEntity.Phone,
+                //Phone = orderEntity.Phone,
                 Region = orderEntity.Region,
                 State = ConvertOrderState(orderEntity.State),
                 TotalPrice = orderEntity.TotalPrice,
@@ -87,7 +88,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             };
         }
 
-        public static RegionOrderItem ConvertRegionOrderItem(OrderByRegionEntity orderByRegionEntity)
+        public static RegionOrderItem ConvertRegionOrderItem(OrderByRegion orderByRegionEntity)
         {
             return new()
             {
@@ -99,23 +100,24 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
             };
         }
 
-        public static OrderEntity CreateOrderEntity(NewOrder order, Customer customer, DateTime orderDate)
+        public static OrderAggregate CreateOrderEntity(NewOrder order, Customer customer, DateTime orderDate)
         {
-            return new(
+            return OrderAggregate.CreateInstance(
+                OrderService.Domain.Order.CreateInstance(
                 order.Id,
                 order.Goods.Count,
                 order.Goods.Sum(x=>x.Price),
                 order.Goods.Sum(x => x.Weight),
-                (DataAccess.OrderType)(order.Source),
+                (OrderService.Domain.OrderType)(order.Source),
                 orderDate,
                 order.Customer.Address.Region,
-                DataAccess.OrderState.Created,
-                order.Customer.Id,
+                OrderService.Domain.OrderState.Created,
+                order.Customer.Id), OrderService.Domain.Customer.CreateInstance(order.Customer.Id,
                 customer.FirstName,
                 customer.LastName,
                 order.Customer.Address.ToString(),
                 customer.MobileNumber
-            );
+            ));
         }
     }
 }

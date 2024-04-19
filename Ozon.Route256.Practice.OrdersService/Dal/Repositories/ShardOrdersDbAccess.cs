@@ -132,7 +132,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
                     ordersId.AddRange(await connection.QueryAsync<int>(cmd));
                 }
             }
-            sortOrder ??= SortOrder.ASC;
+            sortOrder ??= SortOrder.Asc;
             sortingFields = sortingFields.Any() ? sortingFields : new List<string> { "region_name" };
             string sql = @$"
                 select {Fields}
@@ -248,7 +248,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess.Postgres
         private static IEnumerable<T> SortByColumns<T>(IEnumerable<T> items, SortOrder sortOrder, List<string> sortingFields)
         {
             IOrderedEnumerable<T> sorted;
-            if (sortOrder == SortOrder.ASC)
+            if (sortOrder == SortOrder.Asc)
             {
                 sorted = items.OrderBy(p => p.GetType().GetProperty(sortingFields.First())?.GetValue(p, null));
                 foreach (var sortField in sortingFields.Skip(1))

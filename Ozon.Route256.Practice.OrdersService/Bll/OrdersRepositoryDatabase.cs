@@ -1,4 +1,5 @@
-﻿using Ozon.Route256.Practice.OrdersService.Bll;
+﻿using Ozon.Route256.Practice.OrderService.Domain;
+using Ozon.Route256.Practice.OrdersService.Bll;
 using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
 using System.Transactions;
@@ -23,15 +24,15 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
 
             var order = await _ordersDbAccess.Find(orderId) ?? throw new NotFoundException($"Order with id={orderId} not found");
 
-            if (order.State != OrderState.SentToCustomer && order.State != OrderState.Created)
+            if (order.State != Dal.Models.OrderState.SentToCustomer && order.State != Dal.Models.OrderState.Created)
                 throw new BadRequestException($"Cannot cancel order {orderId}. " +
                     $"Order is in inappropriate state.");
 
-            order.State = OrderState.Cancelled;
+            order.State = Dal.Models.OrderState.Cancelled;
             await _ordersDbAccess.UpdateOrderState(order.Id, OrderState.Cancelled, ct);
         }
 
-        public async Task<IReadOnlyCollection<OrderEntity>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, PaginationParameters pp, CancellationToken ct = default)
+        public async Task<IReadOnlyCollection<OrderInfo>> GetOrdersByClientIdAsync(int clientId, DateTime startFrom, PaginationParameters pp, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -40,7 +41,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             return result.Select(x=> Converters.ConvertOrder(x, customer)).ToList().AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<OrderByRegionEntity>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default)
+        public async Task<IReadOnlyCollection<OrderByRegion>> GetOrdersByRegionsAsync(DateTime startDate, List<string> regions, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -48,7 +49,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             return result.Select(Converters.ConvertOrderByRegion).ToList().AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<OrderEntity>> GetOrdersListAsync(List<string> regions, OrderType orderType, PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
+        public async Task<IReadOnlyCollection<OrderInfo>> GetOrdersListAsync(List<string> regions, OrderType orderType, PaginationParameters pp, SortOrder? sortOrder, List<string> sortingFields, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
 
@@ -65,7 +66,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             return await _ordersDbAccess.GetOrderState(orderId, ct);
         }
 
-        public async Task InsertAsync(OrderEntity orderEntity, CancellationToken ct = default)
+        public async Task InsertAsync(OrderAggregate orderEntity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             //using var ts = new TransactionScope(
@@ -77,8 +78,8 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
             //},
             //TransactionScopeAsyncFlowOption.Enabled);
 
-            await _customerDbAccess.CreateOrUpdate(orderEntity.CustomerId, orderEntity.CustomerName, orderEntity.CustomerSurname, orderEntity.Address, orderEntity.Phone, ct);
-            await _ordersDbAccess.Insert(Converters.ConvertOrder(orderEntity), ct);
+           // await _customerDbAccess.CreateOrUpdate(orderEntity.CustomerId, orderEntity.CustomerName, orderEntity.CustomerSurname, orderEntity.Address, orderEntity.Phone, ct);
+           // await _ordersDbAccess.Insert(Converters.ConvertOrder(orderEntity), ct);
 
             //ts.Complete();
         }

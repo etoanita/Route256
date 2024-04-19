@@ -15,6 +15,6 @@ internal class OrderEventHandler : IOrderEventHandler
 
     public async Task Handle(Order order, CancellationToken token)
     {
-        await _orderRepository.UpdateOrderState(order.OrderId, Converters.ConvertOrderState(order.OrderState));
+        await _orderRepository.UpdateOrderState(order.OrderId, order.OrderState);
     }
 }

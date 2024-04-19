@@ -29,10 +29,10 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
 
     public async Task Handle(NewOrder order, CancellationToken token)
     {
-        // var orderAlreadyRegistered = await _orderRepository.IsExistsAsync(order.Id, token);
+         var orderAlreadyRegistered = await _orderRepository.IsExistsAsync(order.Id, token);
 
-        //if (orderAlreadyRegistered)
-        //    throw new Exception($"Order {order.Id} already registered");
+        if (orderAlreadyRegistered)
+            throw new Exception($"Order {order.Id} already registered");
 
         Customer? customer;
         try

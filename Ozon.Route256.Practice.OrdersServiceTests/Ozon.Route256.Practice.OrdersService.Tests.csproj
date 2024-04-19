@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrdersService.csproj" />
+    <ProjectReference Include="..\Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrderService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
