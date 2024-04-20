@@ -15,6 +15,7 @@
     <PackageReference Include="FluentMigrator.Runner" Version="5.2.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.61.0" />
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.61.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="murmurhash" Version="1.0.3" />
     <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
@@ -47,6 +48,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\OrderService\Application\Ozon.Route256.Practice.OrderService.Application.csproj" />
 	  <ProjectReference Include="..\OrderService\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj" />
 	</ItemGroup>
 

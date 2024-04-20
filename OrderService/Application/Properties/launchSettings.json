@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Ozon.Route256.Practice.OrderService.Application": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53028;http://localhost:53029"
+    }
+  }
+}

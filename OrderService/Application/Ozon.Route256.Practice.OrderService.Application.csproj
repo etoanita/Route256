@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>ba142fbe-3660-46ce-ad4c-7f4d9c5ba846</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
     <PackageReference Include="FluentMigrator.Runner" Version="5.2.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.61.0" />
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.61.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="murmurhash" Version="1.0.3" />
     <PackageReference Include="Npgsql" Version="8.0.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.33" />
@@ -44,6 +46,10 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
 		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

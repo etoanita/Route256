@@ -1,6 +1,6 @@
 ﻿using Grpc.Core;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
-using Ozon.Route256.Practice.OrdersService.DataAccess;
+using Ozon.Route256.Practice.OrderService.Application;
 using Ozon.Route256.Practice.OrdersService.Exceptions;
 using static Ozon.Route256.Practice.LogisticsSimulator.Grpc.LogisticsSimulatorService;
 
@@ -8,22 +8,19 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 {
     public sealed class OrdersService : Orders.OrdersBase
     {
-        private readonly IOrdersRepository _ordersRepository;
-        private readonly IRegionsRepository _regionsRepository;
+        private readonly IOrderService _orderService;
+        private readonly IRegionService _regionService;
         private readonly LogisticsSimulatorServiceClient _logisticsSimulatorServiceClient;
-        public OrdersService(IOrdersRepository ordersRepository, IRegionsRepository regionsRepository, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
+        public OrdersService(IOrderService orderService, IRegionService regionService, LogisticsSimulatorServiceClient logisticsSimulatorServiceClient)
         {
-            _ordersRepository = ordersRepository;
-            _regionsRepository = regionsRepository;
+            _orderService = orderService;
+            _regionService = regionService;
             _logisticsSimulatorServiceClient = logisticsSimulatorServiceClient;
         }
 
         public override async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest request, ServerCallContext context)
         {
-            await _ordersRepository.InsertAsync(OrderService.Domain.OrderAggregate.CreateInstance(OrderService.Domain.Order.CreateInstance(0, request.ItemsCount, request.TotalPrice, request.TotalWeight, 
-                Converters.ConvertOrderType(request.OrderType), request.OrderDate.ToDateTime(), request.Region, 
-                Converters.ConvertOrderState(request.State), request.CustomerId), OrderService.Domain.Customer.CreateInstance(
-                request.CustomerId, request.CustomerName, request.CustomerSurname, request.Address, request.Phone)));
+            await _orderService.CreateOrder(request, context.CancellationToken);
             return new();
         }
         public override async Task<CancelOrderResponse> CancelOrder(CancelOrderRequest request, ServerCallContext context)
@@ -37,7 +34,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
                         throw new RpcException(new Status(StatusCode.NotFound, result.Error));
                     return new CancelOrderResponse { Success = false, Message = result.Error };
                 }
-                await _ordersRepository.CancelOrderAsync(request.OrderId, context.CancellationToken);
+                await _orderService.CancelOrder(request.OrderId, context.CancellationToken);
                 CancelOrderResponse response = new()
                 {
                     Success = true
@@ -64,7 +61,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
         {
             try
             {
-                var state = await _ordersRepository.GetOrderStateAsync(request.OrderId, context.CancellationToken);
+                var state = await _orderService.GetOrderState(request.OrderId, context.CancellationToken);
                 return new GetOrderStateResponse { State = state };
             }
             catch (NotFoundException ex)
@@ -75,7 +72,7 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 
         public override async Task<GetRegionsListResponse> GetRegionsList(GetRegionsListRequest request, ServerCallContext context)
         {
-            var regions = await _regionsRepository.GetRegionsListAsync(context.CancellationToken);
+            var regions = await _regionService.GetRegionsList(context.CancellationToken);
             GetRegionsListResponse result = new();
             result.Regions.Add(regions);
             return result;
@@ -83,29 +80,25 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 
         public override async Task<GetOrdersListResponse> GetOrdersList(GetOrdersListRequest request, ServerCallContext context)
         {
-            var regions = await _regionsRepository.FindNotPresentedAsync(request.Regions.ToList());
+            var regions = await _regionService.FindNotPresented(request.Regions.ToList());
             if (regions.Any())
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
-            //  var filteredByRegions = _regionsRepository.
-            //var result = await _ordersRepository.GetOrdersListAsync(request.Regions.ToList(), request.OrderType,
-            //     Converters.ConvertPaginationParameters(request.PaginationParameters),
-            //     Converters.ConvertSortOrder(request.SortingOrder), request.SortingField.ToList(), context.CancellationToken);
-            // var items = new GetOrdersListResponse();
-            // items.OrderItem.Add(result.Select(Converters.ConvertOrderEntity));
-            // return items;
-            return new();
+            var result = await _orderService.GetOrders(request, context.CancellationToken);
+            var items = new GetOrdersListResponse();
+            items.OrderItem.Add(result);
+            return items;
         }
 
         public override async Task<GetOrdersByRegionsResponse> GetOrdersByRegions(GetOrdersByRegionsRequest request, ServerCallContext context)
         {
-            var regions = await _regionsRepository.FindNotPresentedAsync(request.Regions.ToList());
+            var regions = await _regionService.FindNotPresented(request.Regions.ToList());
             if (regions.Any())
             {
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"Followed region(s) was not found: {string.Join(',', regions)}"));
             }
-            var orders = await _ordersRepository.GetOrdersByRegionsAsync(request.StartDate.ToDateTime(), request.Regions.ToList(), context.CancellationToken);
+            var orders = await _orderService.GetOrdersByRegions(request, context.CancellationToken);
             var result = new GetOrdersByRegionsResponse();
             result.OrderItems.Add(orders.Select(Converters.ConvertRegionOrderItem));
             return result;
@@ -113,10 +106,9 @@ namespace Ozon.Route256.Practice.OrdersService.Infrastructure.GrpcServices
 
         public override async Task<GetOrdersByClientIdResponse> GetOrdersByClientId(GetOrdersByClientIdRequest request, ServerCallContext context)
         {
-            var orders = await _ordersRepository.GetOrdersByClientIdAsync(request.ClientId, request.StartDate.ToDateTime(),
-                request.PaginationParameters);
+            var orders = await _orderService.GetOrdersByClientId(request, context.CancellationToken);
             var result = new GetOrdersByClientIdResponse();
-            //result.OrderItems.Add(orders.Select(Converters.ConvertOrderEntity));
+            result.OrderItems.Add(orders);
             return result;
         }
     }

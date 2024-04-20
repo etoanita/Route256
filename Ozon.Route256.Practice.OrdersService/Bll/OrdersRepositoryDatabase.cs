@@ -69,6 +69,7 @@ namespace Ozon.Route256.Practice.OrdersService.DataAccess
         public async Task InsertAsync(OrderAggregate orderEntity, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
+            
             //using var ts = new TransactionScope(
             //TransactionScopeOption.Required,
             //new TransactionOptions

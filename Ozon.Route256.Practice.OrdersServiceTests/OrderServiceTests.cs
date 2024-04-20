@@ -30,8 +30,8 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
 
         private void SetupOrderService()
         {
-            _ordersService = new Infrastructure.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
-                _regionsRepositoryMock.Object, _logisticSimulatorMock.Object);
+           // _ordersService = new Infrastructure.GrpcServices.OrdersService(_ordersRepositoryMock.Object, 
+           //     _regionsRepositoryMock.Object, _logisticSimulatorMock.Object);
         }
 
 
