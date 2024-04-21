@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43128563
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.GatewayService.Tests", "Ozon.Route256.Practice.Tests\Ozon.Route256.Practice.GatewayService.Tests.csproj", "{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrdersService.Tests", "Ozon.Route256.Practice.OrdersServiceTests\Ozon.Route256.Practice.OrdersService.Tests.csproj", "{43E80D1C-5755-404F-8527-05607181FD8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Tests", "Ozon.Route256.Practice.OrdersServiceTests\Ozon.Route256.Practice.OrderService.Tests.csproj", "{43E80D1C-5755-404F-8527-05607181FD8F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Domain", "OrderService\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj", "{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}"
 EndProject
