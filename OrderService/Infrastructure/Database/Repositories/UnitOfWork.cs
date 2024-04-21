@@ -4,18 +4,19 @@ using Ozon.Route256.Practice.OrderService.Infrastructure.Database.Mappers;
 using Ozon.Route256.Practice.OrderService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrderService.Exceptions;
 using OrderState = Ozon.Route256.Practice.OrderService.Dal.Models.OrderState;
+using Ozon.Route256.Practice.OrderService.Infrastructure.Database.Repositories;
 
 namespace Ozon.Route256.Practice.OrderService.DataAccess
 {
     internal sealed class UnitOfWork : IUnitOfWork
     {
-        private readonly ShardOrdersDbAccess _ordersDbAccess;
-        private readonly ShardCustomerDbAccess _customerDbAccess;
+        private readonly IOrdersRepositoryPg _ordersDbAccess;
+        private readonly ICustomersRepositoryPg _customerDbAccess;
         private readonly IDataWriteMapper _mapper;
 
         public UnitOfWork(
-            ShardOrdersDbAccess ordersDbAccess,
-            ShardCustomerDbAccess customerDbAccess,
+            IOrdersRepositoryPg ordersDbAccess,
+            ICustomersRepositoryPg customerDbAccess,
             IDataWriteMapper mapper)
         {
             _ordersDbAccess = ordersDbAccess;
@@ -44,7 +45,7 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
             await _ordersDbAccess.Insert(_mapper.ToOrderDao(order.Order), ct);
         }
 
-        public async Task UpdateOrderState(long orderId, OrderState state, CancellationToken ct = default)
+        public async Task UpdateOrderState(long orderId, Domain.OrderState state, CancellationToken ct = default)
         {
             ct.ThrowIfCancellationRequested();
             var order = await _ordersDbAccess.Find(orderId, ct);
@@ -53,12 +54,7 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
             {
                 throw new Exception($"Order {orderId} was not found");
             }
-            await _ordersDbAccess.UpdateOrderState(orderId, state, ct);
-        }
-
-        public Task UpdateOrderState(long orderId, Domain.OrderState orderState, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            await _ordersDbAccess.UpdateOrderState(orderId, _mapper.ToOrderStateDal(state), ct);
         }
     }
 }

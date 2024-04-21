@@ -23,9 +23,9 @@ internal class DataLayerMapper : IDataReadMapper, IDataWriteMapper
     {
         return orderType switch
         {
-            Domain.OrderType.Api => OrderService.Dal.Models.OrderType.Api,
-            Domain.OrderType.Web => OrderService.Dal.Models.OrderType.Web,
-            Domain.OrderType.Mobile => OrderService.Dal.Models.OrderType.Mobile,
+            Domain.OrderType.Api => Dal.Models.OrderType.Api,
+            Domain.OrderType.Web => Dal.Models.OrderType.Web,
+            Domain.OrderType.Mobile => Dal.Models.OrderType.Mobile,
             _ => throw new NotImplementedException(),
         };
     }
@@ -34,32 +34,52 @@ internal class DataLayerMapper : IDataReadMapper, IDataWriteMapper
     {
         return orderState switch
         {
-            Domain.OrderState.Created=> OrderService.Dal.Models.OrderState.Created,
-            Domain.OrderState.Delivered => OrderService.Dal.Models.OrderState.Delivered,
-            Domain.OrderState.Cancelled => OrderService.Dal.Models.OrderState.Cancelled,
-            Domain.OrderState.Lost => OrderService.Dal.Models.OrderState.Lost,
-            Domain.OrderState.SentToCustomer => OrderService.Dal.Models.OrderState.SentToCustomer,
+            Domain.OrderState.Created=> Dal.Models.OrderState.Created,
+            Domain.OrderState.Delivered => Dal.Models.OrderState.Delivered,
+            Domain.OrderState.Cancelled => Dal.Models.OrderState.Cancelled,
+            Domain.OrderState.Lost => Dal.Models.OrderState.Lost,
+            Domain.OrderState.SentToCustomer => Dal.Models.OrderState.SentToCustomer,
             _ => throw new NotImplementedException(),
         };
     }
 
     public OrderByRegion ConvertOrderByRegion(OrderByRegionDal orderByRegionDal)
     {
-        throw new NotImplementedException();
+        return OrderByRegion.CreateInstance(orderByRegionDal.Region, orderByRegionDal.OrdersCount, orderByRegionDal.TotalPrice,
+            orderByRegionDal.TotalWeight, orderByRegionDal.ClientsCount);
     }
 
     public Domain.OrderState ConvertOrderState(Dal.Models.OrderState orderState)
     {
-        throw new NotImplementedException();
+        return orderState switch
+        {
+            Dal.Models.OrderState.Created => Domain.OrderState.Created,
+            Dal.Models.OrderState.Delivered => Domain.OrderState.Delivered,
+            Dal.Models.OrderState.Cancelled => Domain.OrderState.Cancelled,
+            Dal.Models.OrderState.Lost => Domain.OrderState.Lost,
+            Dal.Models.OrderState.SentToCustomer => Domain.OrderState.SentToCustomer,
+            _ => throw new NotImplementedException(),
+        };
     }
 
-    public Domain.OrderType ConvertOrderType(Dal.Models.OrderType orderState)
+    public Domain.OrderType ConvertOrderType(Dal.Models.OrderType orderType)
     {
-        throw new NotImplementedException();
+        return orderType switch
+        {
+            Dal.Models.OrderType.Api => Domain.OrderType.Api,
+            Dal.Models.OrderType.Web => Domain.OrderType.Web,
+            Dal.Models.OrderType.Mobile => Domain.OrderType.Mobile,
+            _ => throw new NotImplementedException(),
+        };
     }
 
-    public Dal.Models.SortOrder ToSortOrderDal(Domain.SortOrder orderState)
+    public Dal.Models.SortOrder ToSortOrderDal(Domain.SortOrder sortOrder)
     {
-        throw new NotImplementedException();
+        return sortOrder switch
+        {
+            Domain.SortOrder.DESC => Dal.Models.SortOrder.DESC,
+            Domain.SortOrder.ASC => Dal.Models.SortOrder.ASC,
+            _ => throw new NotImplementedException(),
+        };
     }
 }

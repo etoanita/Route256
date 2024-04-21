@@ -3,11 +3,11 @@ using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Queries;
 
-internal sealed class GetOrdersByClientIdHandler : IRequestHandler<GetOrderByClientIdQuery, IReadOnlyCollection<OrderInfo>>
+internal sealed class GetOrdersByClientIdQueryHandler : IRequestHandler<GetOrderByClientIdQuery, IReadOnlyCollection<OrderInfo>>
 {
     private readonly IOrderReadRepository _repository;
 
-    public GetOrdersByClientIdHandler(IOrderReadRepository repository)
+    public GetOrdersByClientIdQueryHandler(IOrderReadRepository repository)
     {
         _repository = repository;
     }
