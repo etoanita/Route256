@@ -3,7 +3,7 @@ using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Queries;
 
-public sealed class GetOrdersQuery : IRequest<List<OrderInfo>>
+public sealed class GetOrdersQuery : IRequest<IReadOnlyCollection<OrderInfo>>
 {
     public List<string> Regions { get; }
     public OrderType OrderType { get; }

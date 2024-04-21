@@ -3,7 +3,7 @@ using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Queries
 {
-    public class GetOrderByClientIdQuery : IRequest<List<OrderInfo>>
+    public class GetOrderByClientIdQuery : IRequest<IReadOnlyCollection<OrderInfo>>
     {
         public int ClientId { get; } 
         public DateTime StartFrom { get; }

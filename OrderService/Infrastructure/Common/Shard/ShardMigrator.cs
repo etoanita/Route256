@@ -43,7 +43,7 @@ public class ShardMigrator: IShardMigrator
                  var context = scope.ServiceProvider.GetRequiredService<BucketMigrationContext>();
                  context.UpdateCurrentDbSchema(bucketId);
                  var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-                runner.MigrateUp();
+                 runner.MigrateUp();
                 //runner.MigrateDown(0);
              }
          }
@@ -74,6 +74,7 @@ public class ShardMigrator: IShardMigrator
             Database = _dbOptions.DatabaseName,
             Username = _dbOptions.User,
             Password = _dbOptions.Password,
+            IncludeErrorDetail = true
         };
         return builder.ToString();
     }

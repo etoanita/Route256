@@ -3,7 +3,7 @@ using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Queries
 {
-    public class GetOrdersByRegionQuery : IRequest<List<OrderByRegion>>
+    public class GetOrdersByRegionQuery : IRequest<IReadOnlyCollection<OrderByRegion>>
     {
         public DateTime StartDate { get; }
         public List<string> Regions { get; }

@@ -7,6 +7,7 @@ public interface IOrderReadRepository
 {
     Task<bool> IsExistsAsync(long orderId, CancellationToken ct = default);
     Task<IReadOnlyCollection<OrderInfo>> GetOrders(GetOrdersQuery request, CancellationToken cancellationToken);
+    Task<OrderState> GetOrderState(GetOrderStateQuery request, CancellationToken cancellationToken);
     Task<IReadOnlyCollection<OrderInfo>> GetOrdersByClientId(GetOrderByClientIdQuery request, CancellationToken cancellationToken);
     Task<IReadOnlyCollection<OrderByRegion>> GetOrdersByRegions(GetOrdersByRegionQuery request, CancellationToken cancellationToken);
 }

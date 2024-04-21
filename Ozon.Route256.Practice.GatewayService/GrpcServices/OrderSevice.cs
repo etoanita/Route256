@@ -32,7 +32,7 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
         {
             var request = new GetOrdersByRegionsRequest
             {
-                StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc))
+                StartDate = Timestamp.FromDateTimeOffset(new DateTime(startDate, DateTimeKind.Utc))
             };
             request.Regions.AddRange(regions);
             var result = await _ordersClient.GetOrdersByRegionsAsync(request);
@@ -44,7 +44,7 @@ namespace Ozon.Route256.Practice.GatewayService.GrpcServices
             var request = new GetOrdersByClientIdRequest
             {
                 ClientId = userId,
-                StartDate = Timestamp.FromDateTime(new DateTime(startDate, DateTimeKind.Utc)),
+                StartDate = Timestamp.FromDateTimeOffset(new DateTime(startDate, DateTimeKind.Utc)),
                 PaginationParameters = new PaginationParameters
                 {
                     PageSize = paginationParameters.PageSize,

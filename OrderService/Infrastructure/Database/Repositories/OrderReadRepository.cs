@@ -62,5 +62,12 @@ namespace Ozon.Route256.Practice.OrderService.Infrastructure.Database.Repositori
             var order = await _ordersRepository.Find(orderId, ct);
             return order != null;
         }
+
+        public async Task<OrderState> GetOrderState(GetOrderStateQuery request, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var state = await _ordersRepository.GetOrderState(request.Id, cancellationToken);
+            return _readMapper.ConvertOrderState(state);
+        }
     }
 }

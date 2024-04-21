@@ -28,7 +28,7 @@ internal sealed class OrderServiceAdapter : IOrderService
 
     public async Task<OrderState> GetOrderState(long orderId, CancellationToken cancellationToken)
     {
-        var state = await _mediator.Send(new GetOrderStateQuery(), cancellationToken);
+        var state = await _mediator.Send(new GetOrderStateQuery(orderId), cancellationToken);
         return _mapper.ToContracts(state);
     }
 

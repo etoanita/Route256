@@ -10,8 +10,7 @@ internal class ContractsMapper : IContractsMapper
 {
     public OrderDto ToCommand(CreateOrderRequest requestOrder)
         => new(
-            //Id: requestOrder.Id,
-            Id: 0,
+            Id: requestOrder.OrderId,
             ItemsCount: requestOrder.ItemsCount,
             TotalPrice: requestOrder.TotalPrice,
             TotalWeight: requestOrder.TotalWeight,
@@ -76,7 +75,7 @@ internal class ContractsMapper : IContractsMapper
             CustomerName = orderInfo.Customer.FirstName,
             CustomerSurname = orderInfo.Customer.LastName,
             ItemsCount = orderInfo.ItemsCount,
-            OrderDate = orderInfo.OrderDate.ToTimestamp(),
+            OrderDate = orderInfo.OrderDate.ToUniversalTime().ToTimestamp(),
             OrderId = orderInfo.Id,
             OrderType = ToContracts(orderInfo.OrderType),
             Phone = orderInfo.Customer.Phone,

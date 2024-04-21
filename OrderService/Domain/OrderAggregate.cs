@@ -18,7 +18,7 @@ public sealed class OrderAggregate
 
     public static OrderAggregate CreateInstance(Order order, Customer customer)
     {
-        if (order.Id != customer.Id)
+        if (order.CustomerId != customer.Id)
             throw new ArgumentException();
         return new OrderAggregate(order, customer);
     }

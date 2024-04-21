@@ -229,7 +229,7 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess.Postgres
             param.Add("region_name", order.RegionName);
             param.Add("order_date", order.OrderDate);
             param.Add("order_type", order.OrderType);
-            await using (var connection = GetConnectionByShardKey(order.CustomerId))
+            await using (var connection = GetConnectionBySearchKey(order.RegionName))
             {
                 await connection.ExecuteAsync(indexSql2, param);
             }

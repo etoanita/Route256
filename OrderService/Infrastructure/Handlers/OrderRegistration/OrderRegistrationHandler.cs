@@ -19,13 +19,14 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
 
     public OrderRegistrationHandler(IOrderReadRepository orderRepository, IRegionsRepository regionsRepository, 
         CustomersClient customersClient, IOrderProducer producer, ICustomersRepository customersRepository,
-        ILogger<OrderRegistrationHandler> logger)
+        IUnitOfWork unitOfWork, ILogger<OrderRegistrationHandler> logger)
     {
         _orderRepository = orderRepository;
         _regionsRepository = regionsRepository;
         _customersRepository = customersRepository;
         _customersClient = customersClient;
-        _producer = producer; 
+        _producer = producer;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 

@@ -49,8 +49,5 @@ create table if not exists depots (
     drop table if exists customers;
     drop table if exists orders;
     drop table if exists regions;
-    drop table if exists depots;
-    drop type order_type;
-    drop type order_state";
-
+    drop table if exists depots;";
 }
