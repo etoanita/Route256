@@ -1,13 +1,13 @@
-﻿using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
+﻿using Ozon.Route256.Practice.OrderService.Dal.Common.Shard;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
-using Ozon.Route256.Practice.OrdersService.Bll;
-using Ozon.Route256.Practice.OrdersService.ClientBalancing;
-using Ozon.Route256.Practice.OrdersService.Configurations;
-using Ozon.Route256.Practice.OrdersService.Dal.Common;
-using Ozon.Route256.Practice.OrdersService.DataAccess;
-using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
-using Ozon.Route256.Practice.OrdersService.Handlers;
-using Ozon.Route256.Practice.OrdersService.Infrastructure;
+using Ozon.Route256.Practice.OrderService.Bll;
+using Ozon.Route256.Practice.OrderService.ClientBalancing;
+using Ozon.Route256.Practice.OrderService.Configurations;
+using Ozon.Route256.Practice.OrderService.Dal.Common;
+using Ozon.Route256.Practice.OrderService.DataAccess;
+using Ozon.Route256.Practice.OrderService.DataAccess.Postgres;
+using Ozon.Route256.Practice.OrderService.Handlers;
+using Ozon.Route256.Practice.OrderService.Infrastructure;
 using StackExchange.Redis;
 
 namespace Ozon.Route256.Practice.OrdersService
@@ -59,8 +59,7 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddEndpointsApiExplorer();
             serviceCollection.AddSingleton<IDbStore, DbStore>();
             serviceCollection.AddHostedService<SdConsumerHostedService>();
-            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryDatabase>();
-            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryDatabase>();
+            serviceCollection.AddScoped<IRegionsRepository, RegionReadRepository>();
             serviceCollection.AddScoped<ShardOrdersDbAccess>();
             serviceCollection.AddScoped<ShardRegionsDbAccess>();
             serviceCollection.AddScoped<ShardCustomerDbAccess>();
@@ -109,7 +108,7 @@ namespace Ozon.Route256.Practice.OrdersService
             applicationBuilder.UseEndpoints(endpointRouteBuilder =>
             {
                 endpointRouteBuilder.MapGrpcReflectionService();
-                endpointRouteBuilder.MapGrpcService<Infrastructure.GrpcServices.OrdersService>();
+                //endpointRouteBuilder.MapGrpcService<Infrastructure.GrpcServices.OrdersService>();
             });
         }
     }

@@ -6,4 +6,5 @@ public interface IUnitOfWork
 {
     Task SaveOrder(OrderAggregate order, CancellationToken cancellationToken);
     Task CancelOrder(long orderId, CancellationToken cancellationToken);
+    Task UpdateOrderState(long orderId, OrderState orderState, CancellationToken cancellationToken);
 }

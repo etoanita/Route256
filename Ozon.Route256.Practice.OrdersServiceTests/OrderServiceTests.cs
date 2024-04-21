@@ -2,22 +2,22 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Moq;
 using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
-using Ozon.Route256.Practice.OrdersService.DataAccess;
-using Ozon.Route256.Practice.OrdersService.Exceptions;
+using Ozon.Route256.Practice.OrderService.DataAccess;
+using Ozon.Route256.Practice.OrderService.Exceptions;
 using static Ozon.Route256.Practice.LogisticsSimulator.Grpc.LogisticsSimulatorService;
 
-namespace Ozon.Route256.Practice.OrdersService.Tests
+namespace Ozon.Route256.Practice.OrderService.Tests
 {
     public class OrderServiceTests
     {
         private readonly Mock<IRegionsRepository> _regionsRepositoryMock;
-        private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
+       // private readonly Mock<IOrdersRepository> _ordersRepositoryMock;
         private readonly Mock<LogisticsSimulatorServiceClient> _logisticSimulatorMock;
         private Infrastructure.GrpcServices.OrdersService _ordersService;
         public OrderServiceTests() 
         {
             _regionsRepositoryMock = new Mock<IRegionsRepository>();
-            _ordersRepositoryMock = new Mock<IOrdersRepository>();
+            //_ordersRepositoryMock = new Mock<IOrdersRepository>();
             _logisticSimulatorMock = new Mock<LogisticsSimulatorServiceClient>();
         }
 
@@ -54,8 +54,8 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void CancelOrderOrderNotFound()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None))
-                .ThrowsAsync(new NotFoundException("not found"));
+           // _ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None))
+           //     .ThrowsAsync(new NotFoundException("not found"));
             SetupOrderService();
             Task result() => _ordersService.CancelOrder(new CancelOrderRequest(), new ServerCallContextMock());
             RpcException res = await Assert.ThrowsAsync<RpcException>(result);
@@ -67,8 +67,8 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void CancelOrderOrderInappropriateState()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None))
-                .ThrowsAsync(new BadRequestException("invalid"));
+           // _ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None))
+           //     .ThrowsAsync(new BadRequestException("invalid"));
             SetupOrderService();
             var result = await _ordersService.CancelOrder(new CancelOrderRequest(), new ServerCallContextMock());
             Assert.False(result.Success);
@@ -79,7 +79,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void CancelOrderOk()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None));
+            //_ordersRepositoryMock.Setup(client => client.CancelOrderAsync(0, CancellationToken.None));
             SetupOrderService();
             var result = await _ordersService.CancelOrder(new CancelOrderRequest(), new ServerCallContextMock());
             Assert.True(result.Success);
@@ -90,7 +90,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrderStateOrderNotFound()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _ordersRepositoryMock.Setup(client => client.GetOrderStateAsync(0, CancellationToken.None)).ThrowsAsync(new NotFoundException("not found"));
+           // _ordersRepositoryMock.Setup(client => client.GetOrderStateAsync(0, CancellationToken.None)).ThrowsAsync(new NotFoundException("not found"));
             SetupOrderService();
             Task result() => _ordersService.GetOrderState(new GetOrderStateRequest(), new ServerCallContextMock());
             RpcException res = await Assert.ThrowsAsync<RpcException>(result);
@@ -102,8 +102,8 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         public async void GetOrderStateOk()
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
-            _ordersRepositoryMock.Setup(client => client.GetOrderStateAsync(0, CancellationToken.None))
-                .Returns(Task.FromResult(OrderState.SentToCustomer));
+           // _ordersRepositoryMock.Setup(client => client.GetOrderStateAsync(0, CancellationToken.None))
+           //     .Returns(Task.FromResult(OrderState.SentToCustomer));
             SetupOrderService();
             var state = await _ordersService.GetOrderState(new GetOrderStateRequest(), new ServerCallContextMock());
             Assert.Equal(OrderState.SentToCustomer, state.State);
@@ -183,7 +183,7 @@ namespace Ozon.Route256.Practice.OrdersService.Tests
         {
             SetupLogisticSimulator(new CancelResult { Success = true });
             //_ordersRepositoryMock.Setup(client => client.GetOrdersByClientIdAsync(0
-            //    , It.IsAny<DateTime>(), new OrdersService.DataAccess.PaginationParameters(0, 0), CancellationToken.None))
+            //    , It.IsAny<DateTime>(), new OrderServiceDataAccess.PaginationParameters(0, 0), CancellationToken.None))
             //    .ReturnsAsync(new List<OrderEntity>());
             SetupOrderService();
             await _ordersService.GetOrdersByClientId(new GetOrdersByClientIdRequest { StartDate = Timestamp.FromDateTimeOffset(DateTime.UtcNow),

@@ -6,4 +6,5 @@ namespace Ozon.Route256.Practice.OrderService.Application.Mappers;
 internal interface ICommandMapper
 {
     OrderAggregate MapToDomainOrder(CreateOrderCommand command);
+    //Domain.OrderType ToCommand(OrderType orderType);
 }

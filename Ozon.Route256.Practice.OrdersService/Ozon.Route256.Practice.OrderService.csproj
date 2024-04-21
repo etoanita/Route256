@@ -26,18 +26,6 @@
    <Protobuf Include="Protos/*.proto" Type="Both" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="DataAccess\Postgres\**" />
-    <Content Remove="DataAccess\Postgres\**" />
-    <EmbeddedResource Remove="DataAccess\Postgres\**" />
-    <None Remove="DataAccess\Postgres\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Protos\customers.proto" />
-    <None Remove="protos\logisticsSimulator.proto" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>$(AssemblyName).Tests</_Parameter1>
@@ -50,6 +38,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\OrderService\Application\Ozon.Route256.Practice.OrderService.Application.csproj" />
 	  <ProjectReference Include="..\OrderService\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj" />
+	  <ProjectReference Include="..\OrderService\Infrastructure\Ozon.Route256.Practice.OrderService.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
-﻿ using MediatR;
+﻿using MediatR;
 using Ozon.Route256.Practice.OrderService.Domain;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Queries;
 
-internal sealed class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, List<OrderInfo>>
+internal sealed class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, IReadOnlyCollection<OrderInfo>>
 {
     private readonly IOrderReadRepository _repository;
 
@@ -12,7 +12,7 @@ internal sealed class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, Li
         _repository = repository;
     }
 
-    public Task<List<OrderInfo>> Handle(GetOrdersQuery request, CancellationToken cancellationToken) 
+    public Task<IReadOnlyCollection<OrderInfo>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
         => _repository.GetOrders(request, cancellationToken);
 
 }

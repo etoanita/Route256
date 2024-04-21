@@ -8,17 +8,17 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Ozon.Route256.Practice.OrdersService.csproj", "Ozon.Route256.Practice.OrdersService/"]
-RUN dotnet restore "./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrdersService.csproj"
+COPY ["Ozon.Route256.Practice.OrderService.csproj", "Ozon.Route256.Practice.OrdersService/"]
+RUN dotnet restore "./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrderService.csproj"
 WORKDIR "Ozon.Route256.Practice.OrdersService"
 COPY . .
-RUN dotnet build "./Ozon.Route256.Practice.OrdersService.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./Ozon.Route256.Practice.OrderService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Ozon.Route256.Practice.OrdersService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Ozon.Route256.Practice.OrderService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Ozon.Route256.Practice.OrdersService.dll"]
+ENTRYPOINT ["dotnet", "Ozon.Route256.Practice.OrderService.dll"]

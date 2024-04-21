@@ -20,8 +20,8 @@ orders_service_build:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: []
   script:
-    - dotnet restore ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrdersService.csproj    
-    - dotnet build ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrdersService.csproj --no-restore
+    - dotnet restore ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrderService.csproj    
+    - dotnet build ./Ozon.Route256.Practice.OrdersService/Ozon.Route256.Practice.OrderService.csproj --no-restore
 
 
 gateway_service_test:
@@ -36,5 +36,5 @@ orders_service_test:
   image: mcr.microsoft.com/dotnet/sdk:6.0
   needs: ["orders_service_build"]
   script:
-    - dotnet test ./Ozon.Route256.Practice.OrdersServiceTests/Ozon.Route256.Practice.OrdersService.Tests.csproj
+    - dotnet test ./Ozon.Route256.Practice.OrdersServiceTests/Ozon.Route256.Practice.OrderService.Tests.csproj
  

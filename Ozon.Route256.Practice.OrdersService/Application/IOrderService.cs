@@ -1,6 +1,4 @@
-﻿using Ozon.Route256.Practice.OrderService.Domain;
-
-namespace Ozon.Route256.Practice.OrderService.Application;
+﻿namespace Ozon.Route256.Practice.OrderService.Application;
 
 public interface IOrderService
 {
@@ -10,7 +8,7 @@ public interface IOrderService
 
     Task<List<OrderItem>> GetOrders(GetOrdersListRequest request, CancellationToken cancellationToken);
 
-    Task<List<OrderByRegion>> GetOrdersByRegions(GetOrdersByRegionsRequest request, CancellationToken cancellationToken);
+    Task<List<RegionOrderItem>> GetOrdersByRegions(GetOrdersByRegionsRequest request, CancellationToken cancellationToken);
 
     Task<List<OrderItem>> GetOrdersByClientId(GetOrdersByClientIdRequest request, CancellationToken cancellationToken);
 

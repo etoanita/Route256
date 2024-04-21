@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>ba142fbe-3660-46ce-ad4c-7f4d9c5ba846</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,15 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DataAccess\Postgres\**" />
-    <Content Remove="DataAccess\Postgres\**" />
-    <EmbeddedResource Remove="DataAccess\Postgres\**" />
-    <None Remove="DataAccess\Postgres\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Protos\customers.proto" />
-    <None Remove="protos\logisticsSimulator.proto" />
+    <None Remove="Protos\sd.proto" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -44,6 +38,20 @@
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
 			<_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
 		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Application\Ozon.Route256.Practice.OrderService.Application.csproj" />
+	  <ProjectReference Include="..\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Common\Shard\ShardNpgsqlCommand.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
+	  <Compile Update="Common\Shard\ShardNpgsqlConnection.cs">
+	    <SubType>Component</SubType>
+	  </Compile>
 	</ItemGroup>
 
 </Project>

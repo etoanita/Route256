@@ -1,4 +1,4 @@
-﻿using Ozon.Route256.Practice.OrdersService.Infrastructure.Kafka.Models;
+﻿using Ozon.Route256.Practice.OrderService.Infrastructure.Kafka.Models;
 
 namespace Ozon.Route256.Practice.OrderService.Application;
 

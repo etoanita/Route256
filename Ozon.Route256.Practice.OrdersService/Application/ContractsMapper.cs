@@ -1,9 +1,10 @@
 ﻿using Google.Protobuf.WellKnownTypes;
 using Ozon.Route256.Practice.OrderService.Application.Commands;
+using Ozon.Route256.Practice.OrderService.Dal.Models;
 using Ozon.Route256.Practice.OrderService.Domain;
-using Ozon.Route256.Practice.OrdersService.Dal.Models;
 
-namespace Ozon.Route256.Practice.CustomerService.Application;
+
+namespace Ozon.Route256.Practice.OrderService.Application;
 
 internal class ContractsMapper : IContractsMapper
 {
@@ -49,6 +50,25 @@ internal class ContractsMapper : IContractsMapper
         };
     }
 
+    public Domain.SortOrder ToCommand(SortOrder sortOrder)
+    {
+        return sortOrder switch
+        {
+            SortOrder.Asc => Domain.SortOrder.ASC,
+            SortOrder.Desc => Domain.SortOrder.DESC,
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    public Domain.PaginationParameters ToCommand(PaginationParameters pagionationParameters)
+    {
+        return new Domain.PaginationParameters
+        (
+            PageNumber: pagionationParameters.PageNumber,
+            PageSize: pagionationParameters.PageSize
+        );
+    }
+
     public OrderItem ToContracts(OrderInfo orderInfo)
         => new()
         {
@@ -85,6 +105,18 @@ internal class ContractsMapper : IContractsMapper
             OrderService.Domain.OrderState.Cancelled => OrderState.Cancelled,
             OrderService.Domain.OrderState.Lost => OrderState.Lost,
             _ => throw new NotImplementedException(),
+        };
+    }
+
+    public RegionOrderItem ToContracts(OrderByRegion orderByRegion)
+    {
+        return new RegionOrderItem
+        {
+            Region = orderByRegion.Region,
+            ClientsCount = orderByRegion.ClientsCount,
+            OrdersCount = orderByRegion.OrdersCount,
+            TotalPrice = orderByRegion.TotalPrice,
+            TotalWeight = orderByRegion.TotalWeight
         };
     }
 }
