@@ -2,7 +2,7 @@
 
 namespace Ozon.Route256.Practice.OrderService.Domain
 {
-    public class OrderByRegion : ValueObject
+    public record OrderByRegion 
     {
         public string Region { get; }
         public int OrdersCount { get; }
@@ -23,15 +23,6 @@ namespace Ozon.Route256.Practice.OrderService.Domain
         {
             // TODO: Validate
             return new OrderByRegion(region, ordersCount, totalPrice, totalWeight, clientsCount);
-        }
-
-        protected override IEnumerable<object> GetEqualityComponents()
-        {
-            yield return Region;
-            yield return OrdersCount;
-            yield return TotalPrice;
-            yield return TotalWeight;
-            yield return ClientsCount;
         }
     }
 }
