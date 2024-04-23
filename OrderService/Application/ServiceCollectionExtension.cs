@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
-    public static class Startup
+    public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddApplication(this IServiceCollection services) {
             _ = services.AddSingleton<ICommandMapper, DataMapper>();

@@ -14,7 +14,7 @@ using Ozon.Route256.Practice.OrderService.Infrastructure.Database.Mappers;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
-    public static class Startup
+    public static class ServiceCollectionExtension
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
