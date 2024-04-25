@@ -2,7 +2,7 @@ using FluentMigrator.Runner;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Ozon.Route256.Practice.OrdersService;
-using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
+using Ozon.Route256.Practice.OrderService.Dal.Common.Shard;
 using System.Net;
 
  await Host

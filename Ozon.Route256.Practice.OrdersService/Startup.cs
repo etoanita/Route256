@@ -1,14 +1,7 @@
-﻿using Ozon.Route256.Practice.OrdersService.Dal.Common.Shard;
-using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
-using Ozon.Route256.Practice.OrdersService.Bll;
-using Ozon.Route256.Practice.OrdersService.ClientBalancing;
-using Ozon.Route256.Practice.OrdersService.Configurations;
-using Ozon.Route256.Practice.OrdersService.Dal.Common;
-using Ozon.Route256.Practice.OrdersService.DataAccess;
-using Ozon.Route256.Practice.OrdersService.DataAccess.Postgres;
-using Ozon.Route256.Practice.OrdersService.Handlers;
-using Ozon.Route256.Practice.OrdersService.Infrastructure;
-using StackExchange.Redis;
+﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
+using Ozon.Route256.Practice.OrderService.Application;
+using Ozon.Route256.Practice.OrderService.Infrastructure;
+using System.Reflection;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -44,61 +37,16 @@ namespace Ozon.Route256.Practice.OrdersService
 
                 option.Address = new Uri(url);
             });
-            serviceCollection.AddGrpcClient<Customers.CustomersClient>(option =>
-            {
-                var url = _configuration.GetValue<string>("CUSTOMER_SERVICE_ADDRESS");
-                if (string.IsNullOrEmpty(url))
-                {
-                    throw new ArgumentException("CUSTOMER_SERVICE_ADDRESS variable is null or empty");
-                }
-
-                option.Address = new Uri(url);
-            });
+            serviceCollection.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            serviceCollection.AddGrpc(option => option.Interceptors.Add<LoggerInterceptor>());
             serviceCollection.AddGrpcReflection();
             serviceCollection.AddControllers();
             serviceCollection.AddEndpointsApiExplorer();
-            serviceCollection.AddSingleton<IDbStore, DbStore>();
-            serviceCollection.AddHostedService<SdConsumerHostedService>();
-            serviceCollection.AddScoped<IRegionsRepository, RegionsRepositoryDatabase>();
-            serviceCollection.AddScoped<IOrdersRepository, OrdersRepositoryDatabase>();
-            serviceCollection.AddScoped<ShardOrdersDbAccess>();
-            serviceCollection.AddScoped<ShardRegionsDbAccess>();
-            serviceCollection.AddScoped<ShardCustomerDbAccess>();
-            serviceCollection.AddScoped<ICustomersRepository, RedisCustomerRepository>();
-            serviceCollection.AddKafka().AddHandlers();
-            serviceCollection.Configure<KafkaConfiguration>(_configuration.GetSection(nameof(KafkaConfiguration)));
-            serviceCollection.AddSingleton<IConnectionMultiplexer>(
-                _ =>
-                {
-                    var connection = ConnectionMultiplexer.Connect("redis", x => x.AbortOnConnectFail = false);
-
-                    return connection;
-                });
-            var connectionString = _configuration.GetConnectionString("OrderDatabase");
-            //serviceCollection.AddFluentMigratorCore()
-            //    .ConfigureRunner(
-            //        builder => builder
-            //            .AddPostgres()
-            //            .ScanIn(GetType().Assembly)
-            //            .For.Migrations())
-            //    .AddOptions<ProcessorOptions>()
-            //    .Configure(
-            //        options =>
-            //        {
-            //            options.ProviderSwitches = "Force Quote=false";
-            //            options.Timeout = TimeSpan.FromMinutes(10);
-            //            options.ConnectionString = connectionString;
-            //        });
-            PostgresMapping.MapCompositeTypes();
-
-            serviceCollection.AddSingleton<IPostgresConnectionFactory>(_ => new PostgresConnectionFactory(connectionString));
-
-            serviceCollection.Configure<DbOptions>(_configuration.GetSection(nameof(DbOptions)));
-            serviceCollection.AddSingleton<IShardPostgresConnectionFactory, ShardConnectionFactory>();
-            serviceCollection.AddSingleton<IShardingRule<long>, LongShardingRule>();
-            serviceCollection.AddSingleton<IShardingRule<string>, StringShardingRule>();
-            serviceCollection.AddSingleton<IShardMigrator, ShardMigrator>();
-
+            serviceCollection.AddScoped<IOrderService, OrderServiceAdapter>();
+            serviceCollection.AddScoped<IRegionService, RegionServiceAdapter>();
+            serviceCollection.AddSingleton<IContractsMapper, ContractsMapper>();
+            serviceCollection.AddApplication();
+            serviceCollection.AddInfrastructure(_configuration);
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)
@@ -109,7 +57,7 @@ namespace Ozon.Route256.Practice.OrdersService
             applicationBuilder.UseEndpoints(endpointRouteBuilder =>
             {
                 endpointRouteBuilder.MapGrpcReflectionService();
-                endpointRouteBuilder.MapGrpcService<Infrastructure.GrpcServices.OrdersService>();
+                endpointRouteBuilder.MapGrpcService<OrderService.Infrastructure.GrpcServices.OrdersService>();
             });
         }
     }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrdersService", "Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrdersService.csproj", "{6C82E938-C13D-4F35-A4CB-43CB930C38E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService", "Ozon.Route256.Practice.OrdersService\Ozon.Route256.Practice.OrderService.csproj", "{6C82E938-C13D-4F35-A4CB-43CB930C38E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.GatewayService", "Ozon.Route256.Practice.GatewayService\Ozon.Route256.Practice.GatewayService.csproj", "{4857F731-BCB5-4882-A13E-C6FB9E9330B5}"
 EndProject
@@ -19,7 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{43128563
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.GatewayService.Tests", "Ozon.Route256.Practice.Tests\Ozon.Route256.Practice.GatewayService.Tests.csproj", "{0F53CE54-F2AD-4517-A4F0-44E11639F5EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrdersService.Tests", "Ozon.Route256.Practice.OrdersServiceTests\Ozon.Route256.Practice.OrdersService.Tests.csproj", "{43E80D1C-5755-404F-8527-05607181FD8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Tests", "Ozon.Route256.Practice.OrdersServiceTests\Ozon.Route256.Practice.OrderService.Tests.csproj", "{43E80D1C-5755-404F-8527-05607181FD8F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Domain", "OrderService\Domain\Ozon.Route256.Practice.OrderService.Domain.csproj", "{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Application", "OrderService\Application\Ozon.Route256.Practice.OrderService.Application.csproj", "{9DB97294-D56C-41E9-AF7F-917074D19E69}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ozon.Route256.Practice.OrderService.Infrastructure", "OrderService\Infrastructure\Ozon.Route256.Practice.OrderService.Infrastructure.csproj", "{496BB951-C735-4363-9294-EDE186719F81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +49,18 @@ Global
 		{43E80D1C-5755-404F-8527-05607181FD8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43E80D1C-5755-404F-8527-05607181FD8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43E80D1C-5755-404F-8527-05607181FD8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A302D2AD-6FED-418A-916E-2E2D1BD52EAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DB97294-D56C-41E9-AF7F-917074D19E69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DB97294-D56C-41E9-AF7F-917074D19E69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DB97294-D56C-41E9-AF7F-917074D19E69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DB97294-D56C-41E9-AF7F-917074D19E69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{496BB951-C735-4363-9294-EDE186719F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{496BB951-C735-4363-9294-EDE186719F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{496BB951-C735-4363-9294-EDE186719F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{496BB951-C735-4363-9294-EDE186719F81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +70,9 @@ Global
 		{4857F731-BCB5-4882-A13E-C6FB9E9330B5} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
 		{0F53CE54-F2AD-4517-A4F0-44E11639F5EB} = {43128563-973A-42DC-B56C-D17BE2EAFFB5}
 		{43E80D1C-5755-404F-8527-05607181FD8F} = {43128563-973A-42DC-B56C-D17BE2EAFFB5}
+		{A302D2AD-6FED-418A-916E-2E2D1BD52EAC} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
+		{9DB97294-D56C-41E9-AF7F-917074D19E69} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
+		{496BB951-C735-4363-9294-EDE186719F81} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F35E1AF-BD22-4740-B6CF-3D0A2BE50A8A}

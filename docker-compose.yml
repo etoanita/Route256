@@ -9,8 +9,8 @@ volumes:
 services:
   orders-service-1:
     build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
     container_name: orders-service-1
     depends_on: 
     - orders-service-db-1
@@ -27,8 +27,8 @@ services:
 
   orders-service-2:
     build:
-      context: ./Ozon.Route256.Practice.OrdersService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
     container_name: orders-service-2
     ports:
       - 5010:5010 

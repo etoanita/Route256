@@ -31,7 +31,7 @@
       "publishAllPorts": true,
       "useSSL": true
     },
-    "Ozon.Route256.Practice.OrdersService.Migrator": {
+    "Ozon.Route256.Practice.OrderService.Migrator": {
       "commandName": "Project",
       "commandLineArgs": "migrate",
       "environmentVariables": {

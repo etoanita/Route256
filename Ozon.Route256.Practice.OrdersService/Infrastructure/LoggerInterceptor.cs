@@ -1,8 +1,8 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
-using Ozon.Route256.Practice.OrdersService.Exceptions;
+using Ozon.Route256.Practice.OrderService.Exceptions;
 
-namespace Ozon.Route256.Practice.OrdersService.Infrastructure;
+namespace Ozon.Route256.Practice.OrderService.Infrastructure;
 
 public sealed class LoggerInterceptor : Interceptor
 {
