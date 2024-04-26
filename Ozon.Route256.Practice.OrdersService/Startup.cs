@@ -1,6 +1,7 @@
 ﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrderService.Application;
 using Ozon.Route256.Practice.OrderService.Infrastructure;
+using Serilog;
 using System.Reflection;
 
 namespace Ozon.Route256.Practice.OrdersService
@@ -11,6 +12,10 @@ namespace Ozon.Route256.Practice.OrdersService
 
         public Startup(IConfiguration configuration)
         {
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .Enrich.WithMemoryUsage()
+            .CreateLogger();
             _configuration = configuration;
         }
 
@@ -38,7 +43,6 @@ namespace Ozon.Route256.Practice.OrdersService
                 option.Address = new Uri(url);
             });
             serviceCollection.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            serviceCollection.AddGrpc(option => option.Interceptors.Add<LoggerInterceptor>());
             serviceCollection.AddGrpcReflection();
             serviceCollection.AddControllers();
             serviceCollection.AddEndpointsApiExplorer();

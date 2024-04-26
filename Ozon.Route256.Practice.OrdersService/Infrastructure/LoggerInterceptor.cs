@@ -18,13 +18,13 @@ public sealed class LoggerInterceptor : Interceptor
         ServerCallContext context,
         UnaryServerMethod<TRequest, TResponse> continuation)
     {
-        _logger.LogInformation("Request {request}", request);
+        _logger.LogInformation("Request {@request}", request);
 
         try
         {
             var response = await base.UnaryServerHandler(request, context, continuation);
 
-            _logger.LogInformation("Response {response}", response);
+            _logger.LogInformation("Response {@response}", response);
 
             return response;
         }

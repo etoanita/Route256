@@ -4,14 +4,18 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Ozon.Route256.Practice.OrdersService;
 using Ozon.Route256.Practice.OrderService.Dal.Common.Shard;
 using System.Net;
+using Serilog;
+using Serilog.Sinks.Graylog;
+using Serilog.Sinks.Graylog.Core.Transport;
 
- await Host
+await Host
     .CreateDefaultBuilder(args)
     .ConfigureWebHostDefaults(builder => builder.UseStartup<Startup>()
         .ConfigureKestrel(option =>
         {
             option.ListenPortByOptions(ProgramExtension.ROUTE256_GRPC_PORT, HttpProtocols.Http2);
         }))
+    .UseSerilog()
     .Build()
     .RunOrMigrate(args);
 
