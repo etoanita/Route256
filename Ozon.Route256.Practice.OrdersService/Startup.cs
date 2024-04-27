@@ -1,8 +1,15 @@
-﻿using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
+﻿using Npgsql;
+using OpenTelemetry.Exporter;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Ozon.Route256.Practice.LogisticsSimulator.Grpc;
 using Ozon.Route256.Practice.OrderService.Application;
 using Ozon.Route256.Practice.OrderService.Infrastructure;
 using Serilog;
 using System.Reflection;
+using Google.Protobuf.WellKnownTypes;
+using Ozon.Route256.Practice.CustomerService.Infrastructure.Tracing;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -21,7 +28,11 @@ namespace Ozon.Route256.Practice.OrdersService
 
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddGrpc(option => option.Interceptors.Add<LoggerInterceptor>());
+            serviceCollection.AddGrpc(option =>
+            {
+                option.Interceptors.Add<LoggerInterceptor>();
+                option.Interceptors.Add<TracingInterceptor>();
+            });
             serviceCollection.AddGrpcClient<SdService.SdServiceClient>(option =>
             {
                 var url = _configuration.GetValue<string>("ROUTE256_SD_ADDRESS");
@@ -51,13 +62,28 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddSingleton<IContractsMapper, ContractsMapper>();
             serviceCollection.AddApplication();
             serviceCollection.AddInfrastructure(_configuration);
+            serviceCollection.AddOpenTelemetry()
+                .WithTracing(builder => builder
+                .AddAspNetCoreInstrumentation()
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(nameof(OrdersService)))
+                .AddNpgsql()
+                .AddConsoleExporter()
+                .AddSource("Create Order Mapper")
+                .AddSource("Create Order Command")
+                .AddSource("Grpc Interceptor")
+                .AddJaegerExporter(options =>
+                {
+                    options.AgentHost = "localhost";
+                    options.AgentPort = 6831;
+                    options.Protocol = JaegerExportProtocol.UdpCompactThrift;
+                    options.ExportProcessorType = ExportProcessorType.Simple;
+                }));
         }
 
         public void Configure(IApplicationBuilder applicationBuilder)
         {
             applicationBuilder.UseRouting();
-            applicationBuilder.UseHttpsRedirection();
-            applicationBuilder.UseAuthorization();
+         
             applicationBuilder.UseEndpoints(endpointRouteBuilder =>
             {
                 endpointRouteBuilder.MapGrpcReflectionService();

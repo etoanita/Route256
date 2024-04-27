@@ -11,43 +11,43 @@ volumes:
   graylog_journal:
 
 services:
-  orders-service-1:
-    build:
-      context: .
-      dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
-    container_name: orders-service-1
-    depends_on: 
-    - orders-service-db-1
-    - orders-service-db-2
-    - service-discovery
-    - broker-1
-    - broker-2
-    - broker-3
-    environment:
-      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
-      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
-      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
-      "ROUTE256_GRPC_PORT": "5010"
+  # orders-service-1:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
+  #   container_name: orders-service-1
+  #   depends_on: 
+  #   - orders-service-db-1
+  #   - orders-service-db-2
+  #   - service-discovery
+  #   - broker-1
+  #   - broker-2
+  #   - broker-3
+  #   environment:
+  #     "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+  #     "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
+  #     "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
+  #     "ROUTE256_GRPC_PORT": "5010"
 
-  orders-service-2:
-    build:
-      context: .
-      dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
-    container_name: orders-service-2
-    ports:
-      - 5010:5010 
-    depends_on: 
-      - orders-service-db-1
-      - orders-service-db-2
-      - service-discovery 
-      - broker-1
-      - broker-2
-      - broker-3
-    environment:
-      "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
-      "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
-      "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
-      "ROUTE256_GRPC_PORT": "5010"
+  # orders-service-2:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Ozon.Route256.Practice.OrdersService/Dockerfile
+  #   container_name: orders-service-2
+  #   ports:
+  #     - 5010:5010 
+  #   depends_on: 
+  #     - orders-service-db-1
+  #     - orders-service-db-2
+  #     - service-discovery 
+  #     - broker-1
+  #     - broker-2
+  #     - broker-3
+  #   environment:
+  #     "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
+  #     "LOGISTICS_SIMULATOR_ADDRESS": "http://logistic-simulator:80"
+  #     "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:5005"
+  #     "ROUTE256_GRPC_PORT": "5010"
 
   gateway-service:
     build:
@@ -66,6 +66,8 @@ services:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/customer-service:latest
     container_name: customer-service
+    ports:
+       - '6082:80'
     environment:
       "ROUTE256_SD_ADDRESS": "http://service-discovery:80"
       "ROUTE256_GRPC_PORT": "5005"
@@ -76,7 +78,8 @@ services:
   logistic-simulator:
     image: >-
       gitlab-registry.ozon.dev/cs/classroom-10/students/practice/logistics-simulator:latest
-
+    ports:
+        - '6090:80'
     container_name: logistic-simulator
     depends_on:
       - broker-1
@@ -117,7 +120,7 @@ services:
       - "6081:80"
     environment:
       - >-
-        ROUTE256_DB_STATE=cluster:0-3:orders-service-db-1:5432;cluster:4-7:orders-service-db-2:5432;
+        ROUTE256_DB_STATE=cluster:0-3:localhost:5401;cluster:4-7:localhost:5402;
       - ROUTE256_UPDATE_TIMEOUT=10
 
   customer-service-db:
@@ -279,3 +282,8 @@ services:
         - "graylog_data:/usr/share/graylog/data/data"
         - "graylog_journal:/usr/share/graylog/data/journal"
     restart: "on-failure"
+  jaeger:
+    image: jaegertracing/all-in-one:${JAEGER_VERSION:-latest}
+    ports:
+      - "16686:16686"
+      - "6831:6831/udp"

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Ozon.Route256.Practice.OrderService.Application.Commands;
 using Ozon.Route256.Practice.OrderService.Application.Queries;
+using System.Diagnostics;
 
 namespace Ozon.Route256.Practice.OrderService.Application;
 
@@ -22,8 +23,17 @@ internal sealed class OrderServiceAdapter : IOrderService
 
     public async Task CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
     {
-        var command = _mapper.ToCommand(request);
-        await _mediator.Send(new CreateOrderCommand(command), cancellationToken);
+        OrderDto command;
+        using (var mapperActivity = new ActivitySource("Create Order Mapper").StartActivity())
+        {
+            mapperActivity!.SetTag("request", request);
+            command = _mapper.ToCommand(request);
+        }
+        using (var commandActivity = new ActivitySource("Create Order Command").StartActivity())
+        {
+            commandActivity!.SetTag("dto", command);
+            await _mediator.Send(new CreateOrderCommand(command), cancellationToken);
+        }
     }
 
     public async Task<OrderState> GetOrderState(long orderId, CancellationToken cancellationToken)

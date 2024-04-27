@@ -123,7 +123,7 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess.Postgres
             const string sqlIndex = @$"
                 select order_id
                 from {ShardsHelper.BucketPlaceholder}.idx_orders_region_name
-                where region_name = :region and order_type > :order_type; 
+                where region_name = :region and order_type = :order_type; 
             ";
             List<int> ordersId = new();
             foreach (var region in regions)

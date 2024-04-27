@@ -6,9 +6,10 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ROUTE256_SD_ADDRESS": "http://service-discovery:80",
-        "CUSTOMER_SERVICE_ADDRESS": "http://customer-service:80",
-        "ROUTE256_GRPC_PORT": "5010"
+        "ROUTE256_SD_ADDRESS": "http://localhost:6081",
+        "CUSTOMER_SERVICE_ADDRESS": "http://localhost:6082",
+        "ROUTE256_GRPC_PORT": "5010",
+        "LOGISTICS_SIMULATOR_ADDRESS": "http://localhost:6090"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7157;http://localhost:5279"
