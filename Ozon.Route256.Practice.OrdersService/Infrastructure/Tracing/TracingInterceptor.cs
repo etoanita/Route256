@@ -2,7 +2,7 @@
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-namespace Ozon.Route256.Practice.CustomerService.Infrastructure.Tracing;
+namespace Ozon.Route256.Practice.OrderService.Infrastructure.Tracing;
 
 public class TracingInterceptor : Interceptor
 {

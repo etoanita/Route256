@@ -9,7 +9,10 @@ using Ozon.Route256.Practice.OrderService.Infrastructure;
 using Serilog;
 using System.Reflection;
 using Google.Protobuf.WellKnownTypes;
-using Ozon.Route256.Practice.CustomerService.Infrastructure.Tracing;
+using Prometheus;
+using Ozon.Route256.Practice.OrderService.Infrastructure.Tracing;
+using Ozon.Route256.Practice.OrderService.Infrastructure.Metrics;
+using Ozon.Route256.Practice.OrderService.Application.Metrics;
 
 namespace Ozon.Route256.Practice.OrdersService
 {
@@ -60,6 +63,8 @@ namespace Ozon.Route256.Practice.OrdersService
             serviceCollection.AddScoped<IOrderService, OrderServiceAdapter>();
             serviceCollection.AddScoped<IRegionService, RegionServiceAdapter>();
             serviceCollection.AddSingleton<IContractsMapper, ContractsMapper>();
+            serviceCollection.AddSingleton<IGrpcMetrics, GrpcMetrics>();
+            serviceCollection.AddSingleton<IOrderMetrics, OrderMetrics>();
             serviceCollection.AddApplication();
             serviceCollection.AddInfrastructure(_configuration);
             serviceCollection.AddOpenTelemetry()
@@ -87,6 +92,7 @@ namespace Ozon.Route256.Practice.OrdersService
             applicationBuilder.UseEndpoints(endpointRouteBuilder =>
             {
                 endpointRouteBuilder.MapGrpcReflectionService();
+                endpointRouteBuilder.MapMetrics();
                 endpointRouteBuilder.MapGrpcService<OrderService.Infrastructure.GrpcServices.OrdersService>();
             });
         }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Ozon.Route256.Practice.OrderService.Application.Mappers;
+using Ozon.Route256.Practice.OrderService.Application.Metrics;
 
 namespace Ozon.Route256.Practice.OrderService.Application.Commands;
 
@@ -19,7 +20,7 @@ internal sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderCom
         var order = _commandMapper.MapToDomainOrder(request);
 
         await _unitOfWork.SaveOrder(order, cancellationToken);
-        
+
         return Unit.Value;
     }
 }

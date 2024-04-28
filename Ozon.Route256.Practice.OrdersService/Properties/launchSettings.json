@@ -9,6 +9,7 @@
         "ROUTE256_SD_ADDRESS": "http://localhost:6081",
         "CUSTOMER_SERVICE_ADDRESS": "http://localhost:6082",
         "ROUTE256_GRPC_PORT": "5010",
+        "ROUTE256_HTTP_PORT": "5011",
         "LOGISTICS_SIMULATOR_ADDRESS": "http://localhost:6090"
       },
       "dotnetRunMessages": true,

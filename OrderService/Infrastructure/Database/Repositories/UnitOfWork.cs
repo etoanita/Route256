@@ -5,6 +5,7 @@ using Ozon.Route256.Practice.OrderService.DataAccess.Postgres;
 using Ozon.Route256.Practice.OrderService.Exceptions;
 using OrderState = Ozon.Route256.Practice.OrderService.Dal.Models.OrderState;
 using Ozon.Route256.Practice.OrderService.Infrastructure.Database.Repositories;
+using Ozon.Route256.Practice.OrderService.Application.Metrics;
 
 namespace Ozon.Route256.Practice.OrderService.DataAccess
 {
@@ -13,15 +14,17 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
         private readonly IOrdersRepositoryPg _ordersDbAccess;
         private readonly ICustomersRepositoryPg _customerDbAccess;
         private readonly IDataWriteMapper _mapper;
+        private readonly IOrderMetrics _metrics;
 
         public UnitOfWork(
             IOrdersRepositoryPg ordersDbAccess,
             ICustomersRepositoryPg customerDbAccess,
-            IDataWriteMapper mapper)
+            IDataWriteMapper mapper, IOrderMetrics metrics)
         {
             _ordersDbAccess = ordersDbAccess;
             _customerDbAccess = customerDbAccess;
             _mapper = mapper;
+            _metrics = metrics;
         }
         public async Task CancelOrder(long orderId, CancellationToken ct = default)
         {
@@ -43,6 +46,7 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
            
             await _customerDbAccess.CreateOrUpdate(order.Customer.Id, order.Customer.FirstName, order.Customer.LastName, order.Customer.Address, order.Customer.Phone, ct);
             await _ordersDbAccess.Insert(_mapper.ToOrderDao(order.Order), ct);
+            _metrics.OrderCreated(order.Order.OrderType);
         }
 
         public async Task UpdateOrderState(long orderId, Domain.OrderState state, CancellationToken ct = default)

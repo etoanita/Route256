@@ -67,7 +67,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
                 order.Goods.Count,
                 order.Goods.Sum(x => x.Price),
                 order.Goods.Sum(x => x.Weight),
-                (OrderType)order.Source,
+                (OrderType)(order.Source - 1), //use converter
                 DateTime.UtcNow,
                 order.Customer.Address.Region,
                 OrderState.Created,
