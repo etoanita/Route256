@@ -9,7 +9,14 @@ internal class OrderMetrics : IOrderMetrics
         name:"order_service_order_created_by_type",
         help: "Создание заказа по типу",
         "type");
+    private readonly Counter _canceledOrderCounter = Prometheus.Metrics.CreateCounter(
+        name: "order_service_order_canceled",
+        help: "Отмена заказа",
+        "city");
 
     public void OrderCreated(Domain.OrderType type)
         => _counter.WithLabels(type.ToString()).Inc();
+
+    public void OrderCanceled()
+    => _canceledOrderCounter.WithLabels().Inc();
 }

@@ -5,4 +5,5 @@ namespace Ozon.Route256.Practice.OrderService.Application.Metrics;
 public interface IOrderMetrics
 {
     void OrderCreated(OrderType type);
+    void OrderCanceled();
 }

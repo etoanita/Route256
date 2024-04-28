@@ -4,8 +4,8 @@ namespace Ozon.Route256.Practice.OrderService.Application.Commands;
 
 public sealed class CreateOrderCommand : IRequest<Unit>
 {
-    public CreateOrderCommand(OrderDto order)
+    public CreateOrderCommand(Domain.OrderAggregate order)
         => Order = order;
 
-    public OrderDto Order { get; }
+    public Domain.OrderAggregate Order { get; }
 }

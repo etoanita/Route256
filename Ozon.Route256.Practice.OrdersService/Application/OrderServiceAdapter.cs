@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Ozon.Route256.Practice.OrderService.Application.Commands;
 using Ozon.Route256.Practice.OrderService.Application.Queries;
+using Ozon.Route256.Practice.OrderService.Domain;
 using System.Diagnostics;
 
 namespace Ozon.Route256.Practice.OrderService.Application;
@@ -23,7 +24,7 @@ internal sealed class OrderServiceAdapter : IOrderService
 
     public async Task CreateOrder(CreateOrderRequest request, CancellationToken cancellationToken)
     {
-        OrderDto command;
+        OrderAggregate command;
         using (var mapperActivity = new ActivitySource("Create Order Mapper").StartActivity())
         {
             mapperActivity!.SetTag("request", request);

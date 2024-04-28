@@ -1,8 +1,11 @@
+using MediatR;
 using Ozon.Route256.Practice.OrderService.Application;
+using Ozon.Route256.Practice.OrderService.Application.Commands;
 using Ozon.Route256.Practice.OrderService.DataAccess;
 using Ozon.Route256.Practice.OrderService.Domain;
 using Ozon.Route256.Practice.OrderService.Infrastructure.Kafka.Models;
 using Ozon.Route256.Practice.OrderService.Infrastructure.Kafka.Producers;
+using System.Threading;
 using static Ozon.Route256.Practice.Customers;
 
 namespace Ozon.Route256.Practice.OrderService.Handlers.OrderRegistration;
@@ -10,7 +13,7 @@ namespace Ozon.Route256.Practice.OrderService.Handlers.OrderRegistration;
 internal class OrderRegistrationHandler : IOrderRegistrationHandler
 {
     private readonly IOrderReadRepository _orderRepository;
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMediator _mediator;
     private readonly IRegionsRepository _regionsRepository;
     private readonly ICustomersRepository _customersRepository;
     private readonly CustomersClient _customersClient;
@@ -19,14 +22,14 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
 
     public OrderRegistrationHandler(IOrderReadRepository orderRepository, IRegionsRepository regionsRepository, 
         CustomersClient customersClient, IOrderProducer producer, ICustomersRepository customersRepository,
-        IUnitOfWork unitOfWork, ILogger<OrderRegistrationHandler> logger)
+        IMediator mediator, ILogger<OrderRegistrationHandler> logger)
     {
         _orderRepository = orderRepository;
         _regionsRepository = regionsRepository;
         _customersRepository = customersRepository;
         _customersClient = customersClient;
         _producer = producer;
-        _unitOfWork = unitOfWork;
+        _mediator = mediator;
         _logger = logger;
     }
 
@@ -73,7 +76,7 @@ internal class OrderRegistrationHandler : IOrderRegistrationHandler
                 OrderState.Created,
                 order.Customer.Id);
         var orderEntity = OrderAggregate.CreateInstance(entityOrder, customer);
-        await _unitOfWork.SaveOrder(orderEntity, token);
+        await _mediator.Send(new CreateOrderCommand(orderEntity), token);
 
         var custAddress = order.Customer.Address;
         try

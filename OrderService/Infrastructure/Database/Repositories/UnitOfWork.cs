@@ -14,17 +14,15 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
         private readonly IOrdersRepositoryPg _ordersDbAccess;
         private readonly ICustomersRepositoryPg _customerDbAccess;
         private readonly IDataWriteMapper _mapper;
-        private readonly IOrderMetrics _metrics;
 
         public UnitOfWork(
             IOrdersRepositoryPg ordersDbAccess,
             ICustomersRepositoryPg customerDbAccess,
-            IDataWriteMapper mapper, IOrderMetrics metrics)
+            IDataWriteMapper mapper)
         {
             _ordersDbAccess = ordersDbAccess;
             _customerDbAccess = customerDbAccess;
             _mapper = mapper;
-            _metrics = metrics;
         }
         public async Task CancelOrder(long orderId, CancellationToken ct = default)
         {
@@ -46,7 +44,6 @@ namespace Ozon.Route256.Practice.OrderService.DataAccess
            
             await _customerDbAccess.CreateOrUpdate(order.Customer.Id, order.Customer.FirstName, order.Customer.LastName, order.Customer.Address, order.Customer.Phone, ct);
             await _ordersDbAccess.Insert(_mapper.ToOrderDao(order.Order), ct);
-            _metrics.OrderCreated(order.Order.OrderType);
         }
 
         public async Task UpdateOrderState(long orderId, Domain.OrderState state, CancellationToken ct = default)

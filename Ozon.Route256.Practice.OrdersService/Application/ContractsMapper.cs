@@ -2,28 +2,32 @@
 using Ozon.Route256.Practice.OrderService.Application.Commands;
 using Ozon.Route256.Practice.OrderService.Dal.Models;
 using Ozon.Route256.Practice.OrderService.Domain;
+using Ozon.Route256.Practice.OrderService.Infrastructure.Kafka.Models;
 
 
 namespace Ozon.Route256.Practice.OrderService.Application;
 
 internal class ContractsMapper : IContractsMapper
 {
-    public OrderDto ToCommand(CreateOrderRequest requestOrder)
-        => new(
-            Id: requestOrder.OrderId,
-            ItemsCount: requestOrder.ItemsCount,
-            TotalPrice: requestOrder.TotalPrice,
-            TotalWeight: requestOrder.TotalWeight,
-            OrderType: ToCommand(requestOrder.OrderType),
-            OrderDate: requestOrder.OrderDate.ToDateTime(),
-            RegionName: requestOrder.Region,
-            State: ToCommand(requestOrder.State),
-            CustomerId: requestOrder.CustomerId,
-            CustomerName: requestOrder.CustomerName,
-            CustomerSurname: requestOrder.CustomerSurname,
-            Address: requestOrder.Address,
-            Phone: requestOrder.Phone
-         );
+    public Domain.OrderAggregate ToCommand(CreateOrderRequest requestOrder)
+        => OrderAggregate.CreateInstance(
+            Domain.Order.CreateInstance(
+            id: requestOrder.OrderId,
+            itemsCount: requestOrder.ItemsCount,
+            totalPrice: requestOrder.TotalPrice,
+            totalWeight: requestOrder.TotalWeight,
+            orderType: ToCommand(requestOrder.OrderType),
+            orderDate: requestOrder.OrderDate.ToDateTime(),
+            region: requestOrder.Region,
+            state: ToCommand(requestOrder.State),
+            customerId: requestOrder.CustomerId),
+            Domain.Customer.CreateInstance(
+            id: requestOrder.CustomerId,
+            firstName: requestOrder.CustomerName,
+            lastName: requestOrder.CustomerSurname,
+            address: requestOrder.Address,
+            phone: requestOrder.Phone
+         ));
 
     public OrderService.Domain.OrderType ToCommand(OrderType orderType)
     {
