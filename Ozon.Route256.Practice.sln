@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Route256.Practice.OrderService.Application.Tests", "Ozon.Route256.Practice.OrderService.Application.Tests\Ozon.Route256.Practice.OrderService.Application.Tests.csproj", "{3BB96C1B-C849-46E7-A9B2-50FD60B2A51B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ozon.Route256.Practice.OrderService.IntegrationTests", "Ozon.Route256.Practice.OrderService.IntegrationTests\Ozon.Route256.Practice.OrderService.IntegrationTests.csproj", "{6B908699-F73A-48F5-8048-EB4CE6F4AB86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +74,10 @@ Global
 		{3BB96C1B-C849-46E7-A9B2-50FD60B2A51B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BB96C1B-C849-46E7-A9B2-50FD60B2A51B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BB96C1B-C849-46E7-A9B2-50FD60B2A51B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B908699-F73A-48F5-8048-EB4CE6F4AB86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B908699-F73A-48F5-8048-EB4CE6F4AB86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B908699-F73A-48F5-8048-EB4CE6F4AB86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B908699-F73A-48F5-8048-EB4CE6F4AB86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{9DB97294-D56C-41E9-AF7F-917074D19E69} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
 		{496BB951-C735-4363-9294-EDE186719F81} = {E7D54463-92D6-4D98-BC9F-B14DC6C431D5}
 		{3BB96C1B-C849-46E7-A9B2-50FD60B2A51B} = {43128563-973A-42DC-B56C-D17BE2EAFFB5}
+		{6B908699-F73A-48F5-8048-EB4CE6F4AB86} = {43128563-973A-42DC-B56C-D17BE2EAFFB5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0F35E1AF-BD22-4740-B6CF-3D0A2BE50A8A}
